@@ -37,12 +37,15 @@ function App() {
         </GridItem>
 
         <GridItem colSpan={4} bg="grey">
-          <VStack spacing={4}>
-            {/* map tasks -> render task components */}
-            {taskList.map((task, index) => (
-              <TaskBubble key={index} task={task} handleDeleteTask={handleDeleteTask} />
-            ))}
-            <HStack>
+          <VStack spacing={4} height="100%" display="flex" flexDirection="column">
+            {/* task list */}
+            <VStack spacing={3} align="stretch" flexGrow={1}>
+              {taskList.map((task, index) => (
+                <TaskBubble key={index} task={task} handleDeleteTask={handleDeleteTask} />
+              ))}
+            </VStack>
+            {/* create new task section*/}
+            <HStack marginTop="auto">
               <Input value={newTaskName} onChange={(e) => setNewTaskName(e.target.value)} placeholder="Task name" />
               <Input type="date" value={newTaskDate} onChange={(e) => setNewTaskDate(e.target.value)} placeholder="Task date" />
               <Button onClick={handleAddTask}>Add Task</Button>

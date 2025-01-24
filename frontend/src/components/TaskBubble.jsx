@@ -1,13 +1,16 @@
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text, Button, Flex } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
 const TaskBubble = ({ task, handleDeleteTask }) => {
   return (
     <Box p="4" bg="white" color="black" borderRadius="md" boxShadow="sm" mb="4">
-      <Text fontSize="md">
-        {task.date} {task.name}
-      </Text>
-      <Button onClick={() => handleDeleteTask(task)}>Delete</Button>
+      <Flex gap="6" align="center">
+        <Text fontSize="md">{task.date}</Text>
+        <Text fontSize="md">{task.name}</Text>
+        <Button bg="orange" p="0" onClick={() => handleDeleteTask(task)}>
+          Delete
+        </Button>
+      </Flex>
     </Box>
   );
 };
