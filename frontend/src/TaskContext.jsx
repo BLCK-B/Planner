@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { createContext, useContext, useState } from "react";
 
 const TaskContext = createContext();
@@ -56,4 +57,8 @@ export const TaskProvider = ({ children }) => {
       {children}
     </TaskContext.Provider>
   );
+};
+
+TaskProvider.propTypes = {
+  children: PropTypes.any,
 };

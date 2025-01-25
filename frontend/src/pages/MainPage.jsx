@@ -1,24 +1,17 @@
-import { useState } from "react";
-import { Box, Button, Input, HStack, GridItem, Grid, Flex } from "@chakra-ui/react";
+import { Box, GridItem, Grid, Flex } from "@chakra-ui/react";
 import TaskBubble from "../components/TaskBubble.jsx";
 import TaskBubbleExpanded from "../components/TaskBubbleExpanded.jsx";
 import Header from "../components/Header.jsx";
 import { useTaskContext } from "../TaskContext.jsx";
+import NewTaskCreate from "../components/NewTaskCreate.jsx";
 
+// todo:
+// long term edit and delete
+// sorting by date
+// date formatting
+// optional descriptions
 function MainPage() {
-  const { taskList, longtermList, handleUpdateTask, expandedTaskId, handleExpandTask, handleDeleteTask, handleAddTask } =
-    useTaskContext();
-
-  const [newTaskName, setNewTaskName] = useState("");
-  const [newTaskDate, setNewTaskDate] = useState("");
-
-  const handleClickAdd = () => {
-    if (newTaskName) {
-      handleAddTask({ name: newTaskName, date: newTaskDate });
-      setNewTaskName("");
-      setNewTaskDate("");
-    }
-  };
+  const { taskList, longtermList, expandedTaskId } = useTaskContext();
 
   return (
     <Box w="100vw" h="100vh" bg="white">
@@ -50,15 +43,7 @@ function MainPage() {
 
         {/* controls */}
         <GridItem h="4em" colSpan={7} rowSpan={1} bg="#dcdcdc">
-          <Flex justify="center" p="1">
-            <HStack marginTop="auto">
-              <Input value={newTaskName} onChange={(e) => setNewTaskName(e.target.value)} placeholder="Task name" />
-              <Input type="date" value={newTaskDate} onChange={(e) => setNewTaskDate(e.target.value)} placeholder="Task date" />
-              <Button bg="green" onClick={handleClickAdd}>
-                Add Task
-              </Button>
-            </HStack>
-          </Flex>
+          <NewTaskCreate />
         </GridItem>
       </Grid>
     </Box>

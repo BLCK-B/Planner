@@ -6,7 +6,7 @@ const TaskBubble = ({ task }) => {
   const { handleExpandTask } = useTaskContext();
 
   const handleClick = () => {
-    handleExpandTask(task); // This will expand the task when the bubble is clicked
+    handleExpandTask(task);
   };
 
   const handleCompleteClick = (e) => {
@@ -27,7 +27,6 @@ const TaskBubble = ({ task }) => {
   );
 };
 
-// prop validation
 TaskBubble.propTypes = {
   task: PropTypes.shape({
     name: PropTypes.string.isRequired,
