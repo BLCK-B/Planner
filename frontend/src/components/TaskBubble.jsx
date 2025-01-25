@@ -19,7 +19,7 @@ const TaskBubble = ({ task, handleDeleteTask }) => {
 TaskBubble.propTypes = {
   task: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
+    date: PropTypes.string,
   }).isRequired,
 
   handleDeleteTask: PropTypes.func.isRequired,
