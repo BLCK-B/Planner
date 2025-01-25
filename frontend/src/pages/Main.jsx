@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Box, Button, Input, HStack, GridItem, Grid, VStack, Flex, Heading, Icon, Spacer } from "@chakra-ui/react";
+import { Box, Button, Input, HStack, GridItem, Grid, Flex } from "@chakra-ui/react";
 import TaskBubble from "../components/TaskBubble";
+import TaskBubbleExpanded from "../components/TaskBubbleExpanded";
 import Header from "../components/Header";
+import { useTaskContext } from "../TaskContext.jsx"; // Import the context
 
 function Main() {
   const [taskList, setTasks] = useState([
@@ -10,10 +12,11 @@ function Main() {
     { name: "Drink", date: "2025-02-05", key: "3" },
   ]);
   const [longtermList, setLongtermList] = useState([
-    { name: "Achieve", key: "1" },
-    { name: "Win", key: "2" },
-    { name: "Reach", key: "3" },
+    { name: "Achieve", key: "10" },
+    { name: "Win", key: "20" },
+    { name: "Reach", key: "30" },
   ]);
+
   const [newTaskName, setNewTaskName] = useState("");
   const [newTaskDate, setNewTaskDate] = useState("");
 
@@ -35,6 +38,8 @@ function Main() {
     setTasks(taskList.filter((task) => task.key !== taskToDelete.key));
   };
 
+  const { expandedTaskId, handleExpandTask } = useTaskContext();
+
   return (
     <Box w="100vw" h="100vh" bg="white">
       <Grid templateRows="auto 1fr" templateColumns="repeat(7, 1fr)" gap={2} h="100%">
@@ -47,26 +52,26 @@ function Main() {
 
         {/* deadline tasks */}
         <GridItem colSpan={4} bg="#dcdcdc">
-          <VStack spacing={4} height="100%" display="flex" flexDirection="column">
-            {/* task list */}
-            <VStack spacing={3} align="stretch" flexGrow={1}>
-              {taskList.map((task, index) => (
-                <TaskBubble key={index} task={task} handleDeleteTask={handleDeleteTask} />
-              ))}
-            </VStack>
-          </VStack>
+          <Flex direction="column" height="100%" justifyContent="flex-end">
+            {taskList.map((task) => (
+              <div key={task.key}>
+                {expandedTaskId === task.key ? (
+                  <TaskBubbleExpanded task={task} handleDeleteTask={handleDeleteTask} />
+                ) : (
+                  <TaskBubble task={task} handleDeleteTask={handleDeleteTask} />
+                )}
+              </div>
+            ))}
+          </Flex>
         </GridItem>
 
         {/* long term tasks */}
         <GridItem colSpan={2} bg="#dcdcdc">
-          <VStack spacing={4} height="100%" display="flex" flexDirection="column">
-            {/* task list */}
-            <VStack spacing={3} align="stretch" flexGrow={1}>
-              {longtermList.map((task, index) => (
-                <TaskBubble key={index} task={task} handleDeleteTask={handleDeleteTask} />
-              ))}
-            </VStack>
-          </VStack>
+          <Flex direction="column" height="100%" justifyContent="flex-start">
+            {longtermList.map((task) => (
+              <TaskBubble key={task.key} task={task} handleDeleteTask={handleDeleteTask} />
+            ))}
+          </Flex>
         </GridItem>
 
         {/* controls */}

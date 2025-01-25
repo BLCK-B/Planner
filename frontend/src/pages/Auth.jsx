@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Button, Input, HStack, GridItem, Grid, VStack, Flex, Heading, Icon, Spacer, Text } from "@chakra-ui/react";
 import Header from "../components/Header";
 
-function Landing() {
+function Auth() {
   return (
     <Box w="100vw" h="100vh" bg="white">
       <Grid templateRows="auto 1fr" templateColumns="repeat(7, 1fr)" gap={2} h="100%">
@@ -14,7 +14,7 @@ function Landing() {
         <GridItem colSpan={1} bg="#dcdcdc"></GridItem>
 
         <GridItem colSpan={5} bg="#dcdcdc">
-          <Text color="black">Sign up now!</Text>
+          <Text color="black">Signing up now! Or logging in!</Text>
         </GridItem>
 
         <GridItem colSpan={1} bg="#dcdcdc"></GridItem>
@@ -23,4 +23,4 @@ function Landing() {
   );
 }
 
-export default Landing;
+export default Auth;

@@ -1,23 +1,22 @@
-import { Box, Text, Button, Flex } from "@chakra-ui/react";
+import { Box, Text, Button, Flex, Input } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import { useTaskContext } from "../TaskContext.jsx";
 
 const TaskBubble = ({ task, handleDeleteTask }) => {
-  const { handleExpandTask } = useTaskContext();
+  const expandBubble = () => {};
+
   return (
     <Box p="2" bg="white" color="black" borderRadius="md" boxShadow="sm" mb="4" w="50%">
       <Flex gap="6" align="center" justifyContent="start">
-        <Text fontSize="md">{task.date}</Text>
-        <Text fontSize="md">{task.name}</Text>
-        <Button bg="orange" p="0" onClick={() => handleExpandTask(task)}>
-          Edit (temp)
+        <Input w="40%" type="date" value={task.date} placeholder={task.date} />
+        <Input w="40%" value={task.name} placeholder={task.name} />
+      </Flex>
+      <Flex gap="6" align="center" justifyContent="center">
+        <Button bg="green" p="0">
+          Confirm
         </Button>
-        <Button bg="orange" p="0">
-          Complete
-        </Button>
-        {/* <Button bg="orange" p="0" onClick={() => handleDeleteTask(task)}>
+        <Button bg="red" p="0" onClick={() => handleDeleteTask(task)}>
           Delete
-        </Button> */}
+        </Button>
       </Flex>
     </Box>
   );
