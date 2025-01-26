@@ -1,17 +1,11 @@
-import { Box, GridItem, Grid, Flex } from "@chakra-ui/react";
-import TaskBubble from "../components/TaskBubble.jsx";
-import TaskBubbleExpanded from "../components/TaskBubbleExpanded.jsx";
+import { Box, GridItem, Grid } from "@chakra-ui/react";
 import Header from "../components/Header.jsx";
-import { useTaskContext } from "../TaskContext.jsx";
 import NewTaskCreate from "../components/NewTaskCreate.jsx";
+import TaskList from "../components/TaskList.jsx";
 
 // todo:
-// sorting by date
-// date formatting
 // optional descriptions
 function MainPage() {
-  const { taskList, expandedTaskId } = useTaskContext();
-
   return (
     <Box w="100vw" h="100vh" bg="white">
       <Grid templateRows="auto 1fr" templateColumns="repeat(7, 1fr)" gap={2} h="100%">
@@ -23,29 +17,13 @@ function MainPage() {
         <GridItem colSpan={1} bg="#dcdcdc"></GridItem>
 
         {/* deadline tasks */}
-        <GridItem colSpan={4} bg="#dcdcdc">
-          <Flex direction="column" height="100%" justifyContent="flex-end">
-            {taskList
-              .filter((task) => task.type === "deadline")
-              .map((task) => (
-                <div key={task.key}>
-                  {expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}
-                </div>
-              ))}
-          </Flex>
+        <GridItem colSpan={4} bg="#dcdcdc" minHeight="300px">
+          <TaskList taskType={"deadline"} />
         </GridItem>
 
         {/* long term tasks */}
-        <GridItem colSpan={2} bg="#dcdcdc">
-          <Flex direction="column" height="100%" justifyContent="flex-start">
-            {taskList
-              .filter((task) => task.type === "long-term")
-              .map((task) => (
-                <div key={task.key}>
-                  {expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}
-                </div>
-              ))}
-          </Flex>
+        <GridItem colSpan={2} bg="#dcdcdc" minHeight="300px">
+          <TaskList taskType={"long-term"} />
         </GridItem>
 
         {/* controls */}
