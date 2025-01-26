@@ -6,12 +6,11 @@ import { useTaskContext } from "../TaskContext.jsx";
 import NewTaskCreate from "../components/NewTaskCreate.jsx";
 
 // todo:
-// long term edit and delete
 // sorting by date
 // date formatting
 // optional descriptions
 function MainPage() {
-  const { taskList, longtermList, expandedTaskId } = useTaskContext();
+  const { taskList, expandedTaskId } = useTaskContext();
 
   return (
     <Box w="100vw" h="100vh" bg="white">
@@ -26,18 +25,26 @@ function MainPage() {
         {/* deadline tasks */}
         <GridItem colSpan={4} bg="#dcdcdc">
           <Flex direction="column" height="100%" justifyContent="flex-end">
-            {taskList.map((task) => (
-              <div key={task.key}>{expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}</div>
-            ))}
+            {taskList
+              .filter((task) => task.type === "deadline")
+              .map((task) => (
+                <div key={task.key}>
+                  {expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}
+                </div>
+              ))}
           </Flex>
         </GridItem>
 
         {/* long term tasks */}
         <GridItem colSpan={2} bg="#dcdcdc">
           <Flex direction="column" height="100%" justifyContent="flex-start">
-            {longtermList.map((task) => (
-              <TaskBubble key={task.key} task={task} />
-            ))}
+            {taskList
+              .filter((task) => task.type === "long-term")
+              .map((task) => (
+                <div key={task.key}>
+                  {expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}
+                </div>
+              ))}
           </Flex>
         </GridItem>
 

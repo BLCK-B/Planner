@@ -10,7 +10,8 @@ const NewTaskCreate = () => {
 
   const handleClickAdd = () => {
     if (newTaskName) {
-      handleAddTask({ name: newTaskName, date: newTaskDate });
+      if (newTaskDate) handleAddTask({ name: newTaskName, date: newTaskDate, type: "deadline" });
+      else handleAddTask({ name: newTaskName, date: newTaskDate, type: "long-term" });
       setNewTaskName("");
       setNewTaskDate("");
     }

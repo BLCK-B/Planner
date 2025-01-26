@@ -9,14 +9,12 @@ export const useTaskContext = () => {
 
 export const TaskProvider = ({ children }) => {
   const [taskList, setTaskList] = useState([
-    { name: "Learn", date: "2025-01-25", key: "1" },
-    { name: "Walk", date: "2025-02-01", key: "2" },
-    { name: "Drink", date: "2025-02-05", key: "3" },
-  ]);
-  const [longtermList, setLongtermList] = useState([
-    { name: "Achieve", key: "10" },
-    { name: "Win", key: "20" },
-    { name: "Reach", key: "30" },
+    { name: "Learn", date: "2025-01-25", type: "deadline", key: "1" },
+    { name: "Walk", date: "2025-02-01", type: "deadline", key: "2" },
+    { name: "Drink", date: "2025-02-05", type: "deadline", key: "3" },
+    { name: "Achieve", type: "long-term", key: "4" },
+    { name: "Win", type: "long-term", key: "5" },
+    { name: "Reach", type: "long-term", key: "6" },
   ]);
 
   const [expandedTaskId, setExpandedTaskId] = useState(null);
@@ -34,8 +32,7 @@ export const TaskProvider = ({ children }) => {
   };
 
   const handleAddTask = (newTask) => {
-    if (newTask.date) setTaskList([...taskList, newTask]);
-    else setLongtermList([...longtermList, newTask]);
+    setTaskList([...taskList, newTask]);
   };
 
   const handleDeleteTask = (taskToDelete) => {
@@ -46,7 +43,6 @@ export const TaskProvider = ({ children }) => {
     <TaskContext.Provider
       value={{
         taskList,
-        longtermList,
         expandedTaskId,
         handleExpandTask,
         handleCollapseTask,
