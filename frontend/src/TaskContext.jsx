@@ -13,7 +13,7 @@ export const TaskProvider = ({ children }) => {
     { name: "Walk", date: "2025-02-01", type: "deadline", key: "2" },
     { name: "Drink", date: "2025-02-05", type: "deadline", key: "3" },
     { name: "Achieve", type: "long-term", key: "4" },
-    { name: "Win", type: "long-term", key: "5" },
+    { name: "Win", description: "In order to win you must not lose. How smart.", type: "long-term", key: "5" },
     { name: "Reach", type: "long-term", key: "6" },
   ]);
 

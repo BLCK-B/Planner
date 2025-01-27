@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Flex, Input, Tabs, Show } from "@chakra-ui/react";
+import { Box, Flex, Input, Show, Textarea } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
 import { FaTrashAlt, FaCheckSquare } from "react-icons/fa";
@@ -10,15 +10,15 @@ const TaskBubble = ({ task }) => {
 
   const [taskName, setTaskName] = useState(task.name);
   const [taskDate, setTaskDate] = useState(task.date);
-  const [taskType, setTaskType] = useState(task.type);
+  const [taskDescription, setTaskDescription] = useState(task.description);
   const handleNameChange = (e) => {
     setTaskName(e.target.value);
   };
   const handleDateChange = (e) => {
     setTaskDate(e.target.value);
   };
-  const handleTypeChange = (type) => {
-    setTaskType(type);
+  const handleDescriptionChange = (e) => {
+    setTaskDescription(e.target.value);
   };
 
   const handleClick = () => {
@@ -27,7 +27,7 @@ const TaskBubble = ({ task }) => {
 
   const handleConfirmClick = (e) => {
     e.stopPropagation();
-    handleUpdateTask(task.key, { name: taskName, date: taskDate, type: taskType });
+    handleUpdateTask(task.key, { name: taskName, date: taskDate, type: task.type, description: taskDescription });
     handleCollapseTask();
     console.log("confirm");
   };
@@ -36,23 +36,30 @@ const TaskBubble = ({ task }) => {
     <Box p="2" bg="base.100" color="black" borderRadius="md" boxShadow="sm" mb="4" onClick={handleClick} cursor="button">
       {/* inputs */}
       <Flex gap="6" align="center" justifyContent="start">
-        <Show when={taskType === "deadline"}>
-          <Input w="40%" type="date" value={taskDate} placeholder={taskDate} onChange={handleDateChange} />
+        <Show when={task.type === "deadline"}>
+          <Input className="taskEditField" variant="subtle" type="date" value={taskDate} onChange={handleDateChange} />
         </Show>
-        <Input w="40%" value={taskName} placeholder={taskName} onChange={handleNameChange} />
+        <Input
+          className="taskEditField"
+          variant="subtle"
+          value={taskName}
+          placeholder="Long-term goal"
+          onChange={handleNameChange}
+        />
       </Flex>
+      <Show when={task.type === "long-term"}>
+        <Textarea
+          className="taskDescriptionField"
+          variant="subtle"
+          placeholder="Description"
+          resize="vertical"
+          autoresize
+          value={taskDescription}
+          onChange={handleDescriptionChange}
+        />
+      </Show>
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
-        <Tabs.Root defaultValue="members" variant="plain">
-          <Tabs.List bg="bg.muted" rounded="l3">
-            <Tabs.Trigger value="long-term" onClick={() => handleTypeChange("long-term")}>
-              long-term
-            </Tabs.Trigger>
-            <Tabs.Trigger value="deadline" onClick={() => handleTypeChange("deadline")}>
-              deadline
-            </Tabs.Trigger>
-          </Tabs.List>
-        </Tabs.Root>
         <FaCheckSquare alt="Confirm" className="confirmIcon" onClick={handleConfirmClick} />
         <FaTrashAlt alt="Delete" className="deleteIcon" onClick={() => handleDeleteTask(task)} />
       </Flex>
@@ -63,9 +70,10 @@ const TaskBubble = ({ task }) => {
 TaskBubble.propTypes = {
   task: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    date: PropTypes.string,
-    type: PropTypes.string,
+    type: PropTypes.string.isRequired,
     key: PropTypes.number.isRequired,
+    date: PropTypes.string,
+    description: PropTypes.string,
   }).isRequired,
 };
 

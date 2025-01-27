@@ -19,7 +19,7 @@ const TaskBubble = ({ task }) => {
 
   return (
     <Box p="2" bg="base.100" color="black" borderRadius="md" boxShadow="sm" mb="4" onClick={handleClick} cursor="button">
-      <Flex gap="6" align="center" justifyContent="space-between">
+      <Flex align="center" justifyContent="space-between">
         <Show when={task.type === "deadline"}>
           <Text fontSize="md">{textualTimeToDate(task.date)}</Text>
         </Show>

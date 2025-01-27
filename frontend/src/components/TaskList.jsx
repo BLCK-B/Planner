@@ -15,7 +15,9 @@ const TaskList = ({ taskType }) => {
           .filter((task) => task.type === taskType)
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .map((task) => (
-            <div key={task.key}>{expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}</div>
+            <div key={task.key}>
+              {expandedTaskId === task.key ? <TaskBubbleExpanded task={task} /> : <TaskBubble task={task} />}
+            </div>
           ))}
       </div>
     </Flex>
