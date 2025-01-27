@@ -1,0 +1,29 @@
+.longtermList {
+  justify-content: flex-start;
+}
+
+.deadlineList {
+  justify-content: flex-end;
+}
+
+.deleteIcon {
+  height: 1.5em;
+  width: 1.5em;
+  padding: 4px;
+  background-color: red;
+  border-radius: 3px;
+}
+
+.confirmIcon {
+  height: 1.5em;
+  width: 1.5em;
+  background-color: #ccccff;
+  border-radius: 3px;
+}
+
+.completeIcon {
+  height: 1.5em;
+  width: 1.5em;
+  background-color: green;
+  border-radius: 3px;
+}

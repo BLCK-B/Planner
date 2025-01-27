@@ -1,16 +1,32 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Provider as ChakraProvider } from "@/components/ui/provider";
+import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage.jsx";
 import Landing from "./pages/Landing.jsx";
 import Auth from "./pages/Auth.jsx";
 import { TaskProvider } from "./TaskContext.jsx";
+// import { colors } from "./styles/Themes.jsx";
+
+const system = createSystem(defaultConfig, {
+  theme: {
+    tokens: {
+      colors: {
+        base: {
+          100: "#FFFFFF",
+          200: "#ebebeb",
+          300: "#bcbcbc",
+          400: "#b0b0b0",
+        },
+      },
+    },
+  },
+});
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <TaskProvider>
-      <ChakraProvider>
+      <ChakraProvider value={system}>
         <Router>
           <Routes>
             {/* landing page */}

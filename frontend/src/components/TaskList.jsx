@@ -3,7 +3,7 @@ import { Flex } from "@chakra-ui/react";
 import { useTaskContext } from "../TaskContext.jsx";
 import TaskBubble from "../components/TaskBubble.jsx";
 import TaskBubbleExpanded from "../components/TaskBubbleExpanded.jsx";
-import "../App.css";
+import "../styles/App.css";
 
 const TaskList = ({ taskType }) => {
   const { taskList, expandedTaskId } = useTaskContext();

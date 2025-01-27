@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Box, Button, Flex, Input, Tabs, Show } from "@chakra-ui/react";
+import { Box, Flex, Input, Tabs, Show } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
+import { FaTrashAlt, FaCheckSquare } from "react-icons/fa";
+import "../styles/App.css";
 
 const TaskBubble = ({ task }) => {
   const { handleCollapseTask, handleDeleteTask, handleUpdateTask } = useTaskContext();
@@ -31,7 +33,7 @@ const TaskBubble = ({ task }) => {
   };
 
   return (
-    <Box p="2" bg="white" color="black" borderRadius="md" boxShadow="sm" mb="4" onClick={handleClick} cursor="button">
+    <Box p="2" bg="base.100" color="black" borderRadius="md" boxShadow="sm" mb="4" onClick={handleClick} cursor="button">
       {/* inputs */}
       <Flex gap="6" align="center" justifyContent="start">
         <Show when={taskType === "deadline"}>
@@ -51,12 +53,8 @@ const TaskBubble = ({ task }) => {
             </Tabs.Trigger>
           </Tabs.List>
         </Tabs.Root>
-        <Button bg="green" p="0" onClick={handleConfirmClick}>
-          Confirm
-        </Button>
-        <Button bg="red" p="0" onClick={() => handleDeleteTask(task)}>
-          Delete
-        </Button>
+        <FaCheckSquare alt="Confirm" className="confirmIcon" onClick={handleConfirmClick} />
+        <FaTrashAlt alt="Delete" className="deleteIcon" onClick={() => handleDeleteTask(task)} />
       </Flex>
     </Box>
   );
