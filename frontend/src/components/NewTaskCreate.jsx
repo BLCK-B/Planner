@@ -1,7 +1,6 @@
 import { useTaskContext } from "../TaskContext.jsx";
 import { IoAddCircle } from "react-icons/io5";
 import PropTypes from "prop-types";
-import "../styles/App.css";
 
 const NewTaskCreate = ({ taskType }) => {
   const { handleAddTask, handleExpandTask } = useTaskContext();
@@ -18,11 +17,19 @@ const NewTaskCreate = ({ taskType }) => {
     handleExpandTask(newTask);
   };
 
-  return <IoAddCircle alt="New task" onClick={addTask} className="createTaskIcon" />;
+  return <IoAddCircle alt="New task" onClick={addTask} style={styles.createTaskIcon} />;
 };
 
 export default NewTaskCreate;
 
 NewTaskCreate.propTypes = {
   taskType: PropTypes.string.isRequired,
+};
+
+const styles = {
+  createTaskIcon: {
+    height: "2em",
+    width: "2em",
+    position: "absolute",
+  },
 };

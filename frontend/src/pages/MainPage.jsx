@@ -1,13 +1,12 @@
-import { Box, GridItem, Grid, Stack } from "@chakra-ui/react";
+import { Box, GridItem, Grid } from "@chakra-ui/react";
 import Header from "../components/Header.jsx";
 import NewTaskCreate from "../components/NewTaskCreate.jsx";
 import TaskList from "../components/TaskList.jsx";
 import Menu from "../components/Menu.jsx";
-import "../styles/App.css";
 
 function MainPage() {
   return (
-    <Box w="100vw" h="100vh" bg="base.300">
+    <Box w="100vw" h="100vh" bg="base.300" fontSize="17px">
       <Grid
         templateRows={{
           base: "auto auto auto auto", // 4 rows
@@ -27,16 +26,16 @@ function MainPage() {
         </GridItem>
 
         {/* side menu */}
-        <GridItem colSpan={1} bg="base.200" className="gridSection" hideBelow="md">
+        <GridItem colSpan={1} bg="base.200" style={styles.gridSection} hideBelow="md">
           <Menu />
         </GridItem>
         {/* bottom menu */}
-        <GridItem colSpan={1} bg="base.200" className="gridSection" hideFrom="md" gridRow={{ base: 4, sm: 4 }}>
+        <GridItem colSpan={1} bg="base.200" style={styles.gridSection} hideFrom="md" gridRow={{ base: 4, sm: 4 }}>
           <Menu />
         </GridItem>
 
         {/* deadline tasks */}
-        <GridItem colSpan={4} bg="base.200" minHeight="300px" className="gridSection" order={{ base: 2, md: 1 }}>
+        <GridItem colSpan={4} bg="base.200" minHeight="300px" style={styles.gridSection} order={{ base: 2, md: 1 }}>
           <NewTaskCreate taskType="deadline" />
           <TaskList taskType="deadline" />
         </GridItem>
@@ -51,7 +50,7 @@ function MainPage() {
           order={{ base: 1, md: 2 }}
           bg="base.200"
           minHeight="300px"
-          className="gridSection">
+          style={styles.gridSection}>
           <NewTaskCreate taskType="long-term" />
           <TaskList taskType="long-term" />
         </GridItem>
@@ -61,3 +60,9 @@ function MainPage() {
 }
 
 export default MainPage;
+
+const styles = {
+  gridSection: {
+    borderRadius: "5px",
+  },
+};

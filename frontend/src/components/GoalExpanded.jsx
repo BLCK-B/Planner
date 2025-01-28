@@ -4,7 +4,6 @@ import { Field } from "@/components/ui/field";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
 import { FaTrashAlt, FaCheckSquare } from "react-icons/fa";
-import "../styles/App.css";
 
 const GoalExpanded = ({ task }) => {
   const { handleCollapseTask, handleDeleteTask, handleUpdateTask } = useTaskContext();
@@ -26,7 +25,6 @@ const GoalExpanded = ({ task }) => {
     e.stopPropagation();
     handleUpdateTask(task.key, { name: taskName, type: task.type, description: taskDescription });
     handleCollapseTask();
-    console.log("confirm");
   };
 
   return (
@@ -34,18 +32,12 @@ const GoalExpanded = ({ task }) => {
       {/* inputs */}
       <Flex gap="6" align="center" justifyContent="start">
         <Field invalid={!taskName}>
-          <Input
-            className="taskEditField"
-            variant="subtle"
-            value={taskName}
-            placeholder="Long-term goal"
-            onChange={handleNameChange}
-          />
+          <Input p="2px" variant="subtle" value={taskName} placeholder="Long-term goal" onChange={handleNameChange} />
         </Field>
       </Flex>
       <Show when={task.type === "long-term"}>
         <Textarea
-          className="taskDescriptionField"
+          style={styles.taskDescriptionField}
           variant="subtle"
           placeholder="Description"
           resize="vertical"
@@ -56,10 +48,10 @@ const GoalExpanded = ({ task }) => {
       </Show>
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
-        <Button disabled={!taskName} className="confirmIcon">
+        <Button disabled={!taskName} style={styles.confirmIcon}>
           <FaCheckSquare alt="Confirm" onClick={handleConfirmClick} />
         </Button>
-        <FaTrashAlt alt="Delete" className="deleteIcon" onClick={() => handleDeleteTask(task)} />
+        <FaTrashAlt alt="Delete" style={styles.deleteIcon} onClick={() => handleDeleteTask(task)} />
       </Flex>
     </Box>
   );
@@ -75,3 +67,20 @@ GoalExpanded.propTypes = {
 };
 
 export default GoalExpanded;
+
+const styles = {
+  taskDescriptionField: {
+    padding: "4px",
+    marginTop: "5px",
+    marginBottom: "5px",
+  },
+  deleteIcon: {
+    height: "1.5em",
+    width: "1.5em",
+    padding: "2px",
+  },
+  confirmIcon: {
+    height: "1.5em",
+    width: "1.5em",
+  },
+};

@@ -4,7 +4,6 @@ import { useTaskContext } from "../TaskContext.jsx";
 import Task from "./Task.jsx";
 import TaskExpanded from "./TaskExpanded.jsx";
 import GoalExpanded from "./GoalExpanded.jsx";
-import "../styles/App.css";
 
 const renderTaskType = (task, expandedTaskId) => {
   if (expandedTaskId === task.key) {
@@ -21,7 +20,7 @@ const TaskList = ({ taskType }) => {
   const { taskList, expandedTaskId } = useTaskContext();
 
   return (
-    <Flex direction="column" height="100%" className={taskType === "long-term" ? "longtermList" : "deadlineList"}>
+    <Flex direction="column" height="100%" style={taskType === "long-term" ? styles.longtermList : styles.deadlineList}>
       <div style={{ overflowY: "auto" }}>
         {taskList
           .filter((task) => task.type === taskType)
@@ -39,3 +38,17 @@ TaskList.propTypes = {
 };
 
 export default TaskList;
+
+const styles = {
+  longtermList: {
+    justifyContent: "flex-start",
+    width: "80%",
+    margin: "0 auto",
+  },
+
+  deadlineList: {
+    justifyContent: "flex-end",
+    width: "60%",
+    margin: "0 auto",
+  },
+};

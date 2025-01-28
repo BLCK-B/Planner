@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
 import { isDatePast, textualTimeToDate } from "../scripts/Dates.jsx";
 import { MdTaskAlt } from "react-icons/md";
-import "../styles/App.css";
 
 const Task = ({ task }) => {
   const { handleExpandTask } = useTaskContext();
@@ -30,11 +29,11 @@ const Task = ({ task }) => {
       {...(isDatePast(task.date) && { bg: "base.400" })}>
       <Flex align="center" justifyContent="space-between">
         <Show when={task.type === "deadline"}>
-          <Text fontSize="md">{textualTimeToDate(task.date)}</Text>
+          <Text>{textualTimeToDate(task.date)}</Text>
         </Show>
-        <Text fontSize="md">{task.name}</Text>
+        <Text>{task.name}</Text>
         <Show when={task.type === "deadline"}>
-          <MdTaskAlt alt="complete" className="completeIcon" onClick={handleCompleteClick} />
+          <MdTaskAlt alt="complete" style={styles.completeIcon} onClick={handleCompleteClick} />
         </Show>
       </Flex>
     </Box>
@@ -50,3 +49,11 @@ Task.propTypes = {
 };
 
 export default Task;
+
+const styles = {
+  completeIcon: {
+    height: "1.5em",
+    width: "1.5em",
+    color: "green",
+  },
+};
