@@ -25,12 +25,8 @@ function MainPage() {
           <Header />
         </GridItem>
 
-        {/* side menu */}
-        <GridItem colSpan={1} bg="base.200" style={styles.gridSection} hideBelow="md">
-          <Menu />
-        </GridItem>
-        {/* bottom menu */}
-        <GridItem colSpan={1} bg="base.200" style={styles.gridSection} hideFrom="md" gridRow={{ base: 4, sm: 4 }}>
+        {/* menu */}
+        <GridItem colSpan={1} bg="base.200" style={styles.gridSection} gridRow={{ base: 4, sm: 4, md: 2 }}>
           <Menu />
         </GridItem>
 

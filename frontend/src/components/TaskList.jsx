@@ -20,7 +20,11 @@ const TaskList = ({ taskType }) => {
   const { taskList, expandedTaskId } = useTaskContext();
 
   return (
-    <Flex direction="column" height="100%" style={taskType === "long-term" ? styles.longtermList : styles.deadlineList}>
+    <Flex
+      direction="column"
+      height="100%"
+      w={{ base: "82%", sm: "70%", md: "60%" }}
+      style={taskType === "long-term" ? styles.longtermList : styles.deadlineList}>
       <div style={{ overflowY: "auto" }}>
         {taskList
           .filter((task) => task.type === taskType)
@@ -42,13 +46,11 @@ export default TaskList;
 const styles = {
   longtermList: {
     justifyContent: "flex-start",
-    width: "80%",
     margin: "0 auto",
   },
 
   deadlineList: {
     justifyContent: "flex-end",
-    width: "60%",
     margin: "0 auto",
   },
 };

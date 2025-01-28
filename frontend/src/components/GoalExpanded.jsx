@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Box, Flex, Input, Show, Textarea, Button } from "@chakra-ui/react";
+import { Box, Flex, Input, Show, Textarea } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
-import { FaTrashAlt, FaCheckSquare } from "react-icons/fa";
+import ButtonConfirm from "./ButtonConfirm.jsx";
+import ButtonDelete from "./ButtonDelete.jsx";
 
 const GoalExpanded = ({ task }) => {
   const { handleCollapseTask, handleDeleteTask, handleUpdateTask } = useTaskContext();
@@ -48,10 +49,8 @@ const GoalExpanded = ({ task }) => {
       </Show>
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
-        <Button disabled={!taskName} style={styles.confirmIcon}>
-          <FaCheckSquare alt="Confirm" onClick={handleConfirmClick} />
-        </Button>
-        <FaTrashAlt alt="Delete" style={styles.deleteIcon} onClick={() => handleDeleteTask(task)} />
+        <ButtonConfirm disabled={!taskName} onClick={handleConfirmClick} />
+        <ButtonDelete onClick={() => handleDeleteTask(task)} />
       </Flex>
     </Box>
   );
@@ -73,14 +72,5 @@ const styles = {
     padding: "4px",
     marginTop: "5px",
     marginBottom: "5px",
-  },
-  deleteIcon: {
-    height: "1.5em",
-    width: "1.5em",
-    padding: "2px",
-  },
-  confirmIcon: {
-    height: "1.5em",
-    width: "1.5em",
   },
 };

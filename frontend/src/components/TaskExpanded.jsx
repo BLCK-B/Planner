@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Box, Flex, Input, Button } from "@chakra-ui/react";
+import { Box, Flex, Input } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
-import { FaTrashAlt, FaCheckSquare } from "react-icons/fa";
 import { isDatePast } from "../scripts/Dates.jsx";
 import { Field } from "@/components/ui/field";
+import ButtonConfirm from "./ButtonConfirm.jsx";
+import ButtonDelete from "./ButtonDelete.jsx";
 
 const TaskExpanded = ({ task }) => {
   const { handleCollapseTask, handleDeleteTask, handleUpdateTask } = useTaskContext();
@@ -49,10 +50,8 @@ const TaskExpanded = ({ task }) => {
       </Flex>
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
-        <Button disabled={!taskName} style={styles.confirmIcon}>
-          <FaCheckSquare alt="Confirm" onClick={handleConfirmClick} />
-        </Button>
-        <FaTrashAlt alt="Delete" style={styles.deleteIcon} onClick={() => handleDeleteTask(task)} />
+        <ButtonConfirm disabled={!taskName} onClick={handleConfirmClick} />
+        <ButtonDelete onClick={() => handleDeleteTask(task)} />
       </Flex>
     </Box>
   );

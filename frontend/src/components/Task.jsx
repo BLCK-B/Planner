@@ -2,7 +2,7 @@ import { Box, Text, Flex, Show } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
 import { isDatePast, textualTimeToDate } from "../scripts/Dates.jsx";
-import { MdTaskAlt } from "react-icons/md";
+import ButtonComplete from "./ButtonComplete.jsx";
 
 const Task = ({ task }) => {
   const { handleExpandTask } = useTaskContext();
@@ -13,7 +13,6 @@ const Task = ({ task }) => {
 
   const handleCompleteClick = (e) => {
     e.stopPropagation(); // prevent triggering handleClick
-    console.log("complete");
   };
 
   return (
@@ -33,7 +32,7 @@ const Task = ({ task }) => {
         </Show>
         <Text>{task.name}</Text>
         <Show when={task.type === "deadline"}>
-          <MdTaskAlt alt="complete" style={styles.completeIcon} onClick={handleCompleteClick} />
+          <ButtonComplete onClick={handleCompleteClick} />
         </Show>
       </Flex>
     </Box>
