@@ -1,5 +1,4 @@
-import { Button, Flex, Heading, Stack, Tabs, useTabs } from "@chakra-ui/react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Tabs } from "@chakra-ui/react";
 
 const Menu = () => {
   return (
