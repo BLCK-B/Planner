@@ -1,33 +1,28 @@
-import { useState } from "react";
-import { HStack, Input, Button, Flex } from "@chakra-ui/react";
 import { useTaskContext } from "../TaskContext.jsx";
+import { IoAddCircle } from "react-icons/io5";
+import PropTypes from "prop-types";
+import "../styles/App.css";
 
-const NewTaskCreate = () => {
-  const { handleAddTask } = useTaskContext();
+const NewTaskCreate = ({ taskType }) => {
+  const { handleAddTask, handleExpandTask } = useTaskContext();
 
-  const [newTaskName, setNewTaskName] = useState("");
-  const [newTaskDate, setNewTaskDate] = useState("");
-
-  const handleClickAdd = () => {
-    if (newTaskName) {
-      if (newTaskDate) handleAddTask({ name: newTaskName, date: newTaskDate, type: "deadline" });
-      else handleAddTask({ name: newTaskName, date: newTaskDate, type: "long-term" });
-      setNewTaskName("");
-      setNewTaskDate("");
+  const addTask = () => {
+    console.log(taskType);
+    let newTask;
+    if (taskType === "long-term") {
+      newTask = { name: "", type: taskType, key: "55" };
+    } else if (taskType === "deadline") {
+      newTask = { name: "", date: String.toString(new Date()), type: taskType, key: "55" };
     }
+    handleAddTask(newTask);
+    handleExpandTask(newTask);
   };
 
-  return (
-    <Flex justify="center" p="1">
-      <HStack marginTop="auto">
-        <Input value={newTaskName} onChange={(e) => setNewTaskName(e.target.value)} placeholder="Task name" />
-        <Input type="date" value={newTaskDate} onChange={(e) => setNewTaskDate(e.target.value)} placeholder="Task date" />
-        <Button bg="green" onClick={handleClickAdd}>
-          Create Task
-        </Button>
-      </HStack>
-    </Flex>
-  );
+  return <IoAddCircle alt="New task" onClick={addTask} className="createTaskIcon" />;
 };
 
 export default NewTaskCreate;
+
+NewTaskCreate.propTypes = {
+  taskType: PropTypes.string.isRequired,
+};

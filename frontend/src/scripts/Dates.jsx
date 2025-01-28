@@ -14,3 +14,12 @@ export const textualTimeToDate = (dateString) => {
   else if (timeToDate > 0) return `${timeToDate} days left`;
   else return `${Math.abs(timeToDate)} days ago`;
 };
+
+export const isDatePast = (dateString) => {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  const present = new Date();
+  date.setHours(0, 0, 0, 0);
+  present.setHours(0, 0, 0, 0);
+  return date.getTime() - present.getTime() + 1 < 1;
+};

@@ -1,11 +1,11 @@
 import { Box, Text, Flex, Show } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
-import { textualTimeToDate } from "../scripts/Dates.jsx";
+import { isDatePast, textualTimeToDate } from "../scripts/Dates.jsx";
 import { MdTaskAlt } from "react-icons/md";
 import "../styles/App.css";
 
-const TaskBubble = ({ task }) => {
+const Task = ({ task }) => {
   const { handleExpandTask } = useTaskContext();
 
   const handleClick = () => {
@@ -18,20 +18,30 @@ const TaskBubble = ({ task }) => {
   };
 
   return (
-    <Box p="2" bg="base.100" color="black" borderRadius="md" boxShadow="sm" mb="4" onClick={handleClick} cursor="button">
+    <Box
+      p="2"
+      bg="base.100"
+      color="black"
+      borderRadius="md"
+      boxShadow="sm"
+      mb="3.5"
+      onClick={handleClick}
+      cursor="button"
+      {...(isDatePast(task.date) && { bg: "base.400" })}>
       <Flex align="center" justifyContent="space-between">
         <Show when={task.type === "deadline"}>
           <Text fontSize="md">{textualTimeToDate(task.date)}</Text>
         </Show>
-
         <Text fontSize="md">{task.name}</Text>
-        <MdTaskAlt alt="complete" className="completeIcon" onClick={handleCompleteClick} />
+        <Show when={task.type === "deadline"}>
+          <MdTaskAlt alt="complete" className="completeIcon" onClick={handleCompleteClick} />
+        </Show>
       </Flex>
     </Box>
   );
 };
 
-TaskBubble.propTypes = {
+Task.propTypes = {
   task: PropTypes.shape({
     name: PropTypes.string.isRequired,
     date: PropTypes.string,
@@ -39,4 +49,4 @@ TaskBubble.propTypes = {
   }).isRequired,
 };
 
-export default TaskBubble;
+export default Task;

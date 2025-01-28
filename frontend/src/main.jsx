@@ -6,7 +6,6 @@ import MainPage from "./pages/MainPage.jsx";
 import Landing from "./pages/Landing.jsx";
 import Auth from "./pages/Auth.jsx";
 import { TaskProvider } from "./TaskContext.jsx";
-// import { colors } from "./styles/Themes.jsx";
 
 const system = createSystem(defaultConfig, {
   theme: {
@@ -15,8 +14,10 @@ const system = createSystem(defaultConfig, {
         base: {
           100: "#FFFFFF",
           200: "#ebebeb",
-          300: "#bcbcbc",
+          300: "#d0d0d0",
           400: "#b0b0b0",
+          500: "#989898",
+          600: "#7D7D7D",
         },
       },
     },

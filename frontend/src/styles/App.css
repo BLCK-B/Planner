@@ -40,3 +40,13 @@
   width: 1.5em;
   color: green;
 }
+
+.createTaskIcon {
+  height: 2em;
+  width: 2em;
+  position: absolute;
+}
+
+.gridSection {
+  border-radius: 5px;
+}
