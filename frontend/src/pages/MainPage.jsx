@@ -9,8 +9,8 @@ function MainPage() {
     <Box w="100vw" h="100vh" bg="base.300" fontSize="17px">
       <Grid
         templateRows={{
-          base: "auto auto auto auto", // 4 rows
-          sm: "auto auto auto auto", // 4 rows
+          base: "auto 1fr 1fr auto", // 4 rows
+          sm: "auto 1fr 1fr auto", // 4 rows
           md: "auto 1fr", // 2 rows
         }}
         templateColumns={{
@@ -21,7 +21,7 @@ function MainPage() {
         h="100%"
         gap={1}>
         {/* header */}
-        <GridItem h="4em" colSpan={7} rowSpan={1} bg="base.200">
+        <GridItem h="3em" colSpan={7} rowSpan={1} bg="base.200">
           <Header />
         </GridItem>
 
