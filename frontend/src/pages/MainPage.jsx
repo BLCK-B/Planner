@@ -1,7 +1,7 @@
 import { Box, GridItem, Grid } from "@chakra-ui/react";
 import Header from "../components/Header.jsx";
 import NewTaskCreate from "../components/NewTaskCreate.jsx";
-import TaskList from "../components/TaskList.jsx";
+import ItemList from "../components/ItemList.jsx";
 import Menu from "../components/Menu.jsx";
 
 function MainPage() {
@@ -31,9 +31,9 @@ function MainPage() {
         </GridItem>
 
         {/* deadline tasks */}
-        <GridItem colSpan={4} bg="base.200" minHeight="300px" style={styles.gridSection} order={{ base: 2, md: 1 }}>
+        <GridItem colSpan={4} bg="base.200" style={styles.gridSection} order={{ base: 2, md: 1 }}>
           <NewTaskCreate taskType="deadline" />
-          <TaskList taskType="deadline" />
+          <ItemList taskType="deadline" />
         </GridItem>
 
         {/* long term tasks */}
@@ -48,7 +48,7 @@ function MainPage() {
           minHeight="300px"
           style={styles.gridSection}>
           <NewTaskCreate taskType="long-term" />
-          <TaskList taskType="long-term" />
+          <ItemList taskType="long-term" />
         </GridItem>
       </Grid>
     </Box>

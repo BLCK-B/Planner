@@ -4,29 +4,34 @@ import { useTaskContext } from "../TaskContext.jsx";
 import Task from "./Task.jsx";
 import TaskExpanded from "./TaskExpanded.jsx";
 import GoalExpanded from "./GoalExpanded.jsx";
+import Goal from "./Goal.jsx";
 
 const renderTaskType = (task, expandedTaskId) => {
-  if (expandedTaskId === task.key) {
-    if (task.type === "long-term") {
+  switch (true) {
+    case expandedTaskId !== task.key && task.type === "long-term":
+      return <Goal task={task} />;
+    case expandedTaskId !== task.key && task.type === "deadline":
+      return <Task task={task} />;
+    case expandedTaskId === task.key && task.type === "long-term":
       return <GoalExpanded task={task} />;
-    } else if (task.type === "deadline") {
+    case expandedTaskId === task.key && task.type === "deadline":
       return <TaskExpanded task={task} />;
-    } else console.warn("wrong task type");
+    default:
+      console.warn("wrong task type");
   }
-  return <Task task={task} />;
 };
 
-const TaskList = ({ taskType }) => {
-  const { taskList, expandedTaskId } = useTaskContext();
+const ItemList = ({ taskType }) => {
+  const { itemList, expandedTaskId } = useTaskContext();
 
   return (
     <Flex
       direction="column"
       height="100%"
-      w={{ base: "82%", sm: "70%", md: "60%" }}
+      w={{ base: "82%", sm: "70%", md: "65%" }}
       style={taskType === "long-term" ? styles.longtermList : styles.deadlineList}>
       <div style={{ overflowY: "auto" }}>
-        {taskList
+        {itemList
           .filter((task) => task.type === taskType)
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .map((task) => (
@@ -37,11 +42,11 @@ const TaskList = ({ taskType }) => {
   );
 };
 
-TaskList.propTypes = {
+ItemList.propTypes = {
   taskType: PropTypes.string.isRequired,
 };
 
-export default TaskList;
+export default ItemList;
 
 const styles = {
   longtermList: {

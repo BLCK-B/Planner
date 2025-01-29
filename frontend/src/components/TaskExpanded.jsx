@@ -6,17 +6,25 @@ import { isDatePast } from "../scripts/Dates.jsx";
 import { Field } from "@/components/ui/field";
 import ButtonConfirm from "./ButtonConfirm.jsx";
 import ButtonDelete from "./ButtonDelete.jsx";
+import Tags from "./Tags.jsx";
 
 const TaskExpanded = ({ task }) => {
   const { handleCollapseTask, handleDeleteTask, handleUpdateTask } = useTaskContext();
 
   const [taskName, setTaskName] = useState(task.name);
   const [taskDate, setTaskDate] = useState(task.date);
+  const [taskTags, setTaskTags] = useState(task.tags || []);
   const handleNameChange = (e) => {
     setTaskName(e.target.value);
   };
   const handleDateChange = (e) => {
     setTaskDate(e.target.value);
+  };
+  const handleAddTag = () => {
+    setTaskTags((prevTags) => [...prevTags, `Tag ${prevTags.length + 1}`]);
+  };
+  const handleRemoveTag = (tagToRemove) => {
+    setTaskTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleClick = () => {
@@ -25,7 +33,7 @@ const TaskExpanded = ({ task }) => {
 
   const handleConfirmClick = (e) => {
     e.stopPropagation();
-    handleUpdateTask(task.key, { name: taskName, date: taskDate, type: task.type });
+    handleUpdateTask(task.key, { name: taskName, date: taskDate, type: task.type, tags: taskTags });
     handleCollapseTask();
     console.log("confirm");
   };
@@ -48,6 +56,8 @@ const TaskExpanded = ({ task }) => {
           <Input p="2px" variant="subtle" value={taskName} placeholder="Task name" onChange={handleNameChange} />
         </Field>
       </Flex>
+      {/* tags */}
+      <Tags taskTags={taskTags} handleAddTag={handleAddTag} handleRemoveTag={handleRemoveTag} />
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
         <ButtonConfirm disabled={!taskName} onClick={handleConfirmClick} />
@@ -63,19 +73,8 @@ TaskExpanded.propTypes = {
     type: PropTypes.string.isRequired,
     key: PropTypes.string.isRequired,
     date: PropTypes.string,
+    tags: PropTypes.array.isRequired,
   }).isRequired,
 };
 
 export default TaskExpanded;
-
-const styles = {
-  deleteIcon: {
-    height: "1.5em",
-    width: "1.5em",
-    padding: "2px",
-  },
-  confirmIcon: {
-    height: "1.5em",
-    width: "1.5em",
-  },
-};

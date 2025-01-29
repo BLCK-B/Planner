@@ -1,8 +1,9 @@
-import { Box, Text, Flex, Show } from "@chakra-ui/react";
+import { Box, Text, Flex, Spacer } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.jsx";
 import { isDatePast, textualTimeToDate } from "../scripts/Dates.jsx";
 import ButtonComplete from "./ButtonComplete.jsx";
+import Tags from "./Tags.jsx";
 
 const Task = ({ task }) => {
   const { handleExpandTask } = useTaskContext();
@@ -27,14 +28,12 @@ const Task = ({ task }) => {
       cursor="button"
       {...(isDatePast(task.date) && { bg: "base.400" })}>
       <Flex align="center" justifyContent="space-between">
-        <Show when={task.type === "deadline"}>
-          <Text>{textualTimeToDate(task.date)}</Text>
-        </Show>
+        <Text w="120px">{textualTimeToDate(task.date)}</Text>
         <Text>{task.name}</Text>
-        <Show when={task.type === "deadline"}>
-          <ButtonComplete onClick={handleCompleteClick} />
-        </Show>
+        <Spacer />
+        <ButtonComplete onClick={handleCompleteClick} />
       </Flex>
+      <Tags taskTags={task.tags} />
     </Box>
   );
 };
@@ -44,15 +43,8 @@ Task.propTypes = {
     name: PropTypes.string.isRequired,
     date: PropTypes.string,
     type: PropTypes.string.isRequired,
+    tags: PropTypes.array.isRequired,
   }).isRequired,
 };
 
 export default Task;
-
-const styles = {
-  completeIcon: {
-    height: "1.5em",
-    width: "1.5em",
-    color: "green",
-  },
-};

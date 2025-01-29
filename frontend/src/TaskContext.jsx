@@ -8,10 +8,10 @@ export const useTaskContext = () => {
 };
 
 export const TaskProvider = ({ children }) => {
-  const [taskList, setTaskList] = useState([
-    { name: "Learn", date: "2025-01-25", type: "deadline", key: "1" },
-    { name: "Walk", date: "2025-02-01", type: "deadline", key: "2" },
-    { name: "Drink", date: "2025-02-05", type: "deadline", key: "3" },
+  const [itemList, setItemList] = useState([
+    { name: "Learn", date: "2025-01-25", type: "deadline", tags: [], key: "1" },
+    { name: "Walk", date: "2025-02-01", type: "deadline", tags: [], key: "2" },
+    { name: "Drink", date: "2025-02-05", type: "deadline", tags: [], key: "3" },
     { name: "Achieve", type: "long-term", key: "4" },
     { name: "Win", description: "In order to win you must not lose. How smart.", type: "long-term", key: "5" },
     { name: "Reach", type: "long-term", key: "6" },
@@ -28,21 +28,21 @@ export const TaskProvider = ({ children }) => {
   };
 
   const handleUpdateTask = (taskKey, updatedTask) => {
-    setTaskList((prevTasks) => prevTasks.map((task) => (task.key === taskKey ? { ...task, ...updatedTask } : task)));
+    setItemList((prevTasks) => prevTasks.map((task) => (task.key === taskKey ? { ...task, ...updatedTask } : task)));
   };
 
   const handleAddTask = (newTask) => {
-    setTaskList([...taskList, newTask]);
+    setItemList([...itemList, newTask]);
   };
 
   const handleDeleteTask = (taskToDelete) => {
-    setTaskList(taskList.filter((task) => task.key !== taskToDelete.key));
+    setItemList(itemList.filter((task) => task.key !== taskToDelete.key));
   };
 
   return (
     <TaskContext.Provider
       value={{
-        taskList,
+        itemList,
         expandedTaskId,
         handleExpandTask,
         handleCollapseTask,
