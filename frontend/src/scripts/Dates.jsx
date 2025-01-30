@@ -9,10 +9,26 @@ export const calcTimeToDate = (dateString) => {
 };
 
 export const textualTimeToDate = (dateString) => {
-  const timeToDate = calcTimeToDate(dateString);
-  if (timeToDate === 0) return "due today";
-  else if (timeToDate > 0) return `${timeToDate} days left`;
-  else return `${Math.abs(timeToDate)} days ago`;
+  const numberOfDays = calcTimeToDate(dateString);
+  if (numberOfDays === 0) return "due today";
+  else if (numberOfDays === 1) return "tomorrow";
+  else if (numberOfDays === -1) return "yesterday";
+
+  const futureOrPast = numberOfDays > 0 ? " left" : " ago";
+  const dayDiff = Math.abs(numberOfDays);
+
+  const years = Math.floor(dayDiff / 365);
+  const months = Math.floor((dayDiff % 365) / 30);
+  const parts = [];
+  if (years > 0) {
+    parts.push(`${years}y`);
+    if (months > 0) parts.push(`${months}m`);
+  } else if (months > 2) {
+    parts.push(`${months}mo`);
+  } else {
+    parts.push(`${dayDiff} days`);
+  }
+  return parts.join(" ") + futureOrPast;
 };
 
 export const isDatePast = (dateString) => {
