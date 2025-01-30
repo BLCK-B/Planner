@@ -30,7 +30,7 @@ const ItemList = ({ taskType }) => {
       height="100%"
       w={{ base: "82%", sm: "70%", md: "65%" }}
       style={taskType === "long-term" ? styles.longtermList : styles.deadlineList}>
-      <div style={{ overflowY: "scroll" }}>
+      <div style={{ overflowY: "scroll", scrollbarWidth: "none" }}>
         {itemList
           .filter((task) => task.type === taskType)
           .sort((a, b) => new Date(b.date) - new Date(a.date))

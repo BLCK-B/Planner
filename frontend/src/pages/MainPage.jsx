@@ -30,8 +30,8 @@ function MainPage() {
           <Menu />
         </GridItem>
 
-        {/* deadline tasks */}
-        <GridItem colSpan={4} bg="base.200" style={styles.gridSection} order={{ base: 2, md: 1 }}>
+        {/* deadline tasks - minHeight is for scrolling */}
+        <GridItem minHeight="0px" colSpan={4} bg="base.200" style={styles.gridSection} order={{ base: 2, md: 1 }}>
           <NewTaskCreate taskType="deadline" />
           <ItemList taskType="deadline" />
         </GridItem>

@@ -6,8 +6,12 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleClick = () => {
-    navigate("/auth"); // Navigate to /auth when button is clicked
+  const handleLogInClick = () => {
+    navigate("/auth/log-in");
+  };
+
+  const handleSignUpClick = () => {
+    navigate("/auth/register", { formType: "register" });
   };
 
   return (
@@ -18,9 +22,14 @@ const Header = () => {
       {location.pathname === "/main" && <FaUserCircle style={{ width: "2em", height: "2em", color: "grey" }} />}
       {/* Conditionally render the Sign up button only on the landing page */}
       {location.pathname === "/" && (
-        <Button bg="green" onClick={handleClick}>
-          Sign up
-        </Button>
+        <Flex gap="10px">
+          <Button bg="green" onClick={handleSignUpClick}>
+            Sign up
+          </Button>
+          <Button bg="green" onClick={handleLogInClick}>
+            Log In
+          </Button>
+        </Flex>
       )}
     </Flex>
   );

@@ -33,7 +33,7 @@ createRoot(document.getElementById("root")).render(
             {/* landing page */}
             <Route path="/" element={<Landing />} />
             {/* auth */}
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/:formType" element={<Auth />} />
             {/* main page */}
             <Route path="/main" element={<MainPage />} />
           </Routes>
