@@ -5,6 +5,7 @@ import Task from "./Task.jsx";
 import TaskExpanded from "./TaskExpanded.jsx";
 import GoalExpanded from "./GoalExpanded.jsx";
 import Goal from "./Goal.jsx";
+import FetchData from "../scripts/FetchData.jsx";
 
 const renderTaskType = (task, expandedTaskId) => {
   switch (true) {
@@ -22,7 +23,13 @@ const renderTaskType = (task, expandedTaskId) => {
 };
 
 const ItemList = ({ taskType }) => {
-  const { itemList, expandedTaskId } = useTaskContext();
+  const { expandedTaskId } = useTaskContext();
+
+  // the itemList is otherwise updated in Context - mutations
+  const { itemList, loading, error } = FetchData();
+
+  if (loading) return <p>Loading tasks...</p>;
+  if (error) return <p>Error fetching tasks: {error}</p>;
 
   return (
     <Flex

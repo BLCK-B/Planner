@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: todo
+          uri: http://localhost:8081 # backend service URL
+          predicates: # used for separate controllers
+            - Path=/**
