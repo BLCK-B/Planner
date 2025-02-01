@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { Flex } from "@chakra-ui/react";
 import { useTaskContext } from "../TaskContext.jsx";
@@ -5,7 +6,7 @@ import Task from "./Task.jsx";
 import TaskExpanded from "./TaskExpanded.jsx";
 import GoalExpanded from "./GoalExpanded.jsx";
 import Goal from "./Goal.jsx";
-import FetchData from "../scripts/FetchData.jsx";
+import useFetch from "../scripts/useFetch.jsx";
 
 const renderTaskType = (task, expandedTaskId) => {
   switch (true) {
@@ -23,10 +24,14 @@ const renderTaskType = (task, expandedTaskId) => {
 };
 
 const ItemList = ({ taskType }) => {
-  const { expandedTaskId } = useTaskContext();
+  const { expandedTaskId, itemList, setItemList } = useTaskContext();
 
-  // the itemList is otherwise updated in Context - mutations
-  const { itemList, loading, error } = FetchData();
+  const { data, loading, error } = useFetch("/getTasks");
+  useEffect(() => {
+    if (data) {
+      setItemList(data);
+    }
+  }, [data, setItemList]);
 
   if (loading) return <p>Loading tasks...</p>;
   if (error) return <p>Error fetching tasks: {error}</p>;

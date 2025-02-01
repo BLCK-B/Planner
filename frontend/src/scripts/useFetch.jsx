@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
-import { useTaskContext } from "../TaskContext.jsx";
 
-// TODO: create fetch function for reuse
-// tests... tests
-const FetchData = () => {
-  const { itemList, setItemList } = useTaskContext();
+const URL = "http://localhost:8080";
+
+const useFetch = (request) => {
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://localhost:8080/getTasks");
+        const response = await fetch(URL + request);
         if (!response.ok) {
           throw new Error("Backend error");
         }
-        const data = await response.json();
-        setItemList(data);
+        setData(await response.json());
       } catch (error) {
         setError(error.message);
       } finally {
@@ -24,9 +22,9 @@ const FetchData = () => {
       }
     };
     fetchTasks();
-  }, []);
+  }, [request]);
 
-  return { itemList, loading, error };
+  return { data, loading, error };
 };
 
-export default FetchData;
+export default useFetch;
