@@ -1,17 +1,17 @@
 package com.blck.edge_service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.nio.file.WatchEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class EdgeServiceApplication {
 			String[] tags
 	) { }
 
-	@GetMapping("/getTasks")
+	@GetMapping("/getTasksHardcoded")
 	public Flux<Task> getTasksHardcoded() {
 		List<Task> tasks = Arrays.asList(
 				new Task("Learn", "2025-01-25", "deadline", null, "1", new String[]{}),
@@ -54,25 +54,25 @@ public class EdgeServiceApplication {
 	private final String centralPersistenceServiceURL = "http://localhost:8081";
 
 	@GetMapping("/loadItems")
-	public Flux<Task> loadItems() {
+	public Mono<String> loadItems() {
 		final String url = centralPersistenceServiceURL + "/users";
 		return webClientBuilder.build()
 				.get()
 				.uri(url)
 				.retrieve()
-				.bodyToFlux(Task.class);
+				.bodyToMono(String.class);
 	}
 
-	@PostMapping("/saveItem")
-	public Mono<Task> saveItem(@RequestBody Task task) {
-		Task hardcoded = new Task("Learn", "2025-01-25", "deadline", null, "1", new String[]{});
+	@PostMapping("/saveUserItems")
+	public Mono<String> saveUserItems(@RequestBody JsonNode items) {
+		System.out.println(items.toPrettyString());
 		final String url = centralPersistenceServiceURL + "/users";
 		return webClientBuilder.build()
 				.post()
 				.uri(url)
-				.bodyValue(hardcoded)
+				.bodyValue(items)
 				.retrieve()
-				.bodyToMono(Task.class);
+				.bodyToMono(String.class);
 	}
 
 }

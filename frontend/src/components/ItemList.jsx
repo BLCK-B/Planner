@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import PropTypes from "prop-types";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Button } from "@chakra-ui/react";
 import { useTaskContext } from "../TaskContext.jsx";
 import Task from "./Task.jsx";
 import TaskExpanded from "./TaskExpanded.jsx";
 import GoalExpanded from "./GoalExpanded.jsx";
 import Goal from "./Goal.jsx";
 import useFetch from "../scripts/useFetch.jsx";
+import fetchPost from "../scripts/fetchPost.jsx";
 
 const renderTaskType = (task, expandedTaskId) => {
   switch (true) {
@@ -26,10 +27,25 @@ const renderTaskType = (task, expandedTaskId) => {
 const ItemList = ({ taskType }) => {
   const { expandedTaskId, itemList, setItemList } = useTaskContext();
 
-  const { data, loading, error } = useFetch("/getTasks");
+  const handleButtonClick = async () => {
+    const { data, loading, error } = await fetchPost("/saveUserItems", { userID: "1", items: itemList });
+
+    if (loading) {
+      console.log("Saving...");
+    } else if (error) {
+      console.log("Error saving:", error);
+    } else {
+      console.log("Data saved:", data);
+    }
+  };
+
+  // const { data, loading, error } = useFetch("/getTasksHardcoded");
+  const { data, loading, error } = useFetch("/loadItems");
   useEffect(() => {
     if (data) {
-      setItemList(data);
+      const parsedItems = data.flatMap((item) => item.items.map((task) => JSON.parse(task)));
+      console.log(parsedItems);
+      setItemList(parsedItems);
     }
   }, [data, setItemList]);
 
@@ -50,6 +66,7 @@ const ItemList = ({ taskType }) => {
             <div key={task.key}>{renderTaskType(task, expandedTaskId)}</div>
           ))}
       </div>
+      <Button onClick={handleButtonClick}>click to save</Button>
     </Flex>
   );
 };
