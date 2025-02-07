@@ -42,7 +42,7 @@ export const TaskProvider = ({ children }) => {
     if (dataIsSaved) {
       const timer = setTimeout(() => {
         setDataIsSaved(false);
-      }, 2500);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [dataIsSaved, setDataIsSaved]);
@@ -55,6 +55,7 @@ export const TaskProvider = ({ children }) => {
 
     if (dataSaveRequest) {
       saveUserDataPost();
+      setDataSaveRequest(false);
       setDataIsSaved(true);
     }
   }, [dataSaveRequest, itemList]);

@@ -20,8 +20,10 @@ const TaskExpanded = ({ task }) => {
   const handleDateChange = (e) => {
     setTaskDate(e.target.value);
   };
-  const handleAddTag = () => {
-    setTaskTags((prevTags) => [...prevTags, `Tag ${prevTags.length + 1}`]);
+  const handleAddTag = (name) => {
+    if (name) {
+      setTaskTags((prevTags) => [...prevTags, name]);
+    }
   };
   const handleRemoveTag = (tagToRemove) => {
     setTaskTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
