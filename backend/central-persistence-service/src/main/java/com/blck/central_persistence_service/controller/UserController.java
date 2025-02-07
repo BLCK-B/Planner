@@ -20,12 +20,12 @@ public class UserController {
 		this.userRepository = userRepository;
 	}
 
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/loadItems", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<UserItems> getAllUsersData() {
 		return userRepository.findAll();
 	}
 
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value="saveUserItems", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<String> saveUserItems(@RequestBody JsonNode usetItems) {
 		System.out.println(usetItems.toPrettyString());
 		String userID = usetItems.get("userID").asText();

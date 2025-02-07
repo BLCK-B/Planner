@@ -35,7 +35,6 @@ const TaskExpanded = ({ task }) => {
     e.stopPropagation();
     handleUpdateTask(task.key, { name: taskName, date: taskDate, type: task.type, tags: taskTags });
     handleCollapseTask();
-    console.log("confirm");
   };
 
   return (
@@ -73,7 +72,7 @@ TaskExpanded.propTypes = {
     type: PropTypes.string.isRequired,
     key: PropTypes.string.isRequired,
     date: PropTypes.string,
-    tags: PropTypes.array.isRequired,
+    tags: PropTypes.array,
   }).isRequired,
 };
 

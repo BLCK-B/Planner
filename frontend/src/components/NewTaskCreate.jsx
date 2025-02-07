@@ -9,9 +9,15 @@ const NewTaskCreate = ({ taskType }) => {
     console.log(taskType);
     let newTask;
     if (taskType === "long-term") {
-      newTask = { name: "", type: taskType, key: "55" };
+      newTask = { name: "", type: taskType, key: Math.floor(Math.random() * 1000000).toString() };
     } else if (taskType === "deadline") {
-      newTask = { name: "", date: String.toString(new Date()), type: taskType, key: "55" };
+      newTask = {
+        name: "",
+        date: String.toString(new Date()),
+        type: taskType,
+        key: Math.floor(Math.random() * 1000000).toString(),
+        tags: [],
+      };
     }
     handleAddTask(newTask);
     handleExpandTask(newTask);
