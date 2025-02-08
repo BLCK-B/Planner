@@ -31,7 +31,6 @@ const ItemList = ({ taskType }) => {
   useEffect(() => {
     if (data) {
       const parsedItems = data.flatMap((item) => item.items.map((task) => JSON.parse(task)));
-      console.log(parsedItems);
       setItemList(parsedItems);
     }
   }, [data, setItemList]);

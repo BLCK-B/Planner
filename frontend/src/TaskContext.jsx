@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { createContext, useContext, useState } from "react";
 import fetchPost from "./scripts/fetchPost.jsx";
+import useFetchPost from "./scripts/useFetchPost.jsx";
 
 const TaskContext = createContext();
 
@@ -13,7 +14,7 @@ export const TaskProvider = ({ children }) => {
   const [itemList, setItemList] = useState([]);
   const [expandedTaskId, setExpandedTaskId] = useState(null);
   const [dataIsSaved, setDataIsSaved] = useState(false);
-  const [dataSaveRequest, setDataSaveRequest] = useState(false);
+  const [request, setRequest] = useState("");
 
   const handleExpandTask = (task) => {
     setExpandedTaskId((prev) => (prev === task.key ? null : task.key));
@@ -25,7 +26,7 @@ export const TaskProvider = ({ children }) => {
 
   const handleUpdateTask = (taskKey, updatedTask) => {
     setItemList((prevTasks) => prevTasks.map((task) => (task.key === taskKey ? { ...task, ...updatedTask } : task)));
-    setDataSaveRequest(true);
+    sendPostRequest(API.setAllItems);
   };
 
   const handleAddTask = (newTask) => {
@@ -38,6 +39,19 @@ export const TaskProvider = ({ children }) => {
 
   // --- unexported ---
 
+  const API = {
+    setAllItems: "/users/saveUserItems",
+    setItem: "todo",
+    deteleItem: "todo",
+  };
+
+  const sendPostRequest = (request) => {
+    setRequest(request);
+    setDataIsSaved(true);
+  };
+
+  const { data, loading, error } = useFetchPost(request, setRequest, { userID: "1", items: itemList });
+
   useEffect(() => {
     if (dataIsSaved) {
       const timer = setTimeout(() => {
@@ -46,19 +60,6 @@ export const TaskProvider = ({ children }) => {
       return () => clearTimeout(timer);
     }
   }, [dataIsSaved, setDataIsSaved]);
-
-  // hook triggered by request to launch an async request
-  useEffect(() => {
-    const saveUserDataPost = async () => {
-      const { data, loading, error } = await fetchPost("/users/saveUserItems", { userID: "1", items: itemList });
-    };
-
-    if (dataSaveRequest) {
-      saveUserDataPost();
-      setDataSaveRequest(false);
-      setDataIsSaved(true);
-    }
-  }, [dataSaveRequest, itemList]);
 
   return (
     <TaskContext.Provider

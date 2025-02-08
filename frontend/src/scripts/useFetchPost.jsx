@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const URL = "http://localhost:8081";
 
-const useFetchPost = (request, body) => {
+const useFetchPost = (request, setRequest, body) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,11 +34,13 @@ const useFetchPost = (request, body) => {
         setData(null);
       } finally {
         setLoading(false);
+        setRequest("");
       }
     };
-
-    fetchData();
-  }, [request, body]);
+    if (request) {
+      fetchData();
+    }
+  }, [request, setRequest, body]);
 
   return { data, loading, error };
 };
