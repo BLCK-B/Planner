@@ -13,4 +13,3 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
 		return "personaldb";
 	}
 }
-

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -6,10 +7,19 @@ import { PasswordInput } from "@/components/ui/password-input";
 import Header from "../components/Header";
 import { useForm } from "react-hook-form";
 import OAuthProviders from "../components/OAuthProviders";
+import useFetchPost from "../scripts/useFetchPost.jsx";
 
 const Auth = () => {
   // TODO: unrecognised param -> register
   const { formType } = useParams();
+
+  const [request, setRequest] = useState("");
+  const [requestBody, setRequestBody] = useState("");
+
+  const sendPostRequest = (request, userID, content) => {
+    setRequestBody({ username: content.username, password: content.password });
+    setRequest(request);
+  };
 
   const {
     register,
@@ -17,9 +27,13 @@ const Auth = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data, event) => {
+    event.preventDefault();
     console.log(data);
+    sendPostRequest("/auth/login", "1", data);
   };
+
+  const { data, loading, error } = useFetchPost(request, setRequest, requestBody);
 
   return (
     <Box w="100vw" h="100vh" bg="base.200">
@@ -46,7 +60,7 @@ const Auth = () => {
                 </Show>
               </Card.Header>
               <Card.Body gap="2">
-                <form onSubmit={onSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <Stack gap="4" align="flex-start" maxW="sm">
                     <OAuthProviders />
 
