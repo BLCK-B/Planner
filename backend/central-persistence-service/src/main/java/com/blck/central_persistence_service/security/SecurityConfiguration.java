@@ -53,7 +53,6 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
 //	@Bean
@@ -88,13 +87,15 @@ public class SecurityConfiguration {
 		http
 				.csrf().disable()
 				.sessionManagement(session -> session
-						.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+						.sessionCreationPolicy(SessionCreationPolicy.NEVER)
 						.maximumSessions(1)
 				)
 				.securityContext((securityContext) -> securityContext
 						.requireExplicitSave(true)
 						.securityContextRepository(getSecurityContextRepository())
 				);
+		// TODO: fix authorize rules vs level-preauthorize
+
 //				.authorizeHttpRequests((authorize) -> authorize
 //						.requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
 //						.requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("USER", "ADMIN")

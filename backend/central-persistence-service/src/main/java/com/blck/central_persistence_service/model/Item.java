@@ -5,8 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "user")
 public record Item(
-	@Id String userID,
-	String itemID,
+	@Id String itemID,
 	String data
 )
 {}
