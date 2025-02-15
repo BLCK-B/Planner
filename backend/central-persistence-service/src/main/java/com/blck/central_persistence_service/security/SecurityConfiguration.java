@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,6 +14,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +47,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 @Configuration
@@ -50,51 +56,61 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
 
-	@Bean
-	@Order(1)
-	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-		OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
-		http
-				.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-				.with(authorizationServerConfigurer, (authorizationServer) ->
-						authorizationServer
-								.oidc(Customizer.withDefaults())	// Enable OpenID Connect 1.0
-				)
-				.authorizeHttpRequests((authorize) ->
-						authorize
-								.anyRequest().authenticated()
-				)
-				// Redirect to the login page when not authenticated from the
-				// authorization endpoint
-				.exceptionHandling((exceptions) -> exceptions
-						.defaultAuthenticationEntryPointFor(
-								new LoginUrlAuthenticationEntryPoint("/login"),
-								new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-						)
-				);
+//	@Bean
+//	@Order(1)
+//	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+//		OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
+//		http
+//				.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+//				.with(authorizationServerConfigurer, (authorizationServer) ->
+//						authorizationServer
+//								.oidc(Customizer.withDefaults())	// Enable OpenID Connect 1.0
+//				)
+//				.authorizeHttpRequests((authorize) ->
+//						authorize
+//								.anyRequest().authenticated()
+//				)
+//				// Redirect to the login page when not authenticated from the
+//				// authorization endpoint
+//				.exceptionHandling((exceptions) -> exceptions
+//						.defaultAuthenticationEntryPointFor(
+//								new LoginUrlAuthenticationEntryPoint("/login"),
+//								new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+//						)
+//				);
+//
+//		return http.build();
+//	}
 
+//	@Order(2)
+	@Bean
+	public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+		http
+				.csrf().disable()
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+						.maximumSessions(1)
+				)
+				.securityContext((securityContext) -> securityContext
+						.requireExplicitSave(true)
+						.securityContextRepository(getSecurityContextRepository())
+				);
+//				.authorizeHttpRequests((authorize) -> authorize
+//						.requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+//						.requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("USER", "ADMIN")
+//						.anyRequest().authenticated()
+//				);
 		return http.build();
 	}
 
 	@Bean
-	@Order(2)
-	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable()
-//				.authorizeHttpRequests((authz) -> authz
-//						.requestMatchers("/auth/login").permitAll() // allow unauthenticated access to /auth/login
-//						.anyRequest().authenticated() // all other requests: authentication
-//				)
-				.authorizeHttpRequests((authz) -> authz
-						.requestMatchers("/auth/login").permitAll() // allow unauthenticated access to /auth/login
-						.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Users with USER or ADMIN role can access /user/**
-						.anyRequest().authenticated() // all other requests: authentication
-				)
-				// Form login handles the redirect to the login page from the
-				// authorization server filter chain
-				.formLogin(Customizer.withDefaults());
+	public HttpSessionSecurityContextRepository getSecurityContextRepository() {
+		return new HttpSessionSecurityContextRepository();
+	}
 
-		return http.build();
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
@@ -104,13 +120,7 @@ public class SecurityConfiguration {
 				.password(passwordEncoder.encode("password"))
 				.roles("USER")
 				.build();
-
 		return new InMemoryUserDetailsManager(userDetails);
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
@@ -118,7 +128,7 @@ public class SecurityConfiguration {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder);
-		return new ProviderManager(Collections.singletonList(authenticationProvider));
+		return new ProviderManager(authenticationProvider);
 	}
 
 	@Bean
