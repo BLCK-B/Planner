@@ -16,7 +16,7 @@ const Auth = () => {
   const [request, setRequest] = useState("");
   const [requestBody, setRequestBody] = useState("");
 
-  const sendPostRequest = (request, userID, content) => {
+  const sendPostRequest = (request, content) => {
     setRequestBody({ username: content.username, password: content.password });
     setRequest(request);
   };
@@ -30,7 +30,8 @@ const Auth = () => {
   const onSubmit = (data, event) => {
     event.preventDefault();
     console.log(data);
-    sendPostRequest("/auth/login", "1", data);
+    if (formType === "log-in") sendPostRequest("/auth/login", data);
+    else if (formType === "register") sendPostRequest("/auth/register", data);
   };
 
   const { data, loading, error } = useFetchPost(request, setRequest, requestBody);

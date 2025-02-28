@@ -1,4 +1,4 @@
-package com.blck.central_persistence_service.model;
+package com.blck.central_persistence_service.userData;
 
 
 import org.springframework.data.annotation.Id;

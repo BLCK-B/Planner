@@ -1,7 +1,5 @@
-package com.blck.central_persistence_service.controller;
+package com.blck.central_persistence_service.userData;
 
-import com.blck.central_persistence_service.model.UserItems;
-import com.blck.central_persistence_service.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
