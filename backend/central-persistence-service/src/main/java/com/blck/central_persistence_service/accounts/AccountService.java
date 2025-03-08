@@ -2,6 +2,7 @@ package com.blck.central_persistence_service.accounts;
 
 import com.blck.central_persistence_service.security.Roles;
 import com.blck.central_persistence_service.userData.UserRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class AccountService implements ReactiveUserDetailsService {
+@Primary
+	public class AccountService implements ReactiveUserDetailsService {
 
 	private final AccountRepository accountRepository;
 

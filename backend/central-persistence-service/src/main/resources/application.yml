@@ -6,6 +6,8 @@ logging:
     org.springframework.security: trace
 
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: central-persistence-service
   data:

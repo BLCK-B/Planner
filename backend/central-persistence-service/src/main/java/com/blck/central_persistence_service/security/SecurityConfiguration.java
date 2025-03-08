@@ -1,8 +1,11 @@
 package com.blck.central_persistence_service.security;
 
+import com.blck.central_persistence_service.accounts.AccountService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,14 +17,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoders;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -41,12 +50,14 @@ import java.util.UUID;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.ServerSecurityContextRepository;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableWebFluxSecurity
-//@EnableWebSecurity
 public class SecurityConfiguration {
 
 //	@Bean
@@ -77,17 +88,17 @@ public class SecurityConfiguration {
 
 //	@Order(2)
 	@Bean
-	public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
 		http
-				.csrf().disable()
-				.sessionManagement(session -> session
-						.sessionCreationPolicy(SessionCreationPolicy.NEVER)
-						.maximumSessions(1)
-				)
-				.securityContext((securityContext) -> securityContext
-						.requireExplicitSave(true)
-						.securityContextRepository(getSecurityContextRepository())
-				);
+				.csrf().disable();
+//				.sessionManagement(session -> session
+//						.sessionCreationPolicy(SessionCreationPolicy.NEVER)
+//						.maximumSessions(1)
+//				)
+//				.securityContext((securityContext) -> securityContext
+//						.requireExplicitSave(true)
+//						.securityContextRepository(getSecurityContextRepository())
+//				);
 		// TODO: fix authorize rules vs level-preauthorize
 
 //				.authorizeHttpRequests((authorize) -> authorize
@@ -103,9 +114,15 @@ public class SecurityConfiguration {
 		return new HttpSessionSecurityContextRepository();
 	}
 
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public ReactiveUserDetailsService userDetailsService(AccountService accountService) {
+		return accountService::findByUsername;
 	}
 
 	@Bean
@@ -116,21 +133,18 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public RegisteredClientRepository registeredClientRepository() {
-		RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
+	public ReactiveClientRegistrationRepository reactiveClientRegistrationRepository() {
+		ClientRegistration oidcClient = ClientRegistration.withRegistrationId("oidc-client")
 				.clientId("oidc-client")
 				.clientSecret("{noop}secret")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
-				.postLogoutRedirectUri("http://127.0.0.1:8080/")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
 				.build();
-
-		return new InMemoryRegisteredClientRepository(oidcClient);
+		return new InMemoryReactiveClientRegistrationRepository(oidcClient);
 	}
 
 	@Bean
@@ -160,8 +174,8 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
-		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+	public ReactiveJwtDecoder jwtDecoder() {
+		return ReactiveJwtDecoders.fromIssuerLocation("http://localhost:8080");
 	}
 
 	@Bean

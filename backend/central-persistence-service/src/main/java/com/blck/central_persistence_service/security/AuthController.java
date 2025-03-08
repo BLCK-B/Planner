@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -60,13 +59,5 @@ public class AuthController {
 				.map(authResponse -> ResponseEntity.ok("Authentication Successful"))
 				.onErrorResume(e -> Mono.just(new ResponseEntity<>("Authentication failure", HttpStatus.UNAUTHORIZED)));
 	}
-
-
-//	@GetMapping("/{username}")
-//	public Mono<ResponseEntity<UserAccount>> getUser(@PathVariable String username) {
-//		return accountService.findByUsername(username)
-//				.map(ResponseEntity::ok)
-//				.defaultIfEmpty(ResponseEntity.notFound().build());
-//	}
 
 }
