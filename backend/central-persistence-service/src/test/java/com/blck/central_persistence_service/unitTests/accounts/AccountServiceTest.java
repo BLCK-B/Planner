@@ -1,10 +1,10 @@
 package com.blck.central_persistence_service.unitTests.accounts;
 
-import com.blck.central_persistence_service.accounts.AccountAlreadyExistsException;
+import com.blck.central_persistence_service.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.central_persistence_service.accounts.AccountRepository;
 import com.blck.central_persistence_service.accounts.AccountService;
+import com.blck.central_persistence_service.accounts.Exceptions.InvalidCredentialsException;
 import com.blck.central_persistence_service.accounts.UserAccount;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,12 +39,11 @@ class AccountServiceTest {
 	PasswordEncoder passwordEncoder;
 
 	@Mock
-	private ReactiveAuthenticationManager reactiveAuthenticationManager;
+	ReactiveAuthenticationManager reactiveAuthenticationManager;
 
 	@InjectMocks
 	AccountService accountService;
 
-	final UserAccount newUserAccount = new UserAccount("123", "username", "password", true, Set.of("USER"));
 	final UserAccount existingUserAccount = new UserAccount(null, "username", "encoded", true, Set.of("USER"));
 
 	@BeforeEach
@@ -78,22 +76,24 @@ class AccountServiceTest {
 	}
 
 	@Test
-	void loginFailureProducesErrorResponse() {
-		when(reactiveAuthenticationManager.authenticate(any())).thenAnswer(i -> Mono.empty());
+	void loginFailureWhenAccountNotFoundOrBadCredentials() {
+		// ReactiveAuthenticationManager implementation does not differentiate these two cases
+		when(reactiveAuthenticationManager.authenticate(any()))
+				.thenAnswer(i -> Mono.error(new BadCredentialsException("Invalid credentials")));
 
-		Mono<ResponseEntity<String>> result = accountService.loginUser(null, null, reactiveAuthenticationManager);
+		Mono<Boolean> result = accountService.loginUser(null, null, reactiveAuthenticationManager);
 
 		StepVerifier.create(result)
-				.expectNextMatches(response -> response.getStatusCode().equals(HttpStatus.UNAUTHORIZED))
-				.verifyComplete();
+				.expectError(InvalidCredentialsException.class)
+				.verify();
 	}
 
 	@Test
 	void loginAuthSuccessful() {
-		Mono<ResponseEntity<String>> result = accountService.loginUser(null, null, reactiveAuthenticationManager);
+		Mono<Boolean> result = accountService.loginUser(null, null, reactiveAuthenticationManager);
 
 		StepVerifier.create(result)
-				.expectNextMatches(response -> response.getStatusCode().equals(HttpStatus.OK))
+				.expectNext(true)
 				.verifyComplete();
 	}
 

@@ -1,53 +1,62 @@
 package com.blck.central_persistence_service.userData;
 
+import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/users")
 @PreAuthorize("hasRole('USER')")
 public class UserController {
 
-	private final UserRepository userRepository;
+	// @AuthenticationPrincipal injects UserDetails to the method
 
-	public UserController(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	private final UserItemRepository UserItemRepository;
+	private final ReactiveMongoTemplate mongoTemplate;
+	private final WebSessionServerSecurityContextRepository securityContextRepository;
+
+	@Autowired
+	public UserController(UserItemRepository UserItemRepository, ReactiveMongoTemplate mongoTemplate, WebSessionServerSecurityContextRepository securityContextRepository) {
+		this.UserItemRepository = UserItemRepository;
+		this.mongoTemplate = mongoTemplate;
+		this.securityContextRepository = securityContextRepository;
 	}
 
-	@GetMapping(value="/loadItems", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Flux<UserItems> getAllUsersData() {
-		return userRepository.findAll();
+	@GetMapping(value = "/loadItems", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Flux<UserItem> getAllUserItems(@AuthenticationPrincipal UserDetails userDetails) {
+		System.out.println("User has authorities: " + userDetails.getAuthorities());
+		return Flux.empty();
+//		return exchange.getPrincipal()
+//				.flatMapMany(principal -> {
+//					Authentication authentication = (Authentication) principal;
+//					System.out.println("Authenticated user: " + authentication.getName());
+//					return mongoTemplate.findAll(UserItem.class, authentication.getName());
+//				})
+//				.switchIfEmpty(Flux.defer(() -> {
+//					System.out.println("No authenticated user found.");
+//					return Flux.empty(); // Return an empty Flux if the user is not authenticated
+//				}));
 	}
 
-//	@DeleteMapping(value="/deleteItem", consumes = MediaType.APPLICATION_JSON_VALUE)
-//	public Mono<ResponseEntity<UserItems>> deleteItem(@RequestBody JsonNode item) {
-//		String userID = item.get("userID").asText();
-//		String itemKey = item.get("item").get("key").toString();
-//		return userRepository.findByUserID(userID)
-//				.flatMap(existingUser ->
-//						userRepository.save(existingUser).map(ResponseEntity::ok)
-//				)
-//				.switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
-//	}
-
-	@PostMapping(value="/saveUserItems", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<String> saveUserItems(@RequestBody JsonNode userItems) {
-		System.out.println(userItems.toPrettyString());
-		String userID = userItems.get("userID").asText();
-		List<String> items = new ArrayList<>();
-		userItems.get("items").forEach(item -> items.add(item.toString()));
-		UserItems toSave = new UserItems(userID, items);
-		return userRepository.save(toSave).map(String::valueOf);
+	@PostMapping(value="/saveUserItem", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Mono<String> saveUserItem(@AuthenticationPrincipal UserAccount user, @RequestBody JsonNode userItem) {
+		String collectionName = user.getUsername();
+		return mongoTemplate.save(userItem, collectionName)
+				.thenReturn("User item saved successfully!");
 	}
-
-//	@GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public Flux<User> findByName(@RequestParam String name) {
-//		return userRepository.findByNameContains(name);
-//	}
 }

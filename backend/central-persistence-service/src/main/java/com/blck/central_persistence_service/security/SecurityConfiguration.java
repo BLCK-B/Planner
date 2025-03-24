@@ -10,10 +10,9 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -23,16 +22,22 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
 		http
-				.csrf().disable()
+				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
 				.authorizeExchange(exchanges -> exchanges
+						.pathMatchers("/auth/register").permitAll()
 						.anyExchange().permitAll()
 				);
 		return http.build();
 	}
 
+//	@Bean
+//	public HttpSessionSecurityContextRepository getSecurityContextRepository() {
+//		return new HttpSessionSecurityContextRepository();
+//	}
+
 	@Bean
-	public HttpSessionSecurityContextRepository getSecurityContextRepository() {
-		return new HttpSessionSecurityContextRepository();
+	public WebSessionServerSecurityContextRepository securityContextRepository() {
+		return new WebSessionServerSecurityContextRepository();
 	}
 
 	@Bean
@@ -43,11 +48,6 @@ public class SecurityConfiguration {
 	@Bean
 	public ReactiveUserDetailsService userDetailsService(AccountService accountService) {
 		return accountService;
-	}
-
-	@Bean
-	public WebSessionServerSecurityContextRepository securityContextRepository() {
-		return new WebSessionServerSecurityContextRepository();
 	}
 
 	@Bean

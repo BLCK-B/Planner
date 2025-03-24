@@ -1,17 +1,16 @@
 package com.blck.central_persistence_service.accounts;
 
+import com.blck.central_persistence_service.accounts.Exceptions.AccountAlreadyExistsException;
+import com.blck.central_persistence_service.accounts.Exceptions.InvalidCredentialsException;
 import com.blck.central_persistence_service.security.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.stereotype.Service;
@@ -60,24 +59,21 @@ import java.util.Set;
 				});
 	}
 
-	// TODO: custom exception and invoke response from controller
-	public Mono<ResponseEntity<String>> loginUser(ServerWebExchange exchange,
-												  Authentication authRequest,
-												  ReactiveAuthenticationManager reactiveAuthenticationManager) {
+	public Mono<Boolean> loginUser(ServerWebExchange exchange,
+								   Authentication authRequest,
+								   ReactiveAuthenticationManager reactiveAuthenticationManager) {
 		return reactiveAuthenticationManager.authenticate(authRequest)
 				.flatMap(authResponse -> {
 					SecurityContext securityContext = new SecurityContextImpl(authResponse);
 					return securityContextRepository.save(exchange, securityContext)
-							.then(Mono.just(ResponseEntity.ok("Authentication successful")));
+							.thenReturn(true);
 				})
-				.switchIfEmpty(Mono.just(new ResponseEntity<>("Authentication failure", HttpStatus.UNAUTHORIZED)))
-				.onErrorResume(e -> Mono.just(new ResponseEntity<>("Authentication failure: " + e.getMessage(), HttpStatus.UNAUTHORIZED)));
+				.onErrorResume(e -> Mono.error(new InvalidCredentialsException("Invalid credentials: " + e)));
 	}
 
 	@Override
 	public Mono<UserDetails> findByUsername(String username) {
 		return accountRepository.findByUsername(username)
-				.switchIfEmpty(Mono.error(new UsernameNotFoundException(username)))
 				.map(userAccount -> userAccount);
 	}
 }

@@ -1,9 +1,12 @@
 package com.blck.central_persistence_service.security;
 
+import com.blck.central_persistence_service.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.central_persistence_service.accounts.AccountService;
+import com.blck.central_persistence_service.accounts.Exceptions.InvalidCredentialsException;
 import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -33,6 +36,9 @@ public class AuthController {
 		String password = credentials.get("password").asText();
 		return accountService.registerUser(username, password)
 				.map(ResponseEntity::ok)
+				.onErrorResume(AccountAlreadyExistsException.class, ex ->
+						Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(null))
+				)
 				.defaultIfEmpty(ResponseEntity.badRequest().build());
 	}
 
@@ -42,7 +48,14 @@ public class AuthController {
 				credentials.get("username").asText(),
 				credentials.get("password").asText()
 		);
-		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager);
+		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager)
+				.map(success -> ResponseEntity.ok("Authentication successful"))
+				.onErrorResume(InvalidCredentialsException.class, e ->
+						Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))
+				)
+				.onErrorResume(e ->
+						Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occurred: " + e.getMessage())) // Handle other errors
+				);
 	}
 
 }
