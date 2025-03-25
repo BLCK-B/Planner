@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.web.server.session.DefaultWebSessionManager;
+import org.springframework.web.server.session.WebSessionManager;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -23,9 +25,10 @@ public class SecurityConfiguration {
 	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
 		http
 				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
+				.securityContextRepository(new WebSessionServerSecurityContextRepository())
 				.authorizeExchange(exchanges -> exchanges
-						.pathMatchers("/auth/register").permitAll()
-						.anyExchange().permitAll()
+						.pathMatchers("/auth/**").permitAll()
+						.anyExchange().authenticated()
 				);
 		return http.build();
 	}

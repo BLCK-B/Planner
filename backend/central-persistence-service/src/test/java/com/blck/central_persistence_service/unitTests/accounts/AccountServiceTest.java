@@ -77,7 +77,7 @@ class AccountServiceTest {
 
 	@Test
 	void loginFailureWhenAccountNotFoundOrBadCredentials() {
-		// ReactiveAuthenticationManager implementation does not differentiate these two cases
+		// AbstractUserDetailsReactiveAuthenticationManager does not differentiate between these cases
 		when(reactiveAuthenticationManager.authenticate(any()))
 				.thenAnswer(i -> Mono.error(new BadCredentialsException("Invalid credentials")));
 

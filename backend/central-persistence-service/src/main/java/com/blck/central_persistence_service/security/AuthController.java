@@ -5,6 +5,7 @@ import com.blck.central_persistence_service.accounts.AccountService;
 import com.blck.central_persistence_service.accounts.Exceptions.InvalidCredentialsException;
 import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

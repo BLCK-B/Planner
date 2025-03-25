@@ -45,12 +45,6 @@ class AuthentizeTest {
 	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("USER"));
 	final UserAccount encodedAccount = new UserAccount(null, "username", bCryptPasswordEncoder.encode("password"), true, Set.of("USER"));
 
-
-	@BeforeEach
-	void setUp() {
-
-	}
-
 	@Test
 	void registerUserSuccess() {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.empty());
@@ -116,6 +110,7 @@ class AuthentizeTest {
 				.exchange()
 				.expectStatus().isUnauthorized();
 	}
+
 
 }
 
