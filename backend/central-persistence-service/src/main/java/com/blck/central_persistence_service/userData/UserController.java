@@ -1,6 +1,7 @@
 package com.blck.central_persistence_service.userData;
 
 import com.blck.central_persistence_service.accounts.UserAccount;
+import com.blck.central_persistence_service.security.Roles;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,29 +42,21 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/userAccountInfo", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<UserAccount> getUserAccountInfo(@AuthenticationPrincipal UserDetails userDetails) {
-		return Mono.just(
-				new UserAccount(
-				null,
-				userDetails.getUsername(),
-				null, true, null)
-		);
+	public Mono<String> getUserAccountInfo(@AuthenticationPrincipal UserDetails userDetails) {
+		return Mono.just(userDetails.getUsername());
+//		return Mono.just(
+//				new UserAccount(
+//				null,
+//				userDetails.getUsername(),
+//				userDetails.getPassword(),
+//		true,
+//			Set.of(String.valueOf(Roles.USER)))
+//		);
 	}
 
 	@GetMapping(value = "/loadItems", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<UserItem> getAllUserItems(@AuthenticationPrincipal UserDetails userDetails) {
-		System.out.println("User has authorities: " + userDetails.getAuthorities());
-		return Flux.empty();
-//		return exchange.getPrincipal()
-//				.flatMapMany(principal -> {
-//					Authentication authentication = (Authentication) principal;
-//					System.out.println("Authenticated user: " + authentication.getName());
-//					return mongoTemplate.findAll(UserItem.class, authentication.getName());
-//				})
-//				.switchIfEmpty(Flux.defer(() -> {
-//					System.out.println("No authenticated user found.");
-//					return Flux.empty(); // Return an empty Flux if the user is not authenticated
-//				}));
+		return mongoTemplate.findAll(UserItem.class, userDetails.getUsername());
 	}
 
 	@PostMapping(value="/saveUserItem", consumes = MediaType.APPLICATION_JSON_VALUE)

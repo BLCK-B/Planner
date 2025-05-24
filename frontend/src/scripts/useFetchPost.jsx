@@ -19,6 +19,7 @@ const useFetchPost = (request, setRequest, body) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(body),
+          credentials: "include",
         };
 
         const response = await fetch(URL + request, options);

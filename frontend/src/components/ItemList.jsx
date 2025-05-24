@@ -30,7 +30,7 @@ const ItemList = ({ taskType }) => {
   const { data, loading, error } = useFetch("/users/loadItems");
   useEffect(() => {
     if (data) {
-      const parsedItems = data.flatMap((item) => item.items.map((task) => JSON.parse(task)));
+      const parsedItems = data.map((item) => JSON.parse(item.data));
       setItemList(parsedItems);
     }
   }, [data, setItemList]);
@@ -46,7 +46,7 @@ const ItemList = ({ taskType }) => {
       style={taskType === "long-term" ? styles.longtermList : styles.deadlineList}>
       <div style={{ overflowY: "scroll", scrollbarWidth: "none" }}>
         {itemList
-          .filter((task) => task.type === taskType)
+          .filter((task) => task && task.type === taskType)
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .map((task) => (
             <div key={task.key}>{renderTaskType(task, expandedTaskId)}</div>
