@@ -10,7 +10,10 @@ const useFetch = (request) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(URL + request);
+        const response = await fetch(URL + request, {
+          method: "GET",
+          credentials: "include",
+        });
         if (!response.ok) {
           throw new Error("Backend error");
         }

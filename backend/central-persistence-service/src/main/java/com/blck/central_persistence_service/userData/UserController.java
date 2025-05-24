@@ -56,18 +56,7 @@ public class UserController {
 
 	@GetMapping(value = "/loadItems", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<UserItem> getAllUserItems(@AuthenticationPrincipal UserDetails userDetails) {
-		System.out.println("User has authorities: " + userDetails.getAuthorities());
-		return Flux.empty();
-//		return exchange.getPrincipal()
-//				.flatMapMany(principal -> {
-//					Authentication authentication = (Authentication) principal;
-//					System.out.println("Authenticated user: " + authentication.getName());
-//					return mongoTemplate.findAll(UserItem.class, authentication.getName());
-//				})
-//				.switchIfEmpty(Flux.defer(() -> {
-//					System.out.println("No authenticated user found.");
-//					return Flux.empty(); // Return an empty Flux if the user is not authenticated
-//				}));
+		return mongoTemplate.findAll(UserItem.class, userDetails.getUsername());
 	}
 
 	@PostMapping(value="/saveUserItem", consumes = MediaType.APPLICATION_JSON_VALUE)

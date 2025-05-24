@@ -24,7 +24,8 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
 		http
-				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
+//				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
+				.csrf(ServerHttpSecurity.CsrfSpec::disable)
 				.securityContextRepository(new WebSessionServerSecurityContextRepository())
 				.authorizeExchange(exchanges -> exchanges
 						.pathMatchers("/auth/**").permitAll()
