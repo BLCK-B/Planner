@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -78,51 +80,33 @@ class AuthorizeTest {
 	}
 
 	@Test
-	void securityContextIsPopulatedOnLogin() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
-
-		webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isOk();
-
-		webTestClient
-				.mutateWith(csrf())
-				.get()
-				.uri("/users/userAccountInfo")
-				.exchange()
-				.expectStatus().isOk()
-				.expectBody(UserAccount.class)
-				.value(userAccount -> {
-					assertNotNull(userAccount.getUsername());
-					assertEquals(encodedAccount.getUsername(), userAccount.getUsername());
-				});
-	}
-
-	@Test
 	void securityContextRetention() {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
-		webTestClient
+		ResponseCookie loginSessionCookie = webTestClient
 				.mutateWith(csrf())
 				.post()
 				.uri("/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(credentials)
 				.exchange()
-				.expectStatus().isOk();
+				.expectStatus().isOk()
+				.expectCookie()
+				.exists("SESSION")
+				.returnResult(Void.class)
+				.getResponseCookies()
+				.getFirst("SESSION");
 		webTestClient
 				.mutateWith(csrf())
 				.get()
 				.uri("/users/userAccountInfo")
+				.cookie(loginSessionCookie.getName(), loginSessionCookie.getValue())
 				.exchange()
 				.expectStatus().isOk()
-				.expectBodyList(UserItem.class)
-				.hasSize(0);
+				.expectBody(String.class)
+				.value(response -> {
+					assertEquals(encodedAccount.getUsername(), response);
+				});
 	}
 
 }
