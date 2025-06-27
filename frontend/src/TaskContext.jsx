@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { createContext, useContext, useState } from "react";
-import useFetchPost from "./scripts/useFetchPost.jsx";
 
 const TaskContext = createContext();
 
@@ -25,7 +24,6 @@ export const TaskProvider = ({ children }) => {
   const handleUpdateTask = (taskKey, updatedTask) => {
     setItemList((prevTasks) => prevTasks.map((task) => (task.key === taskKey ? { ...task, ...updatedTask } : task)));
     updatedTask.key = taskKey;
-    sendPostRequest(API.setItem, "1", updatedTask);
   };
 
   const handleAddTask = (newTask) => {
@@ -37,23 +35,6 @@ export const TaskProvider = ({ children }) => {
   };
 
   // --- unexported ---
-  const [request, setRequest] = useState("");
-  const [requestBody, setRequestBody] = useState("");
-
-  const API = {
-    setAllItems: "/users/saveUserItems",
-    setItem: "/users/setItem",
-    deteleItem: "todo",
-  };
-
-  const sendPostRequest = (request, userID, content) => {
-    setRequestBody({ userID: userID, items: content });
-    setRequest(request);
-    setDataIsSaved(true);
-  };
-
-  const { data, loading, error } = useFetchPost(request, setRequest, requestBody);
-
   useEffect(() => {
     if (dataIsSaved) {
       const timer = setTimeout(() => {

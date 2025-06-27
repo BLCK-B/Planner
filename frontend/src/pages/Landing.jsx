@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Box, Button, Input, HStack, GridItem, Grid, VStack, Flex, Heading, Icon, Spacer, Text } from "@chakra-ui/react";
 import Header from "../components/Header";
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,14 +7,11 @@ import { PasswordInput } from "@/components/ui/password-input";
 import Header from "../components/Header";
 import { useForm } from "react-hook-form";
 import OAuthProviders from "../components/OAuthProviders";
-import useFetchPost from "../scripts/useFetchPost.jsx";
+import fetchRequest from "../scripts/fetchRequest.jsx";
 
 const Auth = () => {
   // TODO: unrecognised param -> register
   const { formType } = useParams();
-
-  const [request, setRequest] = useState("");
-  const [requestBody, setRequestBody] = useState("");
 
   const {
     register,
@@ -29,12 +26,15 @@ const Auth = () => {
     else if (formType === "register") sendPostRequest("/auth/register", data);
   };
 
-  const sendPostRequest = (request, content) => {
-    setRequestBody({ username: content.username, password: content.password });
-    setRequest(request);
+  const sendPostRequest = async (request, content) => {
+    const body = { username: content.username, password: content.password };
+    try {
+      const data = await fetchRequest("POST", request, body);
+      console.log("Response:", data);
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
   };
-
-  const { data, loading, error } = useFetchPost(request, setRequest, requestBody);
 
   return (
     <Box w="100vw" h="100vh" bg="base.200">

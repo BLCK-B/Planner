@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Flex } from "@chakra-ui/react";
 import { useTaskContext } from "../TaskContext.jsx";
@@ -6,7 +6,7 @@ import Task from "./Task.jsx";
 import TaskExpanded from "./TaskExpanded.jsx";
 import GoalExpanded from "./GoalExpanded.jsx";
 import Goal from "./Goal.jsx";
-import useFetch from "../scripts/useFetch.jsx";
+import fetchRequest from "../scripts/fetchRequest.jsx";
 
 const ItemList = ({ taskType }) => {
   const { expandedTaskId, itemList, setItemList } = useTaskContext();
@@ -26,17 +26,18 @@ const ItemList = ({ taskType }) => {
     }
   };
 
-  // const { data, loading, error } = useFetch("/getTasksHardcoded");
-  const { data, loading, error } = useFetch("/users/loadItems");
-  useEffect(() => {
-    if (data) {
-      const parsedItems = data.map((item) => JSON.parse(item.data));
-      setItemList(parsedItems);
-    }
-  }, [data, setItemList]);
+  const loadData = async () => {
+    const data = await fetchRequest("GET", "/users/loadItems");
+    const parsedItems = data.map((item) => JSON.parse(item.data));
+    setItemList(parsedItems);
+  };
 
-  if (loading) return <p>Loading tasks...</p>;
-  if (error) return <p>Error fetching tasks: {error}</p>;
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // if (loading) return <p>Loading tasks...</p>;
+  // if (error) return <p>Error fetching tasks: {error}</p>;
 
   return (
     <Flex
