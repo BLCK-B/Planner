@@ -17,10 +17,17 @@ const fetchRequest = async (method, request, body = null) => {
     const response = await fetch(URL + request, options);
 
     if (!response.ok) {
-      throw new Error("Backend error");
+      const errorText = await response.text();
+      throw new Error(errorText || "Backend error");
     }
 
-    return await response.json();
+    const text = await response.text();
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
   } catch (err) {
     throw new Error(err.message);
   }

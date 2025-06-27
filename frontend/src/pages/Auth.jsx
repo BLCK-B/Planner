@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
@@ -12,6 +12,7 @@ import fetchRequest from "../scripts/fetchRequest.jsx";
 const Auth = () => {
   // TODO: unrecognised param -> register
   const { formType } = useParams();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -19,20 +20,27 @@ const Auth = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data, event) => {
+  const onSubmit = async (data, event) => {
     event.preventDefault();
     console.log(data);
-    if (formType === "log-in") sendPostRequest("/auth/login", data);
-    else if (formType === "register") sendPostRequest("/auth/register", data);
+    if (formType === "log-in") {
+      const response = await sendPostRequest("/auth/login", data);
+      console.log("respoonse data: ", response);
+      if (response) {
+        navigate("/main");
+      }
+    } else if (formType === "register") sendPostRequest("/auth/register", data);
   };
 
   const sendPostRequest = async (request, content) => {
     const body = { username: content.username, password: content.password };
     try {
-      const data = await fetchRequest("POST", request, body);
-      console.log("Response:", data);
+      const response = await fetchRequest("POST", request, body);
+      console.log("Response:", response);
+      return response;
     } catch (error) {
       console.error("Error:", error.message);
+      throw error;
     }
   };
 
