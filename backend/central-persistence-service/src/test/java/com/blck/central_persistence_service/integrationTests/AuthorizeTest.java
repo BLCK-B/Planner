@@ -3,23 +3,18 @@ package com.blck.central_persistence_service.integrationTests;
 import com.blck.central_persistence_service.accounts.AccountRepository;
 import com.blck.central_persistence_service.accounts.AccountService;
 import com.blck.central_persistence_service.accounts.UserAccount;
-import com.blck.central_persistence_service.userData.UserItem;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -27,9 +22,7 @@ import reactor.core.publisher.Mono;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
@@ -108,5 +101,35 @@ class AuthorizeTest {
 					assertEquals(encodedAccount.getUsername(), response);
 				});
 	}
+
+	@Test
+	void securityContextRetentionWithJwt() {
+		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+
+		String jwtToken = webTestClient
+				.mutateWith(csrf())
+				.post()
+				.uri("/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(credentials)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		System.out.println("token got back:" + jwtToken);
+
+		webTestClient
+				.mutateWith(csrf())
+				.get()
+				.uri("/users/userAccountInfo")
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.value(response -> assertEquals(encodedAccount.getUsername(), response));
+	}
+
 
 }

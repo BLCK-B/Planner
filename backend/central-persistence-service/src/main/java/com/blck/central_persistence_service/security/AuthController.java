@@ -2,19 +2,17 @@ package com.blck.central_persistence_service.security;
 
 import com.blck.central_persistence_service.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.central_persistence_service.accounts.AccountService;
-import com.blck.central_persistence_service.accounts.Exceptions.InvalidCredentialsException;
 import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -43,20 +41,38 @@ public class AuthController {
 				.defaultIfEmpty(ResponseEntity.badRequest().build());
 	}
 
+//	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials, ServerWebExchange exchange) {
+//		Authentication authRequest = new UsernamePasswordAuthenticationToken(
+//				credentials.get("username").asText(),
+//				credentials.get("password").asText()
+//		);
+//		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager)
+//				.map(success -> ResponseEntity.ok("Authentication successful"))
+//				.onErrorResume(InvalidCredentialsException.class, e ->
+//						Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))
+//				)
+//				.onErrorResume(e ->
+//						Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occurred: " + e.getMessage())) // Handle other errors
+//				);
+//	}
+
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials, ServerWebExchange exchange) {
+	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(
 				credentials.get("username").asText(),
 				credentials.get("password").asText()
 		);
-		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager)
-				.map(success -> ResponseEntity.ok("Authentication successful"))
-				.onErrorResume(InvalidCredentialsException.class, e ->
+
+		return accountService.loginUser(authRequest, reactiveAuthenticationManager)
+				.map(ResponseEntity::ok) // this returns the token
+				.onErrorResume(BadCredentialsException.class, e ->
 						Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))
 				)
-				.onErrorResume(e ->
-						Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occurred: " + e.getMessage())) // Handle other errors
+				.onErrorResume(RuntimeException.class, e ->
+						Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage()))
 				);
 	}
+
 
 }

@@ -5,7 +5,6 @@ import com.blck.central_persistence_service.accounts.AccountService;
 import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -38,8 +37,8 @@ class AuthentizeTest {
 
 	final ObjectMapper objectMapper = new ObjectMapper();
 	JsonNode credentials = objectMapper.createObjectNode()
-			.put("username", "username")
-			.put("password", "password");
+		.put("username", "username")
+		.put("password", "password");
 
 	final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("USER"));
@@ -51,17 +50,17 @@ class AuthentizeTest {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isEqualTo(200)
-				.expectBody()
-				.jsonPath("$.username").isEqualTo("username")
-				.jsonPath("$.password").isEqualTo("password")
-				.jsonPath("$.roles[0]").isEqualTo("USER");
+			.mutateWith(csrf())
+			.post()
+			.uri("/auth/register")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isEqualTo(200)
+			.expectBody()
+			.jsonPath("$.username").isEqualTo("username")
+			.jsonPath("$.password").isEqualTo("password")
+			.jsonPath("$.roles[0]").isEqualTo("USER");
 	}
 
 	@Test
@@ -70,14 +69,14 @@ class AuthentizeTest {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isEqualTo(409)
-				.expectBody().isEmpty();
+			.mutateWith(csrf())
+			.post()
+			.uri("/auth/register")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isEqualTo(409)
+			.expectBody().isEmpty();
 	}
 
 	@Test
@@ -85,32 +84,31 @@ class AuthentizeTest {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isOk();
+			.mutateWith(csrf())
+			.post()
+			.uri("/auth/login")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isOk();
 	}
 
 	@Test
 	void loginUserWrongCredentials() {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 		credentials = objectMapper.createObjectNode()
-				.put("username", "username")
-				.put("password", "wrongPassword");
+			.put("username", "username")
+			.put("password", "wrongPassword");
 
 		webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isUnauthorized();
+			.mutateWith(csrf())
+			.post()
+			.uri("/auth/login")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isUnauthorized();
 	}
-
 
 }
 

@@ -1,20 +1,27 @@
 package com.blck.central_persistence_service.security;
 
 import com.blck.central_persistence_service.accounts.AccountService;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
-import org.springframework.web.server.session.DefaultWebSessionManager;
-import org.springframework.web.server.session.WebSessionManager;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -26,7 +33,10 @@ public class SecurityConfiguration {
 		http
 //				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.securityContextRepository(new WebSessionServerSecurityContextRepository())
+//				.securityContextRepository(new WebSessionServerSecurityContextRepository())
+				.oauth2ResourceServer((oauth2) -> oauth2
+						.jwt(Customizer.withDefaults())
+				)
 				.authorizeExchange(exchanges -> exchanges
 						.pathMatchers("/auth/**").permitAll()
 						.anyExchange().authenticated()
@@ -34,9 +44,35 @@ public class SecurityConfiguration {
 		return http.build();
 	}
 
+	@Bean
+	public JwtEncoder jwtEncoder() {
+		String jwtSecret = "12345678901234567890123456789012";
+		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(secretKey).build();
+		JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+		return new NimbusJwtEncoder(jwkSource);
+	}
+
+	@Bean
+	public ReactiveJwtDecoder reactiveJwtDecoder() {
+		String jwtSecret = "12345678901234567890123456789012";
+		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+		return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
+	}
+
 //	@Bean
-//	public HttpSessionSecurityContextRepository getSecurityContextRepository() {
-//		return new HttpSessionSecurityContextRepository();
+//	JwtDecoder jwtDecoder() {
+//		return NimbusJwtDecoder.withIssuerLocation(this.issuer)
+//				.jwsAlgorithms(algorithms -> {
+//					algorithms.add(RS512);
+//					algorithms.add(ES512);
+//				}).build();
+//	}
+//
+//	@Bean
+//	public JwtDecoder jwtDecoder() {
+//		return NimbusJwtDecoder.withPublicKey(this.key).build();
+//		return NimbusJwtDecoder.withSecretKey()
 //	}
 
 	@Bean
