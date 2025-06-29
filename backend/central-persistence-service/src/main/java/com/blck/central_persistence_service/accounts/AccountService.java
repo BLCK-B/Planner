@@ -28,8 +28,6 @@ public class AccountService implements ReactiveUserDetailsService {
 
 	private final AccountRepository accountRepository;
 
-//	private final WebSessionServerSecurityContextRepository securityContextRepository;
-
 	private final JwtEncoder jwtEncoder;
 
 	private final PasswordEncoder passwordEncoder;
@@ -62,18 +60,6 @@ public class AccountService implements ReactiveUserDetailsService {
 				return accountRepository.save(userAccount);
 			});
 	}
-
-//	public Mono<Boolean> loginUser(ServerWebExchange exchange,
-//								   Authentication authRequest,
-//								   ReactiveAuthenticationManager reactiveAuthenticationManager) {
-//		return reactiveAuthenticationManager.authenticate(authRequest)
-//			.flatMap(authResponse -> {
-//				SecurityContext securityContext = new SecurityContextImpl(authResponse);
-//				return securityContextRepository.save(exchange, securityContext)
-//						.thenReturn(true);
-//			})
-//			.onErrorResume(e -> Mono.error(new InvalidCredentialsException("Invalid credentials: " + e)));
-//	}
 
 	public Mono<String> loginUser(Authentication authentication,
 								  ReactiveAuthenticationManager reactiveAuthenticationManager) {

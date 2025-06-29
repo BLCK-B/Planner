@@ -41,22 +41,6 @@ public class AuthController {
 				.defaultIfEmpty(ResponseEntity.badRequest().build());
 	}
 
-//	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials, ServerWebExchange exchange) {
-//		Authentication authRequest = new UsernamePasswordAuthenticationToken(
-//				credentials.get("username").asText(),
-//				credentials.get("password").asText()
-//		);
-//		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager)
-//				.map(success -> ResponseEntity.ok("Authentication successful"))
-//				.onErrorResume(InvalidCredentialsException.class, e ->
-//						Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))
-//				)
-//				.onErrorResume(e ->
-//						Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unknown error occurred: " + e.getMessage())) // Handle other errors
-//				);
-//	}
-
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(

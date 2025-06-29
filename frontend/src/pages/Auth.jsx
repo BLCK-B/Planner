@@ -27,7 +27,8 @@ const Auth = () => {
       const response = await sendPostRequest("/auth/login", data);
       console.log("respoonse data: ", response);
       if (response) {
-        navigate("/main");
+        localStorage.setItem("jwtToken", response);
+        // navigate("/main");
       }
     } else if (formType === "register") sendPostRequest("/auth/register", data);
   };

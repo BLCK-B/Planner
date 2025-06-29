@@ -18,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -33,10 +33,10 @@ public class SecurityConfiguration {
 		http
 //				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-//				.securityContextRepository(new WebSessionServerSecurityContextRepository())
 				.oauth2ResourceServer((oauth2) -> oauth2
 						.jwt(Customizer.withDefaults())
 				)
+				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 				.authorizeExchange(exchanges -> exchanges
 						.pathMatchers("/auth/**").permitAll()
 						.anyExchange().authenticated()
@@ -58,26 +58,6 @@ public class SecurityConfiguration {
 		String jwtSecret = "12345678901234567890123456789012";
 		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
 		return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
-	}
-
-//	@Bean
-//	JwtDecoder jwtDecoder() {
-//		return NimbusJwtDecoder.withIssuerLocation(this.issuer)
-//				.jwsAlgorithms(algorithms -> {
-//					algorithms.add(RS512);
-//					algorithms.add(ES512);
-//				}).build();
-//	}
-//
-//	@Bean
-//	public JwtDecoder jwtDecoder() {
-//		return NimbusJwtDecoder.withPublicKey(this.key).build();
-//		return NimbusJwtDecoder.withSecretKey()
-//	}
-
-	@Bean
-	public WebSessionServerSecurityContextRepository securityContextRepository() {
-		return new WebSessionServerSecurityContextRepository();
 	}
 
 	@Bean

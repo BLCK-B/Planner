@@ -44,8 +44,8 @@ class AuthorizeTest {
 
 	final ObjectMapper objectMapper = new ObjectMapper();
 	JsonNode credentials = objectMapper.createObjectNode()
-			.put("username", "username")
-			.put("password", "password");
+		.put("username", "username")
+		.put("password", "password");
 
 	final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("USER"));
@@ -54,52 +54,22 @@ class AuthorizeTest {
 	@Test
 	void unauthUserShouldNotAccessUserController() {
 		webTestClient
-				.mutateWith(csrf())
-				.get()
-				.uri("/users/loadItems")
-				.exchange()
-				.expectStatus().isUnauthorized();
+			.mutateWith(csrf())
+			.get()
+			.uri("/users/loadItems")
+			.exchange()
+			.expectStatus().isUnauthorized();
 	}
 
 	@Test
 	@WithMockUser(username = "username", roles = "USER")
 	void authUserIsAbleToAccessUserController() {
 		webTestClient
-				.mutateWith(csrf())
-				.get()
-				.uri("/users/loadItems")
-				.exchange()
-				.expectStatus().isOk();
-	}
-
-	@Test
-	void securityContextRetention() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
-
-		ResponseCookie loginSessionCookie = webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isOk()
-				.expectCookie()
-				.exists("SESSION")
-				.returnResult(Void.class)
-				.getResponseCookies()
-				.getFirst("SESSION");
-		webTestClient
-				.mutateWith(csrf())
-				.get()
-				.uri("/users/userAccountInfo")
-				.cookie(loginSessionCookie.getName(), loginSessionCookie.getValue())
-				.exchange()
-				.expectStatus().isOk()
-				.expectBody(String.class)
-				.value(response -> {
-					assertEquals(encodedAccount.getUsername(), response);
-				});
+			.mutateWith(csrf())
+			.get()
+			.uri("/users/loadItems")
+			.exchange()
+			.expectStatus().isOk();
 	}
 
 	@Test
@@ -107,28 +77,25 @@ class AuthorizeTest {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		String jwtToken = webTestClient
-				.mutateWith(csrf())
-				.post()
-				.uri("/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isOk()
-				.expectBody(String.class)
-				.returnResult()
-				.getResponseBody();
-
-		System.out.println("token got back:" + jwtToken);
-
+			.mutateWith(csrf())
+			.post()
+			.uri("/auth/login")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.returnResult()
+			.getResponseBody();
 		webTestClient
-				.mutateWith(csrf())
-				.get()
-				.uri("/users/userAccountInfo")
-				.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
-				.exchange()
-				.expectStatus().isOk()
-				.expectBody(String.class)
-				.value(response -> assertEquals(encodedAccount.getUsername(), response));
+			.mutateWith(csrf())
+			.get()
+			.uri("/users/userAccountInfo")
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.value(response -> assertEquals(encodedAccount.getUsername(), response));
 	}
 
 
