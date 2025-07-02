@@ -49,7 +49,7 @@ public class AccountService implements ReactiveUserDetailsService {
 					return Mono.error(new AccountAlreadyExistsException("Account with username " + username + " already exists"));
 				}
 				Set<String> roles = new HashSet<>();
-				roles.add(String.valueOf(Roles.USER));
+				roles.add(String.valueOf(Roles.ROLE_USER));
 				UserAccount userAccount = new UserAccount(
 						null,
 						username,

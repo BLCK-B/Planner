@@ -8,23 +8,33 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import reactor.core.publisher.Mono;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
 //	@Order(2)
@@ -33,8 +43,11 @@ public class SecurityConfiguration {
 		http
 //				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
 				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.oauth2ResourceServer((oauth2) -> oauth2
-						.jwt(Customizer.withDefaults())
+				.oauth2ResourceServer(oauth2 -> oauth2
+					.jwt(jwt -> jwt.jwtAuthenticationConverter(
+							new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
+					))
+//					.jwt(Customizer.withDefaults())
 				)
 				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 				.authorizeExchange(exchanges -> exchanges
@@ -42,6 +55,16 @@ public class SecurityConfiguration {
 						.anyExchange().authenticated()
 				);
 		return http.build();
+	}
+
+	private Converter<Jwt, AbstractAuthenticationToken> jwtGrantedAuthoritiesConverter() {
+		JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
+		converter.setAuthoritiesClaimName("roles");
+		converter.setAuthorityPrefix("");
+		return jwt -> {
+			Collection<GrantedAuthority> authorities = converter.convert(jwt);
+			return new JwtAuthenticationToken(jwt, authorities);
+		};
 	}
 
 	@Bean

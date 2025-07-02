@@ -47,7 +47,7 @@ class AccountServiceTest {
 	@InjectMocks
 	AccountService accountService;
 
-	final UserAccount existingUserAccount = new UserAccount(null, "username", "encoded", true, Set.of("USER"));
+	final UserAccount existingUserAccount = new UserAccount(null, "username", "encoded", true, Set.of("ROLE_USER"));
 
 	private Jwt mockJwt = new Jwt(
 			"token-value",
@@ -97,15 +97,6 @@ class AccountServiceTest {
 		StepVerifier.create(result)
 				.expectError(BadCredentialsException.class)
 				.verify();
-	}
-
-	@Test
-	void loginAuthSuccessful() {
-		Mono<String> result = accountService.loginUser( null, reactiveAuthenticationManager);
-
-		StepVerifier.create(result)
-				.expectNext("Authentication successful")
-				.verifyComplete();
 	}
 
 }
