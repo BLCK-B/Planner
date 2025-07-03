@@ -16,8 +16,6 @@ import reactor.core.publisher.Mono;
 @PreAuthorize("hasRole('USER')")
 public class UserController {
 
-	// @AuthenticationPrincipal injects UserDetails to the method
-
 	private final UserItemRepository UserItemRepository;
 
 	private final ReactiveMongoTemplate mongoTemplate;

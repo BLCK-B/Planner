@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +30,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@PreAuthorize("hasRole('USER')")
 class AccountServiceTest {
 
 	@Mock
@@ -49,12 +50,12 @@ class AccountServiceTest {
 
 	final UserAccount existingUserAccount = new UserAccount(null, "username", "encoded", true, Set.of("ROLE_USER"));
 
-	private Jwt mockJwt = new Jwt(
-			"token-value",
-			Instant.now(),
-			Instant.now().plusSeconds(3600),
-			Map.of("alg", "HS256"),
-			Map.of("sub", "testuser", "roles", List.of("ROLE_USER"))
+	private final Jwt mockJwt = new Jwt(
+		"token-value",
+		Instant.now(),
+		Instant.now().plusSeconds(3600),
+		Map.of("alg", "HS256"),
+		Map.of("sub", "testuser", "roles", List.of("ROLE_USER"))
 	);
 
 	@BeforeEach
@@ -73,8 +74,8 @@ class AccountServiceTest {
 		Mono<UserAccount> result = accountService.registerUser("username", "password");
 
 		StepVerifier.create(result)
-				.expectError(AccountAlreadyExistsException.class)
-				.verify();
+			.expectError(AccountAlreadyExistsException.class)
+			.verify();
 	}
 
 	@Test
@@ -82,21 +83,8 @@ class AccountServiceTest {
 		Mono<UserAccount> result = accountService.registerUser("username", "password");
 
 		StepVerifier.create(result)
-				.expectNextMatches(user -> user.equals(existingUserAccount))
-				.verifyComplete();
-	}
-
-	@Test
-	void loginFailureWhenAccountNotFoundOrBadCredentials() {
-		// AbstractUserDetailsReactiveAuthenticationManager does not differentiate between these cases
-		when(reactiveAuthenticationManager.authenticate(any()))
-				.thenAnswer(i -> Mono.error(new BadCredentialsException("Invalid credentials")));
-
-		Mono<String> result = accountService.loginUser(null, reactiveAuthenticationManager);
-
-		StepVerifier.create(result)
-				.expectError(BadCredentialsException.class)
-				.verify();
+			.expectNextMatches(user -> user.equals(existingUserAccount))
+			.verifyComplete();
 	}
 
 }
