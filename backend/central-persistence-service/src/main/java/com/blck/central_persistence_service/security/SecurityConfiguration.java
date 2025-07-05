@@ -31,7 +31,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 // security TODO:
+// role mapping validation - from enum
 // JWT key as secret - use providers' for OAUTH?
+// CSP: https://www.baeldung.com/spring-security-csp
 // rate limiting
 
 @Configuration
