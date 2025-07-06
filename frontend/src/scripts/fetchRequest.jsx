@@ -2,19 +2,12 @@ const URL = "http://localhost:8081";
 
 const fetchRequest = async (method, request, body = null) => {
   try {
-    const token = localStorage.getItem("jwtToken");
     const headers = {
       "Content-Type": "application/json",
     };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
 
     const options = {
       method: method,
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
       headers: headers,
       credentials: "include",
     };
