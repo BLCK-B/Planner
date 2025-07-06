@@ -13,7 +13,6 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -43,14 +42,14 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials, ServerWebExchange exchange) {
+	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(
 				credentials.get("username").asText(),
 				credentials.get("password").asText()
 		);
 
-		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager)
-				.map(token -> ResponseEntity.ok("Authentication successful"))
+		return accountService.loginUser(authRequest, reactiveAuthenticationManager)
+				.map(ResponseEntity::ok) // this returns the token
 				.onErrorResume(BadCredentialsException.class, e ->
 						Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))
 				)
