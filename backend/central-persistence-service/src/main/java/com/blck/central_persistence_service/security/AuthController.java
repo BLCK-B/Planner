@@ -5,14 +5,15 @@ import com.blck.central_persistence_service.accounts.AccountService;
 import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.server.csrf.CsrfToken;
-import org.springframework.security.web.server.csrf.ServerCsrfTokenRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -23,13 +24,10 @@ public class AuthController {
 
 	private final ReactiveAuthenticationManager reactiveAuthenticationManager;
 
-	private final ServerCsrfTokenRepository csrfTokenRepository;
-
 	@Autowired
-	public AuthController(AccountService accountService, ReactiveAuthenticationManager reactiveAuthenticationManager, ServerCsrfTokenRepository csrfTokenRepository) {
+	public AuthController(AccountService accountService, ReactiveAuthenticationManager reactiveAuthenticationManager) {
 		this.accountService = accountService;
 		this.reactiveAuthenticationManager = reactiveAuthenticationManager;
-		this.csrfTokenRepository = csrfTokenRepository;
 	}
 
 	@PostMapping("/register")
@@ -45,14 +43,14 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials) {
+	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials, ServerWebExchange exchange) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(
 				credentials.get("username").asText(),
 				credentials.get("password").asText()
 		);
 
-		return accountService.loginUser(authRequest, reactiveAuthenticationManager)
-				.map(ResponseEntity::ok) // this returns the token
+		return accountService.loginUser(exchange, authRequest, reactiveAuthenticationManager)
+				.map(token -> ResponseEntity.ok("Authentication successful"))
 				.onErrorResume(BadCredentialsException.class, e ->
 						Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()))
 				)
@@ -61,21 +59,5 @@ public class AuthController {
 				);
 	}
 
-//	@GetMapping("/csrf")
-//	public Mono<ResponseEntity<CsrfToken>> csrfToken(ServerWebExchange exchange) {
-//		return exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty())
-//				.cast(CsrfToken.class)
-//				.map(ResponseEntity::ok);
-////				.switchIfEmpty(Mono.defer(() -> exchange.getAttribute(CsrfToken.class.getName()) != null
-////						? Mono.just(ResponseEntity.ok(exchange.getAttribute(CsrfToken.class.getName())))
-////						: Mono.just(ResponseEntity.noContent().build())));
-//	}
-
-	@GetMapping("/csrf")
-	public Mono<ResponseEntity<CsrfToken>> csrfToken(ServerWebExchange exchange) {
-		return csrfTokenRepository.generateToken(exchange)
-				.flatMap(token -> csrfTokenRepository.saveToken(exchange, token).thenReturn(token))
-				.map(ResponseEntity::ok);
-	}
 
 }

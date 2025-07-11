@@ -2,24 +2,17 @@ const URL = "http://localhost:8081";
 
 const fetchRequest = async (method, request, body = null) => {
   try {
-    const token = localStorage.getItem("jwtToken");
     const headers = {
       "Content-Type": "application/json",
     };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
 
     const options = {
       method: method,
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
       headers: headers,
       credentials: "include",
     };
 
-    if (method === "POST" && body) {
+    if (body) {
       options.body = JSON.stringify(body);
     }
 
@@ -30,12 +23,12 @@ const fetchRequest = async (method, request, body = null) => {
       throw new Error(errorText || "Backend error");
     }
 
-    const text = await response.text();
+    const token = await response.text();
 
     try {
-      return JSON.parse(text);
+      return JSON.parse(token);
     } catch {
-      return text;
+      return token;
     }
   } catch (err) {
     throw new Error(err.message);
