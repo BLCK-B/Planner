@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -25,9 +26,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.ServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.server.csrf.XorServerCsrfTokenRequestAttributeHandler;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Collection;
 
 // security TODO:
@@ -42,23 +48,52 @@ import java.util.Collection;
 public class SecurityConfiguration {
 
 //	@Order(2)
+//	@Bean
+//	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
+//		http
+////				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
+//				.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository()))
+////				.csrf(ServerHttpSecurity.CsrfSpec::disable)
+//				.oauth2ResourceServer(oauth2 -> oauth2
+//					.jwt(jwt -> jwt.jwtAuthenticationConverter(
+//							new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
+//					))
+////					.jwt(Customizer.withDefaults())
+//				)
+//				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+//				.authorizeExchange(exchanges -> exchanges
+//						.pathMatchers("/auth/**").permitAll()
+//						.anyExchange().authenticated()
+//				);
+//		return http.build();
+//	}
+
 	@Bean
-	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
+	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http, ServerCsrfTokenRepository csrfTokenRepository) {
+		ServerCsrfTokenRequestAttributeHandler csrfHandler = new ServerCsrfTokenRequestAttributeHandler();
 		http
-//				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
-				.csrf(ServerHttpSecurity.CsrfSpec::disable)
+//				.csrf(ServerHttpSecurity.CsrfSpec::disable)
+				.csrf(csrf -> csrf
+					.csrfTokenRepository(csrfTokenRepository)
+					.csrfTokenRequestHandler(csrfHandler)
+				)
 				.oauth2ResourceServer(oauth2 -> oauth2
 					.jwt(jwt -> jwt.jwtAuthenticationConverter(
-							new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
+						new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
 					))
-//					.jwt(Customizer.withDefaults())
 				)
 				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 				.authorizeExchange(exchanges -> exchanges
-						.pathMatchers("/auth/**").permitAll()
-						.anyExchange().authenticated()
+					.pathMatchers("/auth/**").permitAll()
+					.anyExchange().authenticated()
 				);
 		return http.build();
+	}
+
+
+	@Bean
+	public ServerCsrfTokenRepository csrfTokenRepository() {
+		return CookieServerCsrfTokenRepository.withHttpOnlyFalse();
 	}
 
 	private Converter<Jwt, AbstractAuthenticationToken> jwtGrantedAuthoritiesConverter() {

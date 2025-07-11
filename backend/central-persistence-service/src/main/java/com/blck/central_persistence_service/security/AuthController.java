@@ -5,13 +5,13 @@ import com.blck.central_persistence_service.accounts.AccountService;
 import com.blck.central_persistence_service.accounts.UserAccount;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.server.csrf.CsrfToken;
+import org.springframework.security.web.server.csrf.ServerCsrfTokenRepository;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -23,10 +23,13 @@ public class AuthController {
 
 	private final ReactiveAuthenticationManager reactiveAuthenticationManager;
 
+	private final ServerCsrfTokenRepository csrfTokenRepository;
+
 	@Autowired
-	public AuthController(AccountService accountService, ReactiveAuthenticationManager reactiveAuthenticationManager) {
+	public AuthController(AccountService accountService, ReactiveAuthenticationManager reactiveAuthenticationManager, ServerCsrfTokenRepository csrfTokenRepository) {
 		this.accountService = accountService;
 		this.reactiveAuthenticationManager = reactiveAuthenticationManager;
+		this.csrfTokenRepository = csrfTokenRepository;
 	}
 
 	@PostMapping("/register")
@@ -58,5 +61,21 @@ public class AuthController {
 				);
 	}
 
+//	@GetMapping("/csrf")
+//	public Mono<ResponseEntity<CsrfToken>> csrfToken(ServerWebExchange exchange) {
+//		return exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty())
+//				.cast(CsrfToken.class)
+//				.map(ResponseEntity::ok);
+////				.switchIfEmpty(Mono.defer(() -> exchange.getAttribute(CsrfToken.class.getName()) != null
+////						? Mono.just(ResponseEntity.ok(exchange.getAttribute(CsrfToken.class.getName())))
+////						: Mono.just(ResponseEntity.noContent().build())));
+//	}
+
+	@GetMapping("/csrf")
+	public Mono<ResponseEntity<CsrfToken>> csrfToken(ServerWebExchange exchange) {
+		return csrfTokenRepository.generateToken(exchange)
+				.flatMap(token -> csrfTokenRepository.saveToken(exchange, token).thenReturn(token))
+				.map(ResponseEntity::ok);
+	}
 
 }
