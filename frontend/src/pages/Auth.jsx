@@ -25,10 +25,10 @@ const Auth = () => {
     console.log(data);
     if (formType === "log-in") {
       const response = await sendPostRequest("/auth/login", data);
-      console.log("respoonse data: ", response);
-      if (response) {
-        localStorage.setItem("jwtToken", response);
-        // navigate("/main");
+      if (!response.error) {
+        navigate("/main");
+      } else {
+        alert("Login failed: " + (response?.error || "Unknown error"));
       }
     } else if (formType === "register") sendPostRequest("/auth/register", data);
   };
@@ -36,12 +36,9 @@ const Auth = () => {
   const sendPostRequest = async (request, content) => {
     const body = { username: content.username, password: content.password };
     try {
-      const response = await fetchRequest("POST", request, body);
-      console.log("Response:", response);
-      return response;
+      return await fetchRequest("POST", request, body);
     } catch (error) {
-      console.error("Error:", error.message);
-      throw error;
+      return { error: error.message };
     }
   };
 
