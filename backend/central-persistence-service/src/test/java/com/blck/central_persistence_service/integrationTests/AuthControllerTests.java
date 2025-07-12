@@ -44,7 +44,7 @@ class AuthControllerTests {
 			.put("password", "password");
 
 	final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("USER"));
+	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("ROLE_USER"));
 	final UserAccount encodedAccount = new UserAccount(null, "username", bCryptPasswordEncoder.encode("password"), true, Set.of("ROLE_USER"));
 	final UserAccount encodedAccountDiffPswd = new UserAccount(null, "username", bCryptPasswordEncoder.encode("different"), true, Set.of("ROLE_USER"));
 
@@ -55,7 +55,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +64,7 @@ class AuthControllerTests {
 			.expectBody()
 			.jsonPath("$.username").isEqualTo("username")
 			.jsonPath("$.password").isEqualTo("password")
-			.jsonPath("$.roles[0]").isEqualTo("USER");
+			.jsonPath("$.roles[0]").isEqualTo("ROLE_USER");
 	}
 
 	@Test
@@ -74,7 +73,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +88,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(encodedAccountDiffPswd));
 
 		webTestClient
-				.mutateWith(csrf())
 				.post()
 				.uri("/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +103,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username"))
 					.authorities(createAuthorityList("ROLE_USER")))
@@ -119,13 +115,12 @@ class AuthControllerTests {
 			.expectBody()
 			.jsonPath("$.username").isEqualTo("username")
 			.jsonPath("$.password").isEqualTo("password")
-			.jsonPath("$.roles[0]").isEqualTo("USER");
+			.jsonPath("$.roles[0]").isEqualTo("ROLE_USER");
 	}
 
 	@Test
 	void registerUserNullCredentialsIsBadRequest() {
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +133,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -155,7 +149,6 @@ class AuthControllerTests {
 			.put("password", "wrongPassword");
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -169,7 +162,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -190,7 +182,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -217,7 +208,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -259,7 +249,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		String jwtToken = Objects.requireNonNull(webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -272,7 +261,6 @@ class AuthControllerTests {
 			.getFirst(String.valueOf(JWT_COOKIE_NAME)))
 			.getValue();
 		webTestClient
-			.mutateWith(csrf())
 			.get()
 			.uri("/users/userAccountInfo")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
@@ -287,7 +275,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username"))
 					.authorities(createAuthorityList("ROLE_USER")))
@@ -302,7 +289,6 @@ class AuthControllerTests {
 	@Test
 	void loginUserNullCredentialsIsBadRequest() {
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)

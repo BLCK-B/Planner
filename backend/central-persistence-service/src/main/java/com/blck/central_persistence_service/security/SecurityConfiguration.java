@@ -8,10 +8,12 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -32,7 +34,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 // security TODO:
-// role mapping validation - from enum (ROLE_ or not)
 // JWT key as secret - use providers' for OAUTH?
 // CSP: https://www.baeldung.com/spring-security-csp
 // rate limiting
@@ -83,7 +84,9 @@ public class SecurityConfiguration {
 		converter.setAuthoritiesClaimName("roles");
 		converter.setAuthorityPrefix("");
 		return jwt -> {
-			Collection<GrantedAuthority> authorities = converter.convert(jwt);
+			Collection<GrantedAuthority> authorities = converter.convert(jwt).stream()
+					.filter(auth -> Roles.doesRoleExist(auth.getAuthority())) // TODO: test this works - need it?
+					.toList();
 			return new JwtAuthenticationToken(jwt, authorities);
 		};
 	}

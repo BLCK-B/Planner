@@ -20,7 +20,6 @@ public class UserControllerTests {
 	@Test
 	void unauthenticatedUserIsUnauthorized() {
 		webTestClient
-			.mutateWith(csrf())
 			.get()
 			.uri("/users/loadItems")
 			.exchange()
@@ -30,7 +29,6 @@ public class UserControllerTests {
 	@Test
 	void authenticatedUserWithoutUserRoleIsForbidden() {
 		webTestClient
-			.mutateWith(csrf())
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username")))
 			.get()
@@ -42,7 +40,6 @@ public class UserControllerTests {
 	@Test
 	void authenticatedUserHasAccess() {
 		webTestClient
-			.mutateWith(csrf())
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username"))
 					.authorities(createAuthorityList("ROLE_USER")))
