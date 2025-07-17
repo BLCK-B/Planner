@@ -8,12 +8,10 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Role;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -23,7 +21,10 @@ import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
-import org.springframework.security.oauth2.server.resource.authentication.*;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtReactiveAuthenticationManager;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
@@ -43,86 +44,86 @@ import java.util.Collection;
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-//	@Order(2)
-	@Bean
-	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http,
-												 AuthenticationWebFilter cookieAuthenticationWebFilter) {
-		http
-			.csrf(ServerHttpSecurity.CsrfSpec::disable)
-			.oauth2ResourceServer(oauth2 -> oauth2
-				.jwt(jwt -> jwt.jwtAuthenticationConverter(
-					new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
-				))
-			)
-			.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-			.authorizeExchange(exchanges -> exchanges
-				.pathMatchers("/auth/**").permitAll()
-				.anyExchange().authenticated()
-			)
-			.addFilterAt(cookieAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
-		return http.build();
-	}
+    //	@Order(2)
+    @Bean
+    public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http,
+                                                 AuthenticationWebFilter cookieAuthenticationWebFilter) {
+        http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(
+                                new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
+                        ))
+                )
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers("/auth/**").permitAll()
+                        .anyExchange().authenticated()
+                )
+                .addFilterAt(cookieAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        return http.build();
+    }
 
-	@Bean
-	public ReactiveJwtAuthenticationConverterAdapter jwtAuthenticationConverterAdapter() {
-		return new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter());
-	}
+    @Bean
+    public ReactiveJwtAuthenticationConverterAdapter jwtAuthenticationConverterAdapter() {
+        return new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter());
+    }
 
-	@Bean
-	public AuthenticationWebFilter cookieAuthenticationWebFilter(ReactiveJwtDecoder jwtDecoder) {
-		JwtReactiveAuthenticationManager authenticationManager = new JwtReactiveAuthenticationManager(jwtDecoder);
-		authenticationManager.setJwtAuthenticationConverter(jwtAuthenticationConverterAdapter());
+    @Bean
+    public AuthenticationWebFilter cookieAuthenticationWebFilter(ReactiveJwtDecoder jwtDecoder) {
+        JwtReactiveAuthenticationManager authenticationManager = new JwtReactiveAuthenticationManager(jwtDecoder);
+        authenticationManager.setJwtAuthenticationConverter(jwtAuthenticationConverterAdapter());
 
-		AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
-		authenticationWebFilter.setServerAuthenticationConverter(new CookieServerAuthenticationConverter());
-		authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
-		return authenticationWebFilter;
-	}
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
+        authenticationWebFilter.setServerAuthenticationConverter(new CookieServerAuthenticationConverter());
+        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
+        return authenticationWebFilter;
+    }
 
-	private Converter<Jwt, AbstractAuthenticationToken> jwtGrantedAuthoritiesConverter() {
-		JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-		converter.setAuthoritiesClaimName("roles");
-		converter.setAuthorityPrefix("");
-		return jwt -> {
-			Collection<GrantedAuthority> authorities = converter.convert(jwt).stream()
-					.filter(auth -> Roles.doesRoleExist(auth.getAuthority())) // TODO: test this works - need it?
-					.toList();
-			return new JwtAuthenticationToken(jwt, authorities);
-		};
-	}
+    private Converter<Jwt, AbstractAuthenticationToken> jwtGrantedAuthoritiesConverter() {
+        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
+        converter.setAuthoritiesClaimName("roles");
+        converter.setAuthorityPrefix("");
+        return jwt -> {
+            Collection<GrantedAuthority> authorities = converter.convert(jwt).stream()
+                    .filter(auth -> Roles.doesRoleExist(auth.getAuthority())) // TODO: test this works - need it?
+                    .toList();
+            return new JwtAuthenticationToken(jwt, authorities);
+        };
+    }
 
-	@Bean
-	public JwtEncoder jwtEncoder() {
-		String jwtSecret = "12345678901234567890123456789012";
-		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-		OctetSequenceKey jwk = new OctetSequenceKey.Builder(secretKey).build();
-		JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-		return new NimbusJwtEncoder(jwkSource);
-	}
+    @Bean
+    public JwtEncoder jwtEncoder() {
+        String jwtSecret = "12345678901234567890123456789012";
+        SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        OctetSequenceKey jwk = new OctetSequenceKey.Builder(secretKey).build();
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSource);
+    }
 
-	@Bean
-	public ReactiveJwtDecoder reactiveJwtDecoder() {
-		String jwtSecret = "12345678901234567890123456789012";
-		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-		return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
-	}
+    @Bean
+    public ReactiveJwtDecoder reactiveJwtDecoder() {
+        String jwtSecret = "12345678901234567890123456789012";
+        SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public ReactiveUserDetailsService userDetailsService(AccountService accountService) {
-		return accountService;
-	}
+    @Bean
+    public ReactiveUserDetailsService userDetailsService(AccountService accountService) {
+        return accountService;
+    }
 
-	@Bean
-	public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-		UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
-		authenticationManager.setPasswordEncoder(passwordEncoder);
-		return authenticationManager;
-	}
+    @Bean
+    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+        authenticationManager.setPasswordEncoder(passwordEncoder);
+        return authenticationManager;
+    }
 
 // TODO: OIDC below
 //	@Bean

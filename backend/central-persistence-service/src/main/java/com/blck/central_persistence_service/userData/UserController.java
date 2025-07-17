@@ -16,14 +16,14 @@ import reactor.core.publisher.Mono;
 @PreAuthorize("hasRole('ROLE_USER')")
 public class UserController {
 
-	private final UserItemRepository UserItemRepository;
+	private final UserItemRepository userItemRepository;
 
 	private final ReactiveMongoTemplate mongoTemplate;
 
 
 	@Autowired
-	public UserController(UserItemRepository UserItemRepository, ReactiveMongoTemplate mongoTemplate) {
-		this.UserItemRepository = UserItemRepository;
+	public UserController(UserItemRepository userItemRepository, ReactiveMongoTemplate mongoTemplate) {
+		this.userItemRepository = userItemRepository;
 		this.mongoTemplate = mongoTemplate;
 	}
 
@@ -32,16 +32,21 @@ public class UserController {
 		return Mono.just(jwt.getSubject());
 	}
 
-	@GetMapping(value = "/loadItems", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Flux<UserItem> getAllUserItems(@AuthenticationPrincipal Jwt jwt) {
-		String username = jwt.getSubject();
-		return mongoTemplate.findAll(UserItem.class, username);
+	@GetMapping(value = "/userTasks", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Flux<Task> userTasks(@AuthenticationPrincipal Jwt jwt) {
+		return userItemRepository.findByUserID(jwt.getSubject());
 	}
 
-	@PostMapping(value = "/saveUserItem", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<String> saveUserItem(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode userItem) {
-		String collectionName = jwt.getSubject();
-		return mongoTemplate.save(userItem, collectionName)
-				.thenReturn("User item saved successfully!");
+	@PutMapping(value = "/userTask", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Mono<String> setUserTask(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode userItem) {
+		Task task = new Task(null, jwt.getSubject(), userItem.get("data").toString());
+		return mongoTemplate.save(task)
+				.thenReturn("User task saved successfully.");
+	}
+
+	@DeleteMapping(value = "/userTask", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Mono<String> deleteUserTask(@AuthenticationPrincipal Jwt jwt, @RequestBody Task userItem) {
+		return userItemRepository.deleteByUserIDAndItemID(jwt.getSubject(), userItem.userID())
+				.thenReturn("User task removed successfully.");
 	}
 }

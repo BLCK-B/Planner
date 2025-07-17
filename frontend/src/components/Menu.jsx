@@ -5,12 +5,12 @@ const Menu = () => {
     <Tabs.Root defaultValue="tasks" orientation="vertical" variant="subtle">
       <Tabs.List bg="base.300" p="1" display="flex" flexDirection={{ base: "row", sm: "row", md: "column" }} w="100%">
         <Tabs.Trigger value="tasks" mb="2">
-          Tasks
+          Tab 1
         </Tabs.Trigger>
         <Tabs.Trigger value="notes" mb="2">
-          Notes
+          Tab 2
         </Tabs.Trigger>
-        <Tabs.Trigger value="todos">Todo lists</Tabs.Trigger>
+        <Tabs.Trigger value="todos">Tab 3</Tabs.Trigger>
       </Tabs.List>
     </Tabs.Root>
   );
