@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center } from "@chakra-ui/react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,7 +6,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import Header from "../components/Header";
 import { useForm } from "react-hook-form";
 import OAuthProviders from "../components/OAuthProviders";
-import fetchRequest from "../scripts/fetchRequest.jsx";
+import fetchRequest from "../scripts/fetchRequest.tsx";
 
 const Auth = () => {
   // TODO: unrecognised param -> register

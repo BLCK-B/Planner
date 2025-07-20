@@ -1,4 +1,4 @@
-export const calcTimeToDate = (dateString) => {
+export const calcTimeToDate = (dateString: string) => {
   const date = new Date(dateString);
   const present = new Date();
   date.setHours(0, 0, 0, 0);
@@ -8,7 +8,7 @@ export const calcTimeToDate = (dateString) => {
   return result;
 };
 
-export const textualTimeToDate = (dateString) => {
+export const textualTimeToDate = (dateString: string) => {
   const numberOfDays = calcTimeToDate(dateString);
   if (numberOfDays === 0) return "due today";
   else if (numberOfDays === 1) return "tomorrow";
@@ -31,7 +31,7 @@ export const textualTimeToDate = (dateString) => {
   return parts.join(" ") + futureOrPast;
 };
 
-export const isDatePast = (dateString) => {
+export const isDatePast = (dateString: string) => {
   if (!dateString) return false;
   const date = new Date(dateString);
   const present = new Date();

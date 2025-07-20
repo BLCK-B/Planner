@@ -1,8 +1,8 @@
 import { Box, GridItem, Grid } from "@chakra-ui/react";
-import Header from "../components/Header.jsx";
-import NewTaskCreate from "../components/NewTaskCreate.jsx";
-import ItemList from "../components/ItemList.jsx";
-import Menu from "../components/Menu.jsx";
+import Header from "../components/Header.tsx";
+import NewTaskCreate from "../components/NewTaskCreate.tsx";
+import ItemList from "../components/ItemList.tsx";
+import Menu from "../components/Menu.tsx";
 
 function MainPage() {
   return (

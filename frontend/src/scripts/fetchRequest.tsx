@@ -1,12 +1,14 @@
 const URL = "http://localhost:8081";
 
-const fetchRequest = async (method, request, body = null) => {
+type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
+
+const fetchRequest = async (method: Methods, request: string, body?: object | null) => {
   try {
     const headers = {
       "Content-Type": "application/json",
     };
 
-    const options = {
+    const options: RequestInit = {
       method: method,
       headers: headers,
       credentials: "include",
@@ -31,7 +33,11 @@ const fetchRequest = async (method, request, body = null) => {
       return token;
     }
   } catch (err) {
-    throw new Error(err.message);
+    if (err instanceof Error) {
+      console.error(err.message);
+    } else {
+      console.error(String(err));
+    }
   }
 };
 

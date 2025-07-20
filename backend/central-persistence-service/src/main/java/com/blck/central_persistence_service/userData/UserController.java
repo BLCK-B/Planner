@@ -44,9 +44,9 @@ public class UserController {
 				.thenReturn("User task saved successfully.");
 	}
 
-	@DeleteMapping(value = "/userTask", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<String> deleteUserTask(@AuthenticationPrincipal Jwt jwt, @RequestBody Task userItem) {
-		return userItemRepository.deleteByUserIDAndItemID(jwt.getSubject(), userItem.userID())
+	@DeleteMapping(value = "/userTask/{taskID}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Mono<String> deleteUserTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
+		return userItemRepository.deleteByUserIDAndItemID(jwt.getSubject(), taskID)
 				.thenReturn("User task removed successfully.");
 	}
 }

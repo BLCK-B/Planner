@@ -2,10 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MainPage from "./pages/MainPage.jsx";
-import Landing from "./pages/Landing.jsx";
-import Auth from "./pages/Auth.jsx";
-import { TaskProvider } from "./TaskContext.jsx";
+import MainPage from "./pages/MainPage.tsx";
+import Landing from "./pages/Landing.tsx";
+import Auth from "./pages/Auth.tsx";
+import { TaskProvider } from "./TaskContext.tsx";
 
 const system = createSystem(defaultConfig, {
   theme: {
@@ -24,7 +24,12 @@ const system = createSystem(defaultConfig, {
   },
 });
 
-createRoot(document.getElementById("root")).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+createRoot(rootElement).render(
   <StrictMode>
     <TaskProvider>
       <ChakraProvider value={system}>

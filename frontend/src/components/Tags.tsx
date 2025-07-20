@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { Flex, Input, Box, Show } from "@chakra-ui/react";
-import PropTypes from "prop-types";
 import { Tag } from "@/components/ui/tag";
 import { Field } from "@/components/ui/field";
+import * as React from "react";
 
-const Tags = ({ taskTags, handleAddTag, handleRemoveTag }) => {
+type Props = {
+  taskTags: string[];
+  handleAddTag?: (name: string) => void;
+  handleRemoveTag?: (name: string) => void;
+};
+
+const Tags = ({ taskTags, handleAddTag, handleRemoveTag }: Props) => {
   const [menuShown, setMenuShown] = useState(false);
   const [newTagName, setNewTagName] = useState("");
 
@@ -12,13 +18,15 @@ const Tags = ({ taskTags, handleAddTag, handleRemoveTag }) => {
     setMenuShown(true);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewTagName(e.target.value);
   };
 
   const confirmNewTag = () => {
     setMenuShown(false);
-    handleAddTag(newTagName);
+    if (handleAddTag) {
+      handleAddTag(newTagName);
+    }
     setNewTagName("");
   };
 
@@ -26,7 +34,7 @@ const Tags = ({ taskTags, handleAddTag, handleRemoveTag }) => {
     <Flex>
       <Show when={!menuShown}>
         {taskTags.map((tag, index) => (
-          <Tag key={index} variant="surface" closable={!!handleRemoveTag} onClose={() => handleRemoveTag(tag)}>
+          <Tag key={index} variant="surface" closable={!!handleRemoveTag} onClose={() => handleRemoveTag ? handleRemoveTag(tag) : null}>
             {tag}
           </Tag>
         ))}
@@ -52,12 +60,4 @@ const Tags = ({ taskTags, handleAddTag, handleRemoveTag }) => {
     </Flex>
   );
 };
-
-Tags.propTypes = {
-  taskTags: PropTypes.array.isRequired,
-  handleAddTag: PropTypes.func,
-  handleRemoveTag: PropTypes.func,
-  newTagName: PropTypes.string,
-};
-
 export default Tags;
