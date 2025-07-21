@@ -6,6 +6,8 @@ import MainPage from "./pages/MainPage.tsx";
 import Landing from "./pages/Landing.tsx";
 import Auth from "./pages/Auth.tsx";
 import { TaskProvider } from "./TaskContext.tsx";
+import { QueryClient } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 const system = createSystem(defaultConfig, {
   theme: {
@@ -29,8 +31,11 @@ if (!rootElement) {
   throw new Error("Root element not found");
 }
 
+const queryClient = new QueryClient();
+
 createRoot(rootElement).render(
   <StrictMode>
+    <QueryClientProvider client={queryClient}>
     <TaskProvider>
       <ChakraProvider value={system}>
         <Router>
@@ -45,5 +50,6 @@ createRoot(rootElement).render(
         </Router>
       </ChakraProvider>
     </TaskProvider>
+    </QueryClientProvider>
   </StrictMode>
 );

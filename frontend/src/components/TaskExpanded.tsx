@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Box, Flex, Input } from "@chakra-ui/react";
-import PropTypes from "prop-types";
 import { useTaskContext } from "../TaskContext.tsx";
 import { isDatePast } from "../scripts/Dates.tsx";
 import { Field } from "@/components/ui/field";
 import ButtonConfirm from "./base/ButtonConfirm.tsx";
 import ButtonDelete from "./base/ButtonDelete.tsx";
 import fetchRequest from "../scripts/fetchRequest.tsx";
+import useSaveTask from "./queries/UseSaveTask.tsx"
 import Tags from "./Tags.tsx";
 import type { Task } from "../types/Task";
 import * as React from "react";
@@ -16,43 +16,59 @@ type Props = {
 };
 
 const TaskExpanded = ({ task }: Props) => {
-  const { handleCollapseTask, handleDeleteTask, handleUpdateTask } = useTaskContext();
+  const { handleCollapseTask, handleDeleteTask } = useTaskContext();
 
-  const [taskName, setTaskName] = useState(task.data.name);
-  const [taskDate, setTaskDate] = useState(task.data.date);
-  const [taskTags, setTaskTags] = useState(task.data.tags || []);
+  const mutation = useSaveTask();
+
+  const [localTask, setLocalTask] = useState<Task>(task);
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTaskName(e.target.value);
+    setLocalTask(prev => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        name: e.target.value,
+      },
+    }));
   };
+
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTaskDate(e.target.value);
+    setLocalTask(prev => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        date: e.target.value,
+      },
+    }));
   };
+
   const handleAddTag = (name: string) => {
-    if (name) {
-      setTaskTags((prevTags) => [...prevTags, name]);
-    }
+    setLocalTask(prev => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        tags: [...(prev.data.tags ?? []), name],
+      },
+    }));
   };
+
   const handleRemoveTag = (tagToRemove: string) => {
-    setTaskTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
+    setLocalTask(prev => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        tags: (prev.data.tags ?? []).filter(tag => tag !== tagToRemove),
+      },
+    }));
   };
 
   const handleClick = () => {
     // handleCollapseTask();
   };
 
-  const handleConfirmClick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const newTask: Task = {
-      itemID: task.itemID,
-      data: {
-        name: taskName,
-        date: taskDate,
-        type: task.data.type,
-        tags: taskTags,
-      },
-    };
-    const response = await fetchRequest("PUT", "/users/userTask", newTask);
-    handleUpdateTask(newTask);
+    await mutation.mutateAsync(localTask);
     handleCollapseTask();
   };
 
@@ -73,35 +89,23 @@ const TaskExpanded = ({ task }: Props) => {
       mb="4"
       onClick={handleClick}
       cursor="button"
-      {...(isDatePast(task.data.date) && { bg: "base.400" })}>
+      {...(isDatePast(localTask.data.date) && { bg: "base.400" })}>
       {/* inputs */}
       <Flex gap="6" align="center" justifyContent="start">
-        <Input p="2px" variant="subtle" type="date" value={taskDate} onChange={handleDateChange} />
-        <Field invalid={!taskName}>
-          <Input p="2px" variant="subtle" value={taskName} placeholder="Task name" onChange={handleNameChange} />
+        <Input p="2px" variant="subtle" type="date" value={localTask.data.date} onChange={handleDateChange} />
+        <Field invalid={!localTask.data.name}>
+          <Input p="2px" variant="subtle" value={localTask.data.name} placeholder="Task name" onChange={handleNameChange} />
         </Field>
       </Flex>
       {/* tags */}
-      <Tags taskTags={taskTags} handleAddTag={handleAddTag} handleRemoveTag={handleRemoveTag} />
+      <Tags taskTags={localTask.data.tags} handleAddTag={handleAddTag} handleRemoveTag={handleRemoveTag} />
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
-        <ButtonConfirm disabled={!taskName} onClick={handleConfirmClick} />
+        <ButtonConfirm disabled={!localTask.data.name} onClick={handleConfirmClick} />
         <ButtonDelete onClick={() => handleDeleteTaskLocal(task)} />
       </Flex>
     </Box>
   );
-};
-
-TaskExpanded.propTypes = {
-  task: PropTypes.shape({
-    itemID: PropTypes.string.isRequired,
-    data: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired,
-      date: PropTypes.string,
-      tags: PropTypes.array,
-    }).isRequired,
-  }).isRequired,
 };
 
 export default TaskExpanded;

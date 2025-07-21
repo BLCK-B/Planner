@@ -1,6 +1,6 @@
 import {type ReactNode, useEffect} from "react";
 import { createContext, useContext, useState } from "react";
-import type {Task} from "./types/Task.ts";
+import type {Task} from "./types/Task.tsx";
 import * as React from "react";
 
 type TaskContextType = {
@@ -42,10 +42,6 @@ export const TaskProvider = ({ children }: Props) => {
     setExpandedTaskId('');
   };
 
-  const handleUpdateTask = (updatedTask: Task) => {
-    setItemList((prevTasks) => prevTasks.map((task) => (task.itemID === updatedTask.itemID ? { ...task, ...updatedTask } : task)));
-  };
-
   const handleAddTask = (newTask: Task) => {
     setItemList([...itemList, newTask]);
   };
@@ -72,7 +68,6 @@ export const TaskProvider = ({ children }: Props) => {
         expandedTaskId,
         handleExpandTask,
         handleCollapseTask,
-        handleUpdateTask,
         handleAddTask,
         handleDeleteTask,
         dataIsSaved,
