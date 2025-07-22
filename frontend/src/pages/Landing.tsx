@@ -1,5 +1,5 @@
 import { Box, Button, Input, HStack, GridItem, Grid, VStack, Flex, Heading, Icon, Spacer, Text } from "@chakra-ui/react";
-import Header from "../components/Header";
+import Header from "../components/layout/Header.tsx";
 
 function Landing() {
   return (

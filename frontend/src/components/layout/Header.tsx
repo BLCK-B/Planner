@@ -1,7 +1,6 @@
 import { Button, Flex, Heading, Spacer } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
-import SaveIndicator from "./SaveIndicator";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ const Header = () => {
       <Heading>Planner</Heading>
       <Heading>🦥</Heading>
       <Spacer />
-      {location.pathname === "/main" && <SaveIndicator />}
       {location.pathname === "/main" && <FaUserCircle style={{ width: "2em", height: "2em", color: "grey" }} />}
       {/* Conditionally render the Sign up button only on the landing page */}
       {location.pathname === "/" && (

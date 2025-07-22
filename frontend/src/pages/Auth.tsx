@@ -3,9 +3,9 @@ import { Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
-import Header from "../components/Header";
+import Header from "../components/layout/Header.tsx";
 import { useForm } from "react-hook-form";
-import OAuthProviders from "../components/OAuthProviders";
+import OAuthProviders from "../components/base/OAuthProviders.tsx";
 import fetchRequest from "../scripts/fetchRequest.tsx";
 
 const Auth = () => {

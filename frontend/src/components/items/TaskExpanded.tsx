@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Box, Flex, Input } from "@chakra-ui/react";
-import { useTaskContext } from "../TaskContext.tsx";
-import { isDatePast } from "../scripts/Dates.tsx";
+import { useTaskContext } from "../../TaskContext.tsx";
+import { isDatePast } from "../../scripts/Dates.tsx";
 import { Field } from "@/components/ui/field";
-import ButtonConfirm from "./base/ButtonConfirm.tsx";
-import ButtonDelete from "./base/ButtonDelete.tsx";
-import fetchRequest from "../scripts/fetchRequest.tsx";
-import useSaveTask from "./queries/UseSaveTask.tsx"
-import Tags from "./Tags.tsx";
-import type { Task } from "../types/Task";
+import ButtonConfirm from "../base/ButtonConfirm.tsx";
+import ButtonDelete from "../base/ButtonDelete.tsx";
+import useSaveTask from "../queries/UseSaveTask.tsx"
+import useDeleteTask from "../queries/UseDeleteTask.tsx"
+import Tags from "../base/Tags.tsx";
+import type { Task } from "../../types/Task.ts";
 import * as React from "react";
 
 type Props = {
@@ -16,9 +16,10 @@ type Props = {
 };
 
 const TaskExpanded = ({ task }: Props) => {
-  const { handleCollapseTask, handleDeleteTask } = useTaskContext();
+  const { handleCollapseTask } = useTaskContext();
 
-  const mutation = useSaveTask();
+  const saveTaskMutation = useSaveTask();
+  const deleteTaskMutation = useDeleteTask();
 
   const [localTask, setLocalTask] = useState<Task>(task);
 
@@ -68,15 +69,12 @@ const TaskExpanded = ({ task }: Props) => {
 
   const handleConfirmClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    await mutation.mutateAsync(localTask);
+    await saveTaskMutation.mutateAsync(localTask);
     handleCollapseTask();
   };
 
-  const handleDeleteTaskLocal = async (task: Task) => {
-    const response = await fetchRequest("DELETE", `/users/userTask/${task.itemID}`);
-    if (!response.error) {
-      handleDeleteTask(task);
-    }
+  const handleDeleteTaskLocal = async () => {
+    await deleteTaskMutation.mutateAsync(localTask);
   };
 
   return (
@@ -102,7 +100,7 @@ const TaskExpanded = ({ task }: Props) => {
       {/* buttons */}
       <Flex gap="6" align="center" justifyContent="center">
         <ButtonConfirm disabled={!localTask.data.name} onClick={handleConfirmClick} />
-        <ButtonDelete onClick={() => handleDeleteTaskLocal(task)} />
+        <ButtonDelete onClick={handleDeleteTaskLocal} />
       </Flex>
     </Box>
   );

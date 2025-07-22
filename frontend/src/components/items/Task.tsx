@@ -1,9 +1,9 @@
 import { Box, Text, Flex, Spacer } from "@chakra-ui/react";
-import { useTaskContext } from "../TaskContext.tsx";
-import { isDatePast, textualTimeToDate } from "../scripts/Dates.tsx";
-import ButtonComplete from "./base/ButtonComplete.tsx";
-import Tags from "./Tags.tsx";
-import type { Task as TaskType } from "../types/Task";
+import { useTaskContext } from "../../TaskContext.tsx";
+import { isDatePast, textualTimeToDate } from "../../scripts/Dates.tsx";
+import ButtonComplete from "../base/ButtonComplete.tsx";
+import Tags from "../base/Tags.tsx";
+import type { Task as TaskType } from "../../types/Task.ts";
 import * as React from "react";
 
 const Task = (task: TaskType) => {
