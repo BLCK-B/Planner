@@ -1,10 +1,9 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
-import Header from "../components/layout/Header.tsx";
-import NewTaskCreate from "../components/items/NewTaskCreate.tsx";
-import ItemsWithDate from "../components/lists/ItemsWithDate.tsx";
-import ItemsWithoutDate from "../components/lists/ItemsWithoutDate.tsx";
-import Menu from "../components/layout/Menu.tsx";
-import CreatorMenu from "../components/functional/CreatorMenu.tsx";
+import Header from "@/components/layout/Header.tsx";
+import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
+import ItemsWithoutDate from "@/components/lists/ItemsWithoutDate.tsx";
+import Menu from "@/components/layout/Menu.tsx";
+import CreatorMenu from "@/components/functional/CreatorMenu.tsx";
 
 function MainPage() {
     return (
@@ -34,7 +33,6 @@ function MainPage() {
 
                 {/* minHeight is for scrolling */}
                 <GridItem minHeight="0px" colSpan={4} bg="base.200" style={styles.gridSection} order={{base: 2, md: 1}}>
-                    {/*<NewTaskCreate taskType="with-date" />*/}
                     <ItemsWithDate/>
                 </GridItem>
 
@@ -48,10 +46,9 @@ function MainPage() {
                     bg="base.200"
                     minHeight="300px"
                     style={styles.gridSection}>
-                    {/*<NewTaskCreate taskType="without-date" />*/}
                     <ItemsWithoutDate/>
                 </GridItem>
-                
+
                 <CreatorMenu/>
             </Grid>
         </Box>

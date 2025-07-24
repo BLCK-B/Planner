@@ -1,6 +1,6 @@
-import fetchRequest from "../../scripts/fetchRequest.tsx";
-import type {Task as TaskType } from "../../types/Task.ts";
-import type { BackendResponse } from "../../types/BackendResponse";
+import fetchRequest from "@/scripts/fetchRequest.tsx";
+import type {Task as TaskType} from "@/types/Task.ts";
+import type {BackendResponse} from "@/types/BackendResponse.ts";
 
 export const loadItemsQuery = () => ({
     queryKey: ['userItems'],

@@ -1,8 +1,9 @@
 import {MdTaskAlt} from "react-icons/md";
 import {IconButton} from "@chakra-ui/react";
+import * as React from "react";
 
 type Props = {
-    onClick: () => void;
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
     disabled?: boolean;
 }
 

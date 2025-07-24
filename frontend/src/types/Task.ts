@@ -4,6 +4,7 @@ export type Task = {
         name: string;
         date: string;
         type: string;
-        tags?: string[];
+        tags: string[];
+        completed?: string;
     };
 };

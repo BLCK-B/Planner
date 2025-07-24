@@ -1,11 +1,11 @@
 import {useEffect} from "react";
 import {useQuery} from "@tanstack/react-query"
 import {Flex} from "@chakra-ui/react";
-import {useTaskContext} from "../../TaskContext.tsx";
-import TaskExpanded from "../items/TaskExpanded.tsx";
-import Task from "../items/Task.tsx";
-import loadItemsQuery from "../queries/LoadItemsQuery.tsx";
-import type {Task as TaskType} from "../../types/Task.ts";
+import {useTaskContext} from "@/TaskContext.tsx";
+import TaskExpanded from "@/components/items/TaskExpanded.tsx";
+import Task from "@/components/items/Task.tsx";
+import loadItemsQuery from "@/components/queries/LoadItemsQuery.tsx";
+import type {Task as TaskType} from "@/types/Task.ts";
 
 const ItemsWithDate = () => {
     const {expandedTaskId, itemList, setItemList} = useTaskContext();
@@ -27,8 +27,18 @@ const ItemsWithDate = () => {
     }, [data, setItemList]);
 
     const sortDates = (a: TaskType, b: TaskType): number => {
-        return new Date(b.data.date).getTime() - new Date(a.data?.date).getTime();
+        const aCompleted = Boolean(a.data.completed);
+        const bCompleted = Boolean(b.data.completed);
+
+        if (aCompleted && !bCompleted) return 1;
+        if (!aCompleted && bCompleted) return -1;
+
+        const aDate = new Date(a.data?.date).getTime();
+        const bDate = new Date(b.data?.date).getTime();
+
+        return bDate - aDate;
     };
+
 
     const filterWithDate = (task: TaskType) => {
         return task.data.date;
@@ -50,6 +60,7 @@ const ItemsWithDate = () => {
             </div>
         </Flex>
     );
+
 };
 
 export default ItemsWithDate;

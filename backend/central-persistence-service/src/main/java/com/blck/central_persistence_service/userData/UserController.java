@@ -20,7 +20,6 @@ public class UserController {
 
 	private final ReactiveMongoTemplate mongoTemplate;
 
-
 	@Autowired
 	public UserController(UserItemRepository userItemRepository, ReactiveMongoTemplate mongoTemplate) {
 		this.userItemRepository = userItemRepository;

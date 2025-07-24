@@ -1,95 +1,96 @@
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center } from "@chakra-ui/react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Field } from "@/components/ui/field";
-import { PasswordInput } from "@/components/ui/password-input";
-import Header from "../components/layout/Header.tsx";
-import { useForm } from "react-hook-form";
-import OAuthProviders from "../components/base/OAuthProviders.tsx";
-import fetchRequest from "../scripts/fetchRequest.tsx";
+import {useParams, useNavigate, useLocation} from "react-router-dom";
+import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center} from "@chakra-ui/react";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Field} from "@/components/ui/field";
+import {PasswordInput} from "@/components/ui/password-input";
+import Header from "@/components/layout/Header.tsx";
+import {useForm} from "react-hook-form";
+import OAuthProviders from "@/components/base/OAuthProviders.tsx";
+import fetchRequest from "@/scripts/fetchRequest.tsx";
 
 const Auth = () => {
-  // TODO: unrecognised param -> register
-  const { formType } = useParams();
-  const navigate = useNavigate();
+    // TODO: unrecognised param -> register
+    const {formType} = useParams();
+    const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+    const {
+        register,
+        handleSubmit,
+        formState: {errors},
+    } = useForm();
 
-  const onSubmit = async (data, event) => {
-    event.preventDefault();
-    console.log(data);
-    if (formType === "log-in") {
-      const response = await sendPostRequest("/auth/login", data);
-      if (!response.error) {
-        navigate("/main");
-      } else {
-        alert("Login failed: " + (response?.error || "Unknown error"));
-      }
-    } else if (formType === "register") sendPostRequest("/auth/register", data);
-  };
+    const onSubmit = async (data, event) => {
+        event.preventDefault();
+        console.log(data);
+        if (formType === "log-in") {
+            const response = await sendPostRequest("/auth/login", data);
+            if (!response.error) {
+                navigate("/main");
+            } else {
+                alert("Login failed: " + (response?.error || "Unknown error"));
+            }
+        } else if (formType === "register") sendPostRequest("/auth/register", data);
+    };
 
-  const sendPostRequest = async (request, content) => {
-    const body = { username: content.username, password: content.password };
-    try {
-      return await fetchRequest("POST", request, body);
-    } catch (error) {
-      return { error: error.message };
-    }
-  };
+    const sendPostRequest = async (request, content) => {
+        const body = {username: content.username, password: content.password};
+        try {
+            return await fetchRequest("POST", request, body);
+        } catch (error) {
+            return {error: error.message};
+        }
+    };
 
-  return (
-    <Box w="100vw" h="100vh" bg="base.200">
-      <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
-        {/* header */}
-        <GridItem h="3em" colSpan={1} rowSpan={1} bg="#dcdcdc">
-          <Header />
-        </GridItem>
+    return (
+        <Box w="100vw" h="100vh" bg="base.200">
+            <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
+                {/* header */}
+                <GridItem h="3em" colSpan={1} rowSpan={1} bg="#dcdcdc">
+                    <Header/>
+                </GridItem>
 
-        <Center>
-          <GridItem colSpan={1} bg="#dcdcdc">
-            <Card.Root width="320px" variant="elevated">
-              <Card.Header>
-                <Show when={formType === "register"}>
-                  <Card.Title>Sign up</Card.Title>
-                  <Card.Description>Continue with provider or create an account.</Card.Description>
-                </Show>
-                <Show when={formType === "log-in"}>
-                  <Card.Title>Log in</Card.Title>
-                  <Card.Description>Welcome back. Continue with provider or credentials.</Card.Description>
-                  <Checkbox defaultChecked size="sm">
-                    Remember me
-                  </Checkbox>
-                </Show>
-              </Card.Header>
-              <Card.Body gap="2">
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <Stack gap="4" align="flex-start" maxW="sm">
-                    <OAuthProviders />
+                <Center>
+                    <GridItem colSpan={1} bg="#dcdcdc">
+                        <Card.Root width="320px" variant="elevated">
+                            <Card.Header>
+                                <Show when={formType === "register"}>
+                                    <Card.Title>Sign up</Card.Title>
+                                    <Card.Description>Continue with provider or create an account.</Card.Description>
+                                </Show>
+                                <Show when={formType === "log-in"}>
+                                    <Card.Title>Log in</Card.Title>
+                                    <Card.Description>Welcome back. Continue with provider or
+                                        credentials.</Card.Description>
+                                </Show>
+                            </Card.Header>
+                            <Card.Body gap="2">
+                                <form onSubmit={handleSubmit(onSubmit)}>
+                                    <Stack gap="4" align="flex-start" maxW="sm">
+                                        <OAuthProviders/>
 
-                    <Field label="E-mail" invalid={!!errors.username} errorText={errors.username?.message}>
-                      <Input placeholder="me@example.com" {...register("username", { required: "Username is required" })} />
-                    </Field>
+                                        <Field label="E-mail" invalid={!!errors.username}
+                                               errorText={errors.username?.message}>
+                                            <Input
+                                                placeholder="me@example.com" {...register("username", {required: "Username is required"})} />
+                                        </Field>
 
-                    <Field label="Password" invalid={!!errors.password} errorText={errors.password?.message}>
-                      <PasswordInput {...register("password", { required: "Password is required" })} />
-                    </Field>
+                                        <Field label="Password" invalid={!!errors.password}
+                                               errorText={errors.password?.message}>
+                                            <PasswordInput {...register("password", {required: "Password is required"})} />
+                                        </Field>
 
-                    <Button type="submit">Submit</Button>
+                                        <Button type="submit">Submit</Button>
 
-                    <Show when={formType === "log-in"}>Forgot password</Show>
-                  </Stack>
-                </form>
-              </Card.Body>
-            </Card.Root>
-          </GridItem>
-        </Center>
-      </Grid>
-    </Box>
-  );
+                                        <Show when={formType === "log-in"}>Forgot password</Show>
+                                    </Stack>
+                                </form>
+                            </Card.Body>
+                        </Card.Root>
+                    </GridItem>
+                </Center>
+            </Grid>
+        </Box>
+    );
 };
 
 export default Auth;

@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import fetchRequest from "../../scripts/fetchRequest.tsx";
-import loadItemsQuery from "./LoadItemsQuery.tsx";
-import type { Task as TaskType } from "../../types/Task";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import fetchRequest from "@/scripts/fetchRequest.tsx";
+import loadItemsQuery from "@/components/queries/LoadItemsQuery.tsx";
+import type {Task as TaskType} from "@/types/Task";
 
 const deleteRequest = async (task: TaskType): Promise<TaskType[]> => {
     return await fetchRequest("DELETE", `/users/userTask/${task.itemID}`);
@@ -14,7 +14,7 @@ const useDeleteTask = () => {
         mutationFn: deleteRequest,
         onSuccess: () => {
             const queryKey = loadItemsQuery().queryKey;
-            queryClient.invalidateQueries({ queryKey });
+            queryClient.invalidateQueries({queryKey});
         },
         onError: (error) => {
             console.error("Error saving task:", error);

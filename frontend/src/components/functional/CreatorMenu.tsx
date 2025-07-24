@@ -1,12 +1,17 @@
-import {Box, Card, Center, Dialog, Button, Portal} from "@chakra-ui/react";
-// import {useTaskContext} from "../../TaskContext.tsx";
-import type {Task} from "../../types/Task.ts";
-import type {Properties} from 'csstype';
-import TaskExpanded from "../items/TaskExpanded.tsx";
+import {Dialog, Button, Portal, Flex, Input} from "@chakra-ui/react";
+
+import type {Task} from "@/types/Task.ts";
+import Tags from "@/components/base/Tags.tsx";
+import {Field} from "@/components/ui/field";
+import * as React from "react";
+import {useState} from "react";
+import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
+import useSaveTask from "@/components/queries/UseSaveTask.tsx";
+import {IoAddCircle} from "react-icons/io5";
 
 const CreatorMenu = () => {
 
-    // const {handleAddTask, handleExpandTask} = useTaskContext();
+    const saveTaskMutation = useSaveTask();
 
     const newItem: Task = {
         itemID: '',
@@ -15,46 +20,107 @@ const CreatorMenu = () => {
             date: "",
             type: "",
             tags: [],
+            completed: "",
         },
     };
 
-    // const addTask = () => {
-    //     const newTask: Task = {
-    //         itemID: '',
-    //         data: {
-    //             name: "",
-    //             date: isDate() ? new Date().toDateString() : "",
-    //             type: taskType,
-    //             tags: [],
-    //         },
-    //     };
-    //     handleAddTask(newTask);
-    //     handleExpandTask(newTask);
-    // };
+    const [newItemLocal, setNewItemLocal] = useState<Task>(newItem);
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewItemLocal(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                name: e.target.value,
+            },
+        }));
+    };
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewItemLocal(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                date: e.target.value,
+            },
+        }));
+    };
+
+    const handleAddTag = (name: string) => {
+        setNewItemLocal(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                tags: [...(prev.data.tags ?? []), name],
+            },
+        }));
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        setNewItemLocal(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                tags: (prev.data.tags ?? []).filter(tag => tag !== tagToRemove),
+            },
+        }));
+    };
+
+    const saveItem = async () => {
+        await saveTaskMutation.mutateAsync(newItemLocal);
+    };
 
     return (
-        <Dialog.Root defaultOpen size={"lg"}>
-            <Portal>
-                <Dialog.Backdrop/>
-                <Dialog.Positioner>
-                    <Dialog.Content>
-                        <Dialog.Header>
-                            <Dialog.Title>Dialog Title</Dialog.Title>
-                        </Dialog.Header>
-                        <Dialog.Body>
-                            <TaskExpanded task={newItem}/>
-                        </Dialog.Body>
-                        <Dialog.Footer>
-                            <Dialog.ActionTrigger asChild>
-                                <Button variant="outline">Cancel</Button>
-                            </Dialog.ActionTrigger>
-                            <Button>Save</Button>
-                        </Dialog.Footer>
-                    </Dialog.Content>
-                </Dialog.Positioner>
-            </Portal>
-        </Dialog.Root>
+        <>
+            <Dialog.Root size={"sm"}>
+                <Dialog.Trigger asChild>
+                    <IoAddCircle size="sm" style={styles.openDialogButton}>Open Dialog</IoAddCircle>
+                </Dialog.Trigger>
+                <Portal>
+                    <Dialog.Backdrop/>
+                    <Dialog.Positioner>
+                        <Dialog.Content>
+                            <Dialog.Header>
+                                <Dialog.Title>Create a new task</Dialog.Title>
+                            </Dialog.Header>
+                            <Dialog.Body>
+                                <Flex gap="6" align="start" justifyContent="start" direction="column">
+                                    <Field invalid={!newItemLocal.data.name}>
+                                        <Input p="2px" variant="subtle" value={newItemLocal.data.name}
+                                               placeholder="Task name"
+                                               onChange={handleNameChange}/>
+                                    </Field>
+                                    <Input p="2px" variant="subtle" type="date" value={newItemLocal.data.date}
+                                           onChange={handleDateChange}/>
+                                    <Tags taskTags={newItemLocal.data.tags} handleAddTag={handleAddTag}
+                                          handleRemoveTag={handleRemoveTag}/>
+                                </Flex>
+                            </Dialog.Body>
+                            <Dialog.Footer>
+                                <Dialog.ActionTrigger asChild>
+                                    <ButtonConfirm onClick={saveItem}
+                                                   disabled={!newItemLocal.data.name}>Save</ButtonConfirm>
+                                </Dialog.ActionTrigger>
+                                <Dialog.ActionTrigger asChild>
+                                    <Button size="xs" variant="outline">Cancel</Button>
+                                </Dialog.ActionTrigger>
+                            </Dialog.Footer>
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Portal>
+            </Dialog.Root>
+        </>
     );
 };
 
 export default CreatorMenu;
+
+const styles = {
+    openDialogButton: {
+        position: "absolute",
+        height: "2em",
+        width: "2em",
+        left: "11em",
+        top: "4em",
+    },
+};
