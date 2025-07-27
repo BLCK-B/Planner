@@ -9,7 +9,6 @@ import OAuthProviders from "@/components/base/OAuthProviders.tsx";
 import fetchRequest from "@/scripts/fetchRequest.tsx";
 
 const Auth = () => {
-    // TODO: unrecognised param -> register
     const {formType} = useParams();
     const navigate = useNavigate();
 

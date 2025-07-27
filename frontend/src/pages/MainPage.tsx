@@ -4,8 +4,32 @@ import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
 import ItemsWithoutDate from "@/components/lists/ItemsWithoutDate.tsx";
 import Menu from "@/components/layout/Menu.tsx";
 import CreatorMenu from "@/components/functional/CreatorMenu.tsx";
+import {checkAuthStateQuery} from "@/components/queries/CheckAuthStateQuery.ts";
+import {useQuery} from "@tanstack/react-query";
+import type {Task as TaskType} from "@/types/Task.ts";
+import {useEffect} from "react";
+import type {FetchError} from "@/types/FetchError.ts";
+import {useNavigate} from "react-router-dom";
 
-function MainPage() {
+const MainPage = () => {
+    const navigate = useNavigate();
+
+    const {error, isLoading} = useQuery<TaskType[]>(checkAuthStateQuery());
+
+    useEffect(() => {
+        if (error) {
+            const fetchError = error as FetchError
+            if (fetchError.status === 401) {
+                navigate("/auth/log-in");
+            } else {
+                console.error(fetchError);
+            }
+        }
+    }, [error]);
+
+    if (isLoading) {
+        return null;
+    }
     return (
         <Box w="100vw" h="100vh" bg="base.300" fontSize="17px">
             <Grid
@@ -53,7 +77,7 @@ function MainPage() {
             </Grid>
         </Box>
     );
-}
+};
 
 export default MainPage;
 

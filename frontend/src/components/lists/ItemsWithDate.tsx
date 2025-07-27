@@ -10,7 +10,7 @@ import type {Task as TaskType} from "@/types/Task.ts";
 const ItemsWithDate = () => {
     const {expandedTaskId, itemList, setItemList} = useTaskContext();
 
-    const {data} = useQuery<TaskType[]>(loadItemsQuery());
+    const {data, error} = useQuery<TaskType[]>(loadItemsQuery());
 
     const renderTaskType = (task: TaskType, expandedTaskId: string) => {
         if (expandedTaskId !== task.itemID) {
@@ -24,7 +24,7 @@ const ItemsWithDate = () => {
         if (data) {
             setItemList(data);
         }
-    }, [data, setItemList]);
+    }, [data, setItemList, error]);
 
     const sortDates = (a: TaskType, b: TaskType): number => {
         const aCompleted = Boolean(a.data.completed);

@@ -1,7 +1,7 @@
 import {Box, GridItem, Grid, Text} from "@chakra-ui/react";
 import Header from "@/components/layout/Header.tsx";
 
-function Landing() {
+function LandingPage() {
     return (
         <Box w="100vw" h="100vh" bg="base.100">
             <Grid templateRows="auto 1fr" templateColumns="repeat(7, 1fr)" gap={2} h="100%">
@@ -22,4 +22,4 @@ function Landing() {
     );
 }
 
-export default Landing;
+export default LandingPage;
