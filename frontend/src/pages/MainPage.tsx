@@ -4,7 +4,7 @@ import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
 import ItemsWithoutDate from "@/components/lists/ItemsWithoutDate.tsx";
 import Menu from "@/components/layout/Menu.tsx";
 import CreatorMenu from "@/components/functional/CreatorMenu.tsx";
-import {checkAuthStateQuery} from "@/components/queries/CheckAuthStateQuery.ts";
+import {checkAuthStateQuery} from "@/components/queries/CheckAuthStateQuery.tsx";
 import {useQuery} from "@tanstack/react-query";
 import type {Task as TaskType} from "@/types/Task.ts";
 import {useEffect} from "react";
@@ -14,7 +14,7 @@ import {useNavigate} from "react-router-dom";
 const MainPage = () => {
     const navigate = useNavigate();
 
-    const {error, isLoading} = useQuery<TaskType[]>(checkAuthStateQuery());
+    const {error} = useQuery<TaskType[]>(checkAuthStateQuery());
 
     useEffect(() => {
         if (error) {
@@ -27,9 +27,6 @@ const MainPage = () => {
         }
     }, [error]);
 
-    if (isLoading) {
-        return null;
-    }
     return (
         <Box w="100vw" h="100vh" bg="base.300" fontSize="17px">
             <Grid
@@ -56,7 +53,8 @@ const MainPage = () => {
                 </GridItem>
 
                 {/* minHeight is for scrolling */}
-                <GridItem minHeight="0px" colSpan={4} bg="base.200" style={styles.gridSection} order={{base: 2, md: 1}}>
+                <GridItem minHeight="0px" colSpan={4} bg="base.200" style={styles.gridSection}
+                          order={{base: 2, md: 1}}>
                     <ItemsWithDate/>
                 </GridItem>
 

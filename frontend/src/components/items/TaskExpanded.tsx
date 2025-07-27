@@ -7,9 +7,10 @@ import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 import useSaveTask from "@/components/queries/UseSaveTask.tsx"
 import useDeleteTask from "@/components/queries/UseDeleteTask.tsx"
-import Tags from "@/components/base/Tags.tsx";
 import type {Task} from "@/types/Task.ts";
 import * as React from "react";
+import OneTag from "@/components/base/OneTag.tsx";
+import {Tag} from "@/components/ui/tag";
 
 type Props = {
     task: Task;
@@ -22,6 +23,18 @@ const TaskExpanded = ({task}: Props) => {
     const deleteTaskMutation = useDeleteTask();
 
     const [localTask, setLocalTask] = useState<Task>(task);
+
+    const setNewNameAt = (index: number, newName: string) => {
+        const newTags = localTask.data.tags;
+        newTags[index] = newName;
+        setLocalTask(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                tags: newTags,
+            },
+        }));
+    };
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLocalTask(prev => ({
@@ -43,12 +56,12 @@ const TaskExpanded = ({task}: Props) => {
         }));
     };
 
-    const handleAddTag = (name: string) => {
+    const handleAddTag = () => {
         setLocalTask(prev => ({
             ...prev,
             data: {
                 ...prev.data,
-                tags: [...(prev.data.tags ?? []), name],
+                tags: [...(prev.data.tags ?? []), ""],
             },
         }));
     };
@@ -98,7 +111,19 @@ const TaskExpanded = ({task}: Props) => {
                 </Field>
             </Flex>
             {/* tags */}
-            <Tags taskTags={localTask.data.tags} handleAddTag={handleAddTag} handleRemoveTag={handleRemoveTag}/>
+            <Flex>
+                {/* tag list */}
+                {localTask.data.tags.map((tagName, index) => (
+                    <OneTag key={index} name={tagName}
+                            setNewName={(newName: string) => setNewNameAt(index, newName)} deleteTag={handleRemoveTag}/>
+                ))}
+                {/* add tag button */}
+                {handleAddTag && localTask.data.tags.length <= 2 && (
+                    <Tag onClick={handleAddTag} variant="surface">
+                        + tag
+                    </Tag>
+                )}
+            </Flex>
             {/* buttons */}
             <Flex gap="6" align="center" justifyContent="center">
                 <ButtonConfirm disabled={!localTask.data.name} onClick={handleConfirmClick}/>
