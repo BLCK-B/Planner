@@ -5,6 +5,7 @@ import {useTaskContext} from "@/TaskContext.tsx";
 import TaskExpanded from "@/components/items/TaskExpanded.tsx";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/components/queries/LoadItemsQuery.tsx";
+import {customSort} from '@/scripts/Sorting.tsx';
 import type {Task as TaskType} from "@/types/Task.ts";
 
 const ItemsWithoutDate = () => {
@@ -26,10 +27,6 @@ const ItemsWithoutDate = () => {
         }
     }, [data, setItemList]);
 
-    const sortDates = (a: TaskType, b: TaskType): number => {
-        return new Date(b.data.date).getTime() - new Date(a.data?.date).getTime();
-    };
-
     const filterWithoutDate = (task: TaskType) => {
         return !task.data.date;
     };
@@ -43,7 +40,7 @@ const ItemsWithoutDate = () => {
             <div style={{overflowY: "scroll", scrollbarWidth: "none"}}>
                 {itemList
                     .filter(filterWithoutDate)
-                    .sort(sortDates)
+                    .sort(customSort)
                     .map((task) => (
                         <div key={task.itemID}>{renderTaskType(task, expandedTaskId)}</div>
                     ))}

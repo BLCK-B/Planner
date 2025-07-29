@@ -6,6 +6,7 @@ import TaskExpanded from "@/components/items/TaskExpanded.tsx";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/components/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
+import {customSort} from '@/scripts/Sorting.tsx'
 
 const ItemsWithDate = () => {
     const {expandedTaskId, itemList, setItemList} = useTaskContext();
@@ -26,24 +27,6 @@ const ItemsWithDate = () => {
         }
     }, [data, setItemList, error]);
 
-    const sortDates = (a: TaskType, b: TaskType): number => {
-        const aCompleted = Boolean(a.data.completed);
-        const bCompleted = Boolean(b.data.completed);
-
-        if (aCompleted && !bCompleted) return 1;
-        if (!aCompleted && bCompleted) return -1;
-
-        const aDate = new Date(a.data?.date).getTime();
-        const bDate = new Date(b.data?.date).getTime();
-
-        return bDate - aDate;
-    };
-
-
-    const filterWithDate = (task: TaskType) => {
-        return task.data.date;
-    };
-
     return (
         <Flex
             direction="column"
@@ -52,8 +35,8 @@ const ItemsWithDate = () => {
             style={styles.deadlineList}>
             <div style={{overflowY: "scroll", scrollbarWidth: "none"}}>
                 {itemList
-                    .filter(filterWithDate)
-                    .sort(sortDates)
+                    .filter(task => task.data.date)
+                    .sort(customSort)
                     .map((task) => (
                         <div key={task.itemID}>{renderTaskType(task, expandedTaskId)}</div>
                     ))}

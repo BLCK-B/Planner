@@ -1,4 +1,4 @@
-import {Dialog, Button, Portal, Flex, Input} from "@chakra-ui/react";
+import {Dialog, Button, Portal, Flex, Input, Checkbox} from "@chakra-ui/react";
 
 import type {Task} from "@/types/Task.ts";
 import Tags from "@/components/base/Tags.tsx";
@@ -18,6 +18,7 @@ const CreatorMenu = () => {
         data: {
             name: "",
             date: "",
+            deadline: true,
             type: "",
             tags: [],
             completed: "",
@@ -66,6 +67,16 @@ const CreatorMenu = () => {
         }));
     };
 
+    const handleCheckboxChange = (details: { checked: boolean }) => {
+        setNewItemLocal(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                deadline: details.checked,
+            },
+        }));
+    };
+
     const saveItem = async () => {
         await saveTaskMutation.mutateAsync(newItemLocal);
     };
@@ -90,8 +101,18 @@ const CreatorMenu = () => {
                                                placeholder="Task name"
                                                onChange={handleNameChange}/>
                                     </Field>
-                                    <Input p="2px" variant="subtle" type="date" value={newItemLocal.data.date}
-                                           onChange={handleDateChange}/>
+                                    <Flex style={styles.dateFlex}>
+                                        <Input p="2px" variant="subtle" type="date" value={newItemLocal.data.date}
+                                               onChange={handleDateChange}/>
+                                        <Checkbox.Root checked={newItemLocal.data.deadline}
+                                                       onCheckedChange={handleCheckboxChange} size={"md"}>
+                                            <Checkbox.HiddenInput/>
+                                            <Checkbox.Label>Deadline</Checkbox.Label>
+                                            <Checkbox.Control>
+                                                <Checkbox.Indicator/>
+                                            </Checkbox.Control>
+                                        </Checkbox.Root>
+                                    </Flex>
                                     <Tags taskTags={newItemLocal.data.tags} handleAddTag={handleAddTag}
                                           handleRemoveTag={handleRemoveTag}/>
                                 </Flex>
@@ -123,4 +144,9 @@ const styles = {
         left: "11em",
         top: "4em",
     },
+    dateFlex: {
+        position: "relative",
+        width: "65%",
+        gap: "2rem",
+    }
 };

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Box, Flex, Input} from "@chakra-ui/react";
+import {Box, Checkbox, Flex, Input} from "@chakra-ui/react";
 import {useTaskContext} from "@/TaskContext.tsx";
 import {isDatePast} from "@/scripts/Dates.tsx";
 import {Field} from "@/components/ui/field";
@@ -76,6 +76,16 @@ const TaskExpanded = ({task}: Props) => {
         }));
     };
 
+    const handleCheckboxChange = (details: { checked: boolean }) => {
+        setLocalTask(prev => ({
+            ...prev,
+            data: {
+                ...prev.data,
+                deadline: details.checked,
+            },
+        }));
+    };
+
     const handleClick = () => {
         // handleCollapseTask();
     };
@@ -104,7 +114,19 @@ const TaskExpanded = ({task}: Props) => {
             {...(task.data.completed && {bg: "green.100"})}>
             {/* inputs */}
             <Flex gap="6" align="center" justifyContent="start">
-                <Input p="2px" variant="subtle" type="date" value={localTask.data.date} onChange={handleDateChange}/>
+                {/*<Input p="2px" variant="subtle" type="date" value={localTask.data.date} onChange={handleDateChange}/>*/}
+                <Flex style={styles.dateFlex}>
+                    <Input p="2px" variant="subtle" type="date" value={localTask.data.date}
+                           onChange={handleDateChange}/>
+                    <Checkbox.Root checked={localTask.data.deadline}
+                                   onCheckedChange={handleCheckboxChange} size={"md"}>
+                        <Checkbox.HiddenInput/>
+                        <Checkbox.Label>Deadline</Checkbox.Label>
+                        <Checkbox.Control>
+                            <Checkbox.Indicator/>
+                        </Checkbox.Control>
+                    </Checkbox.Root>
+                </Flex>
                 <Field invalid={!localTask.data.name}>
                     <Input p="2px" variant="subtle" value={localTask.data.name} placeholder="Task name"
                            onChange={handleNameChange}/>
@@ -134,3 +156,9 @@ const TaskExpanded = ({task}: Props) => {
 };
 
 export default TaskExpanded;
+
+const styles = {
+    dateFlex: {
+        gap: "0.5rem",
+    }
+};
