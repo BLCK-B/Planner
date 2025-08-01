@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.blck.central_persistence_service.security.SecurityNames.JWT_COOKIE_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -42,7 +44,7 @@ class AuthControllerTests {
 			.put("password", "password");
 
 	final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("USER"));
+	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("ROLE_USER"));
 	final UserAccount encodedAccount = new UserAccount(null, "username", bCryptPasswordEncoder.encode("password"), true, Set.of("ROLE_USER"));
 	final UserAccount encodedAccountDiffPswd = new UserAccount(null, "username", bCryptPasswordEncoder.encode("different"), true, Set.of("ROLE_USER"));
 
@@ -53,7 +55,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -63,7 +64,7 @@ class AuthControllerTests {
 			.expectBody()
 			.jsonPath("$.username").isEqualTo("username")
 			.jsonPath("$.password").isEqualTo("password")
-			.jsonPath("$.roles[0]").isEqualTo("USER");
+			.jsonPath("$.roles[0]").isEqualTo("ROLE_USER");
 	}
 
 	@Test
@@ -72,7 +73,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -88,7 +88,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(encodedAccountDiffPswd));
 
 		webTestClient
-				.mutateWith(csrf())
 				.post()
 				.uri("/auth/register")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +103,6 @@ class AuthControllerTests {
 		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username"))
 					.authorities(createAuthorityList("ROLE_USER")))
@@ -117,13 +115,12 @@ class AuthControllerTests {
 			.expectBody()
 			.jsonPath("$.username").isEqualTo("username")
 			.jsonPath("$.password").isEqualTo("password")
-			.jsonPath("$.roles[0]").isEqualTo("USER");
+			.jsonPath("$.roles[0]").isEqualTo("ROLE_USER");
 	}
 
 	@Test
 	void registerUserNullCredentialsIsBadRequest() {
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/register")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +133,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +149,6 @@ class AuthControllerTests {
 			.put("password", "wrongPassword");
 
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -163,46 +158,97 @@ class AuthControllerTests {
 	}
 
 	@Test
-	void returnedJwtTokenContentsAreCorrect() throws JsonProcessingException {
+	void jwtIsNotEmbeddedInResponseBodyOrHeader() {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
-		String jwtToken = webTestClient
-			.mutateWith(csrf())
+		webTestClient
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(credentials)
 			.exchange()
 			.expectStatus().isOk()
-			.expectBody(String.class)
-			.returnResult()
-			.getResponseBody();
-
-		String[] parts = Objects.requireNonNull(jwtToken).split("\\.");
-		assertEquals(3, parts.length, "JWT token has 3 parts: header, payload, signature.");
-
-		String decodedPayload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-		JsonNode payload = new ObjectMapper().readTree(decodedPayload);
-
-		assertAll(
-			() -> assertEquals("username", payload.get("sub").asText()),
-			() -> assertTrue(payload.hasNonNull("iat")),
-			() -> assertTrue(payload.hasNonNull("exp")),
-			() -> {
-				JsonNode rolesNode = payload.get("roles");
-				List<String> roles = new ArrayList<>();
-				rolesNode.forEach(node -> roles.add(node.asText()));
-				assertTrue(roles.contains("ROLE_USER"));
-			}
-		);
+			.expectBody()
+			.consumeWith(response -> {
+				assertAll(
+						() -> assertEquals("Authentication successful", new String(Objects.requireNonNull(response.getResponseBody()), StandardCharsets.UTF_8)),
+						() -> assertNull(response.getResponseHeaders().getFirst(HttpHeaders.AUTHORIZATION))
+				);
+			});
 	}
 
 	@Test
-	void securityContextRetentionWithJwt() {
+	void jwtIsInSecureCookie() {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
-		String jwtToken = webTestClient
-			.mutateWith(csrf())
+		webTestClient
+			.post()
+			.uri("/auth/login")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody()
+			.consumeWith(response -> {
+				ResponseCookie token = response.getResponseCookies().getFirst(String.valueOf(JWT_COOKIE_NAME));
+				String setCookieHeader = response.getResponseHeaders().getFirst(HttpHeaders.SET_COOKIE);
+
+				assertNotNull(token, "JWT token is present in cookie");
+				assertNotNull(setCookieHeader, "Cookie has header");
+				assertAll(
+					() -> assertTrue(token.isHttpOnly(), "Cookie is not accessible by client-side JS"),
+					() -> assertTrue(token.isSecure(), "HTTPS cookie"),
+					() -> assertTrue(setCookieHeader.contains("SameSite=Strict"), "Only send cookie when request originates from our site")
+				);
+			});
+	}
+
+	@Test
+	void jwtContentsAreCorrect() {
+		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+
+		webTestClient
+			.post()
+			.uri("/auth/login")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(credentials)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody()
+			.consumeWith(response -> {
+				ResponseCookie token = response.getResponseCookies().getFirst(String.valueOf(JWT_COOKIE_NAME));
+
+				assertNotNull(token, "JWT token is present in cookie");
+				String[] parts = token.getValue().split("\\.");
+				assertEquals(3, parts.length, "JWT token has 3 parts: header, payload, signature");
+
+				String decodedPayload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+				JsonNode payload;
+				try {
+					payload = new ObjectMapper().readTree(decodedPayload);
+				} catch (JsonProcessingException e) {
+					throw new RuntimeException(e);
+				}
+
+				assertAll(
+					() -> assertEquals("username", payload.get("sub").asText()),
+					() -> assertTrue(payload.hasNonNull("iat")),
+					() -> assertTrue(payload.hasNonNull("exp")),
+					() -> {
+						JsonNode rolesNode = payload.get("roles");
+						List<String> roles = new ArrayList<>();
+						rolesNode.forEach(node -> roles.add(node.asText()));
+						assertTrue(roles.contains("ROLE_USER"));
+					}
+				);
+			});
+	}
+
+	@Test
+	void securityContextRetention() {
+		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+
+		String jwtToken = Objects.requireNonNull(webTestClient
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -211,9 +257,10 @@ class AuthControllerTests {
 			.expectStatus().isOk()
 			.expectBody(String.class)
 			.returnResult()
-			.getResponseBody();
+			.getResponseCookies()
+			.getFirst(String.valueOf(JWT_COOKIE_NAME)))
+			.getValue();
 		webTestClient
-			.mutateWith(csrf())
 			.get()
 			.uri("/users/userAccountInfo")
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
@@ -228,7 +275,6 @@ class AuthControllerTests {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
 
 		webTestClient
-			.mutateWith(csrf())
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username"))
 					.authorities(createAuthorityList("ROLE_USER")))
@@ -243,7 +289,6 @@ class AuthControllerTests {
 	@Test
 	void loginUserNullCredentialsIsBadRequest() {
 		webTestClient
-			.mutateWith(csrf())
 			.post()
 			.uri("/auth/login")
 			.contentType(MediaType.APPLICATION_JSON)

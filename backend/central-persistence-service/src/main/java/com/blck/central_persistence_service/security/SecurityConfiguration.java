@@ -14,6 +14,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -22,16 +23,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtReactiveAuthenticationManager;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 // security TODO:
-// role mapping validation - from enum
 // JWT key as secret - use providers' for OAUTH?
 // CSP: https://www.baeldung.com/spring-security-csp
 // rate limiting
@@ -41,68 +44,86 @@ import java.util.Collection;
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-//	@Order(2)
-	@Bean
-	public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http) {
-		http
-//				.csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
-				.csrf(ServerHttpSecurity.CsrfSpec::disable)
-				.oauth2ResourceServer(oauth2 -> oauth2
-					.jwt(jwt -> jwt.jwtAuthenticationConverter(
-							new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
-					))
-//					.jwt(Customizer.withDefaults())
-				)
-				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-				.authorizeExchange(exchanges -> exchanges
-						.pathMatchers("/auth/**").permitAll()
-						.anyExchange().authenticated()
-				);
-		return http.build();
-	}
+    //	@Order(2)
+    @Bean
+    public SecurityWebFilterChain apiFilterChain(ServerHttpSecurity http,
+                                                 AuthenticationWebFilter cookieAuthenticationWebFilter) {
+        http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(
+                                new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter())
+                        ))
+                )
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers("/auth/**").permitAll()
+                        .anyExchange().authenticated()
+                )
+                .addFilterAt(cookieAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+        return http.build();
+    }
 
-	private Converter<Jwt, AbstractAuthenticationToken> jwtGrantedAuthoritiesConverter() {
-		JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-		converter.setAuthoritiesClaimName("roles");
-		converter.setAuthorityPrefix("");
-		return jwt -> {
-			Collection<GrantedAuthority> authorities = converter.convert(jwt);
-			return new JwtAuthenticationToken(jwt, authorities);
-		};
-	}
+    @Bean
+    public ReactiveJwtAuthenticationConverterAdapter jwtAuthenticationConverterAdapter() {
+        return new ReactiveJwtAuthenticationConverterAdapter(jwtGrantedAuthoritiesConverter());
+    }
 
-	@Bean
-	public JwtEncoder jwtEncoder() {
-		String jwtSecret = "12345678901234567890123456789012";
-		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-		OctetSequenceKey jwk = new OctetSequenceKey.Builder(secretKey).build();
-		JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
-		return new NimbusJwtEncoder(jwkSource);
-	}
+    @Bean
+    public AuthenticationWebFilter cookieAuthenticationWebFilter(ReactiveJwtDecoder jwtDecoder) {
+        JwtReactiveAuthenticationManager authenticationManager = new JwtReactiveAuthenticationManager(jwtDecoder);
+        authenticationManager.setJwtAuthenticationConverter(jwtAuthenticationConverterAdapter());
 
-	@Bean
-	public ReactiveJwtDecoder reactiveJwtDecoder() {
-		String jwtSecret = "12345678901234567890123456789012";
-		SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-		return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
-	}
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
+        authenticationWebFilter.setServerAuthenticationConverter(new CookieServerAuthenticationConverter());
+        authenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
+        return authenticationWebFilter;
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    private Converter<Jwt, AbstractAuthenticationToken> jwtGrantedAuthoritiesConverter() {
+        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
+        converter.setAuthoritiesClaimName("roles");
+        converter.setAuthorityPrefix("");
+        return jwt -> {
+            Collection<GrantedAuthority> authorities = converter.convert(jwt).stream()
+                    .filter(auth -> Roles.doesRoleExist(auth.getAuthority())) // TODO: test this works - need it?
+                    .toList();
+            return new JwtAuthenticationToken(jwt, authorities);
+        };
+    }
 
-	@Bean
-	public ReactiveUserDetailsService userDetailsService(AccountService accountService) {
-		return accountService;
-	}
+    @Bean
+    public JwtEncoder jwtEncoder() {
+        String jwtSecret = "12345678901234567890123456789012";
+        SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        OctetSequenceKey jwk = new OctetSequenceKey.Builder(secretKey).build();
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSource);
+    }
 
-	@Bean
-	public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-		UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
-		authenticationManager.setPasswordEncoder(passwordEncoder);
-		return authenticationManager;
-	}
+    @Bean
+    public ReactiveJwtDecoder reactiveJwtDecoder() {
+        String jwtSecret = "12345678901234567890123456789012";
+        SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ReactiveUserDetailsService userDetailsService(AccountService accountService) {
+        return accountService;
+    }
+
+    @Bean
+    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+        authenticationManager.setPasswordEncoder(passwordEncoder);
+        return authenticationManager;
+    }
 
 // TODO: OIDC below
 //	@Bean
