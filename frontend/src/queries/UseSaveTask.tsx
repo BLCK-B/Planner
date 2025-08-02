@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import fetchRequest from "@/scripts/fetchRequest.tsx";
-import loadItemsQuery from "@/components/queries/LoadItemsQuery.tsx";
-import type {Task as TaskType} from "@/types/Task";
+import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
+import type {Task as TaskType} from "@/types/Task.ts";
 
 const saveRequest = async (task: TaskType): Promise<TaskType[]> => {
     return await fetchRequest("PUT", "/users/userTask", task);

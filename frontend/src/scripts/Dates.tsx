@@ -15,14 +15,15 @@ export const textualTimeToDate = (dateString: string, isDeadline: string) => {
     else if (numberOfDays === -1) return "yesterday";
 
     let lastPart = "";
-    if (isDeadline !== "false" && numberOfDays > 0) {
-        lastPart = " left";
+    let firstPart = "";
+    if (numberOfDays > 0) {
+        if (isDeadline !== "false") {
+            lastPart = " left";
+        } else {
+            firstPart = "in ";
+        }
     } else if (numberOfDays < 0) {
         lastPart = " ago";
-    }
-    let firstPart = "";
-    if (isDeadline === "false") {
-        firstPart = "in ";
     }
 
     const dayDiff = Math.abs(numberOfDays);
@@ -54,3 +55,12 @@ export const getDateToday = () => {
     const today = new Date();
     return `${today.getDate()}. ${today.getMonth() + 1}.`;
 };
+
+export const ddMMyyyy = (date: string) => {
+    const asDate = new Date(date);
+    const day = asDate.getDate();
+    const month = asDate.getMonth() + 1;
+    const year = asDate.getFullYear();
+    // return `${day}. ${month}. ${year}`;
+    return `${day}. ${month}.`;
+}

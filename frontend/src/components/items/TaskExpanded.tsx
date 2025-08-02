@@ -5,8 +5,8 @@ import {isDatePast} from "@/scripts/Dates.tsx";
 import {Field} from "@/components/ui/field";
 import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
-import useSaveTask from "@/components/queries/UseSaveTask.tsx"
-import useDeleteTask from "@/components/queries/UseDeleteTask.tsx"
+import useSaveTask from "@/queries/UseSaveTask.tsx"
+import useDeleteTask from "@/queries/UseDeleteTask.tsx"
 import type {Task} from "@/types/Task.ts";
 import * as React from "react";
 import OneTag from "@/components/base/OneTag.tsx";

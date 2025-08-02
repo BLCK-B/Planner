@@ -1,5 +1,5 @@
 import {Box, GridItem, Grid, Text} from "@chakra-ui/react";
-import Header from "@/components/layout/Header.tsx";
+import Header from "@/components/header/Header.tsx";
 
 function LandingPage() {
     return (

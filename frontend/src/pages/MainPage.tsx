@@ -1,10 +1,10 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
-import Header from "@/components/layout/Header.tsx";
+import Header from "@/components/header/Header.tsx";
 import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
 import ItemsWithoutDate from "@/components/lists/ItemsWithoutDate.tsx";
-import Menu from "@/components/layout/Menu.tsx";
-import CreatorMenu from "@/components/functional/CreatorMenu.tsx";
-import {checkAuthStateQuery} from "@/components/queries/CheckAuthStateQuery.tsx";
+import Menu from "@/components/sidemenu/Menu.tsx";
+import CreatorMenu from "@/components/popover/CreatorMenu.tsx";
+import {checkAuthStateQuery} from "@/queries/CheckAuthStateQuery.tsx";
 import {useQuery} from "@tanstack/react-query";
 import type {Task as TaskType} from "@/types/Task.ts";
 import {useEffect} from "react";
@@ -38,12 +38,12 @@ const MainPage = () => {
                 templateColumns={{
                     base: "repeat(1, 1fr)", // 1 column
                     sm: "repeat(1, 1fr)", // 1 column
-                    md: "repeat(7, 1fr)", // 7 columns
+                    md: "repeat(10, 1fr)", // 7 columns
                 }}
                 h="100%"
                 gap={1}>
                 {/* header */}
-                <GridItem h="3em" colSpan={7} rowSpan={1} bg="base.200">
+                <GridItem h="3em" colSpan={10} rowSpan={1} bg="base.200">
                     <Header/>
                 </GridItem>
 
@@ -53,7 +53,7 @@ const MainPage = () => {
                 </GridItem>
 
                 {/* minHeight is for scrolling */}
-                <GridItem minHeight="0px" colSpan={4} bg="base.200" style={styles.gridSection}
+                <GridItem minHeight="0px" colSpan={5} bg="base.200" style={styles.gridSection}
                           order={{base: 2, md: 1}}>
                     <ItemsWithDate/>
                 </GridItem>
@@ -62,7 +62,7 @@ const MainPage = () => {
                     colSpan={{
                         base: 4,
                         sm: 4,
-                        md: 2,
+                        md: 4,
                     }}
                     order={{base: 1, md: 2}}
                     bg="base.200"

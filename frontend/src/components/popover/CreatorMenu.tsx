@@ -6,7 +6,7 @@ import {Field} from "@/components/ui/field";
 import * as React from "react";
 import {useState} from "react";
 import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
-import useSaveTask from "@/components/queries/UseSaveTask.tsx";
+import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {IoAddCircle} from "react-icons/io5";
 
 const CreatorMenu = () => {

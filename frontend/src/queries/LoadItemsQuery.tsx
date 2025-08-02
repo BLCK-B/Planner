@@ -1,6 +1,7 @@
 import fetchRequest from "@/scripts/fetchRequest.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import type {BackendResponse} from "@/types/BackendResponse.ts";
+import {enforceTask} from "@/util/dataEnforcer.ts";
 
 export const loadItemsQuery = () => ({
     queryKey: ['userItems'],
@@ -13,7 +14,7 @@ const fetchItems = async () => {
         itemID: item.itemID,
         data: JSON.parse(item.data) as TaskType["data"],
     }));
-    return parsedItems;
+    return parsedItems.map(task => enforceTask(task));
 };
 
 export default loadItemsQuery;

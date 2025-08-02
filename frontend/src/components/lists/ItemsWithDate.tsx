@@ -4,7 +4,7 @@ import {Flex} from "@chakra-ui/react";
 import {useTaskContext} from "@/TaskContext.tsx";
 import TaskExpanded from "@/components/items/TaskExpanded.tsx";
 import Task from "@/components/items/Task.tsx";
-import loadItemsQuery from "@/components/queries/LoadItemsQuery.tsx";
+import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import {customSort} from '@/scripts/Sorting.tsx'
 
