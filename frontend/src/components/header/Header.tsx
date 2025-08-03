@@ -1,7 +1,7 @@
 import {Button, Flex, Heading, Spacer, Show} from "@chakra-ui/react";
 import {useNavigate, useLocation} from "react-router-dom";
 import {FaUserCircle} from "react-icons/fa";
-import ListFilters from "@/components/header/ListFilters.tsx";
+import TopActions from "@/components/header/TopActions.tsx";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Header = () => {
             <Heading>Planner</Heading>
             <Heading>🦥</Heading>
             <Show when={location.pathname === "/main"}>
-                <ListFilters/>
+                <TopActions/>
                 <Spacer/>
                 <FaUserCircle style={{width: "2em", height: "2em", color: "grey"}}/>
             </Show>

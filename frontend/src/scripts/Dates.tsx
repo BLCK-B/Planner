@@ -3,9 +3,8 @@ export const calcTimeToDate = (dateString: string) => {
     const present = new Date();
     date.setHours(0, 0, 0, 0);
     present.setHours(0, 0, 0, 0);
-    const one_day = 1000 * 60 * 60 * 24;
-    const result = Math.round((date.getTime() - present.getTime()) / one_day);
-    return result;
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.round((date.getTime() - present.getTime()) / oneDay);
 };
 
 export const textualTimeToDate = (dateString: string, isDeadline: string) => {

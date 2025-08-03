@@ -1,23 +1,22 @@
 import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
-import {useTaskContext} from "@/TaskContext.tsx";
 import {isDatePast, textualTimeToDate, getDateToday, ddMMyyyy} from "@/scripts/Dates.tsx";
 import ButtonComplete from "@/components/base/ButtonComplete.tsx";
 import Tags from "@/components/base/Tags.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
-import {useAtomValue} from 'jotai';
-import {showExactDatesAtom} from '@/atoms.ts';
+import {useAtomValue, useSetAtom} from 'jotai';
+import {showExactDatesAtom, showEditDialog} from '@/global/atoms.ts';
 
 const Task = (task: TaskType) => {
-    const {handleExpandTask} = useTaskContext();
-
     const saveTaskMutation = useSaveTask();
 
     const showExactDates = useAtomValue(showExactDatesAtom);
 
+    const triggerEdit = useSetAtom(showEditDialog);
+
     const handleClick = () => {
-        handleExpandTask(task);
+        triggerEdit(task);
     };
 
     const handleCompleteClick = async (e: React.MouseEvent<HTMLButtonElement>) => {

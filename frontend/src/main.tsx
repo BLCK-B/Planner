@@ -5,7 +5,6 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import MainPage from "./pages/MainPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import Auth from "./pages/Auth.tsx";
-import {TaskProvider} from "./TaskContext.tsx";
 import {QueryClient} from '@tanstack/react-query';
 import {QueryClientProvider} from '@tanstack/react-query';
 
@@ -36,20 +35,18 @@ const queryClient = new QueryClient();
 createRoot(rootElement).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
-            <TaskProvider>
-                <ChakraProvider value={system}>
-                    <Router>
-                        <Routes>
-                            {/* landing page */}
-                            <Route path="/" element={<LandingPage/>}/>
-                            {/* auth */}
-                            <Route path="/auth/:formType" element={<Auth/>}/>
-                            {/* main page */}
-                            <Route path="/main" element={<MainPage/>}/>
-                        </Routes>
-                    </Router>
-                </ChakraProvider>
-            </TaskProvider>
+            <ChakraProvider value={system}>
+                <Router>
+                    <Routes>
+                        {/* landing page */}
+                        <Route path="/" element={<LandingPage/>}/>
+                        {/* auth */}
+                        <Route path="/auth/:formType" element={<Auth/>}/>
+                        {/* main page */}
+                        <Route path="/main" element={<MainPage/>}/>
+                    </Routes>
+                </Router>
+            </ChakraProvider>
         </QueryClientProvider>
     </StrictMode>
 );

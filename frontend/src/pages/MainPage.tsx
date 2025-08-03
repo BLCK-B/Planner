@@ -3,7 +3,7 @@ import Header from "@/components/header/Header.tsx";
 import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
 import ItemsWithoutDate from "@/components/lists/ItemsWithoutDate.tsx";
 import Menu from "@/components/sidemenu/Menu.tsx";
-import CreatorMenu from "@/components/popover/CreatorMenu.tsx";
+import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
 import {checkAuthStateQuery} from "@/queries/CheckAuthStateQuery.tsx";
 import {useQuery} from "@tanstack/react-query";
 import type {Task as TaskType} from "@/types/Task.ts";

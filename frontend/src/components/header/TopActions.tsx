@@ -1,11 +1,12 @@
 import {Button, Flex, Heading, Spacer, Show, IconButton} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
-import {useAtom} from 'jotai';
-import {showExactDatesAtom} from "@/atoms.ts";
+import {useAtom, useSetAtom} from 'jotai';
+import {showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
 
-const ListFilters = () => {
+const TopActions = () => {
 
     const [showExactDates, setShowExactDates] = useAtom(showExactDatesAtom);
+    const setShowAddDialog = useSetAtom(showAddDialog);
 
     const activeColor = (active: boolean) => {
         return active ? "black" : "grey";
@@ -16,12 +17,13 @@ const ListFilters = () => {
             <IconButton onClick={() => setShowExactDates(!showExactDates)} bg="none">
                 <IoCalendarNumber color={activeColor(showExactDates)} aria-label="Complete"/>
             </IconButton>
+            <Button size="xs" onClick={() => setShowAddDialog(true)}>Add</Button>
         </Flex>
     );
 
 };
 
-export default ListFilters;
+export default TopActions;
 
 const styles = {
     filters: {
