@@ -11,9 +11,10 @@ const TopActions = () => {
     const setShowAddDialog = useSetAtom(showAddDialog);
 
     const setEditItem = useSetAtom(existingItemForEdit);
-    
+
     const createNewItem = () => {
         setEditItem(newTask);
+        console.log(newTask);
         setShowAddDialog(true);
     };
 

@@ -51,7 +51,7 @@ const Task = (task: TaskType) => {
             {...(task.data.completed && {bg: "green.100"})}
         >
             <Flex align="center" justifyContent="space-between">
-                <Show when={task.data.date}>
+                <Show when={task.data.itemType === "Task"}>
                     <Text w="120px">{dateFormatter(task)}</Text>
                 </Show>
                 <Text>{task.data.name}</Text>

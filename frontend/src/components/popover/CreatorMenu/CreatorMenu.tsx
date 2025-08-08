@@ -74,6 +74,10 @@ const CreatorMenu = () => {
         }));
     };
 
+    const disableSaveRules = () => {
+        return !newItem.data.name || (newItem.data.itemType === "Task" && !newItem.data.date);
+    };
+
     return (
         <>
             <Dialog.Root size={"sm"} open={showDialog}>
@@ -101,8 +105,10 @@ const CreatorMenu = () => {
                                     </Field>
                                     <Show when={newItem.data.itemType === "Task"}>
                                         <Flex style={styles.dateFlex}>
-                                            <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
-                                                   onChange={(e) => updateItem("date", e.target.value)}/>
+                                            <Field invalid={!newItem.data.date}>
+                                                <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
+                                                       onChange={(e) => updateItem("date", e.target.value)}/>
+                                            </Field>
                                             <Checkbox.Root checked={newItem.data.deadline}
                                                            onCheckedChange={(e) => updateItem("deadline", e.checked)}
                                                            size={"md"}>
@@ -133,7 +139,7 @@ const CreatorMenu = () => {
                             </Dialog.Body>
                             <Dialog.Footer>
                                 <Button size="xs" onClick={saveItem}
-                                        disabled={!newItem.data.name}>Save</Button>
+                                        disabled={disableSaveRules()}>Save</Button>
                                 <Button size="xs" variant="outline"
                                         onClick={() => setShowDialog(false)}>Cancel</Button>
                             </Dialog.Footer>
