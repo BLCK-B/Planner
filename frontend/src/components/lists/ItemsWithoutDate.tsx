@@ -13,10 +13,6 @@ const ItemsWithoutDate = () => {
         return <div>Loading...</div>;
     }
 
-    const filterWithoutDate = (task: TaskType) => {
-        return !task.data.date;
-    };
-
     return (
         <Flex
             direction="column"
@@ -25,7 +21,7 @@ const ItemsWithoutDate = () => {
             style={styles.longtermList}>
             <div style={{overflowY: "scroll", scrollbarWidth: "none"}}>
                 {itemList
-                    .filter(filterWithoutDate)
+                    .filter(task => task.data.itemType === "Goal")
                     .sort(customSort)
                     .map((task) => (
                         <div key={task.itemID}><Task {...task} /></div>

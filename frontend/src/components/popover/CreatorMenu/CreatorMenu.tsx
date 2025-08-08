@@ -1,49 +1,26 @@
-import {Dialog, Button, Portal, Flex, Input, Checkbox, Show} from "@chakra-ui/react";
-import type {Task} from "@/types/Task.ts";
+import {Dialog, Button, Portal, Flex, Input, Checkbox, Show, Spacer} from "@chakra-ui/react";
 import {Field} from "@/components/ui/field";
-import * as React from "react";
-import {useEffect, useState} from "react";
-import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
-import {showAddDialog, showEditDialog} from "@/global/atoms.ts";
+import useDeleteTask from "@/queries/UseDeleteTask.tsx";
+import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
 import OneTag from "@/components/base/OneTag.tsx";
 import {Tag} from "@/components/ui/tag";
+import {newTask} from "@/types/Task.ts";
 
 const CreatorMenu = () => {
 
     const [showDialog, setShowDialog] = useAtom(showAddDialog);
 
-    const [showDialogExisting, setShowDialogExisting] = useAtom(showEditDialog);
-
-    useEffect(() => {
-        if (showDialogExisting !== undefined) {
-            setShowDialog(true);
-            setNewItemLocal(showDialogExisting);
-            setShowDialogExisting(undefined);
-        }
-    }, [showDialogExisting]);
+    const [newItem, setNewItem] = useAtom(existingItemForEdit);
 
     const saveTaskMutation = useSaveTask();
 
-    const newItem: Task = {
-        itemID: '',
-        data: {
-            name: "",
-            date: "",
-            deadline: true,
-            tags: [],
-            completed: "",
-        },
-    };
+    const deleteTaskMutation = useDeleteTask();
 
-    const [newItemLocal, setNewItemLocal] = useState<Task>(newItem);
-
-    const [itemType, setItemType] = useState("Task");
-
-    const updateItem = (key: keyof typeof newItemLocal.data, value: any) => {
-        setNewItemLocal(prev => ({
+    const updateItem = (key: keyof typeof newItem.data, value: any) => {
+        setNewItem(prev => ({
             ...prev,
             data: {
                 ...prev.data,
@@ -52,13 +29,14 @@ const CreatorMenu = () => {
         }));
     };
 
+    // TODO: not working, instead handleAddTag
     const addTag = (name: string) => {
-        const currentTags = newItemLocal.data.tags ?? [];
+        const currentTags = newItem.data.tags ?? [];
         updateItem("tags", [...currentTags, name]);
     };
 
     const handleAddTag = () => {
-        setNewItemLocal(prev => ({
+        setNewItem(prev => ({
             ...prev,
             data: {
                 ...prev.data,
@@ -68,19 +46,26 @@ const CreatorMenu = () => {
     };
 
     const removeTag = (tagToRemove: string) => {
-        const currentTags = newItemLocal.data.tags ?? [];
+        const currentTags = newItem.data.tags ?? [];
         updateItem("tags", currentTags.filter(tag => tag !== tagToRemove));
     };
 
     const saveItem = async () => {
-        await saveTaskMutation.mutateAsync(newItemLocal);
+        await saveTaskMutation.mutateAsync(newItem);
+        setNewItem(newTask);
+        setShowDialog(false);
+    };
+
+    const deleteItem = async () => {
+        await deleteTaskMutation.mutateAsync(newItem);
+        setNewItem(newTask);
         setShowDialog(false);
     };
 
     const setNewNameAt = (index: number, newName: string) => {
-        const newTags = newItemLocal.data.tags;
+        const newTags = newItem.data.tags;
         newTags[index] = newName;
-        setNewItemLocal(prev => ({
+        setNewItem(prev => ({
             ...prev,
             data: {
                 ...prev.data,
@@ -97,21 +82,28 @@ const CreatorMenu = () => {
                     <Dialog.Positioner>
                         <Dialog.Content>
                             <Dialog.Header>
-                                <Dialog.Title>Create a new</Dialog.Title>
-                                <SelectTabs tabs={["Task", "Goal"]} selected={itemType} valueChanged={setItemType}/>
+                                <Flex>
+                                    <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
+                                                valueChanged={(value) => updateItem("itemType", value)}/>
+                                    <Spacer/>
+                                    <Show when={newItem !== newTask}>
+                                        <Button size="xs" variant="subtle" color="red.500"
+                                                onClick={deleteItem}>Delete</Button>
+                                    </Show>
+                                </Flex>
                             </Dialog.Header>
                             <Dialog.Body>
                                 <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                    <Field invalid={!newItemLocal.data.name}>
-                                        <Input p="2px" variant="subtle" value={newItemLocal.data.name}
+                                    <Field invalid={!newItem.data.name}>
+                                        <Input p="2px" variant="subtle" value={newItem.data.name}
                                                placeholder="Task name"
                                                onChange={(e) => updateItem("name", e.target.value)}/>
                                     </Field>
-                                    <Show when={itemType === "Task"}>
+                                    <Show when={newItem.data.itemType === "Task"}>
                                         <Flex style={styles.dateFlex}>
-                                            <Input p="2px" variant="subtle" type="date" value={newItemLocal.data.date}
+                                            <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
                                                    onChange={(e) => updateItem("date", e.target.value)}/>
-                                            <Checkbox.Root checked={newItemLocal.data.deadline}
+                                            <Checkbox.Root checked={newItem.data.deadline}
                                                            onCheckedChange={(e) => updateItem("deadline", e.checked)}
                                                            size={"md"}>
                                                 <Checkbox.HiddenInput/>
@@ -125,13 +117,13 @@ const CreatorMenu = () => {
                                     {/* tags */}
                                     <Flex>
                                         {/* tag list */}
-                                        {newItemLocal.data.tags.map((tagName, index) => (
+                                        {newItem.data.tags.map((tagName, index) => (
                                             <OneTag key={index} name={tagName}
                                                     setNewName={(newName: string) => setNewNameAt(index, newName)}
                                                     deleteTag={removeTag}/>
                                         ))}
                                         {/* add tag button */}
-                                        <Show when={newItemLocal.data.tags.length <= 2}>
+                                        <Show when={newItem.data.tags.length <= 2}>
                                             <Tag onClick={handleAddTag} variant="surface">
                                                 + tag
                                             </Tag>
@@ -140,8 +132,8 @@ const CreatorMenu = () => {
                                 </Flex>
                             </Dialog.Body>
                             <Dialog.Footer>
-                                <ButtonConfirm onClick={saveItem}
-                                               disabled={!newItemLocal.data.name}>Save</ButtonConfirm>
+                                <Button size="xs" onClick={saveItem}
+                                        disabled={!newItem.data.name}>Save</Button>
                                 <Button size="xs" variant="outline"
                                         onClick={() => setShowDialog(false)}>Cancel</Button>
                             </Dialog.Footer>

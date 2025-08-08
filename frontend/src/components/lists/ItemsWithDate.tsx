@@ -21,7 +21,7 @@ const ItemsWithDate = () => {
             style={styles.deadlineList}>
             <div style={{overflowY: "scroll", scrollbarWidth: "none"}}>
                 {itemList
-                    .filter(task => task.data.date)
+                    .filter(task => task.data.itemType === "Task")
                     .sort(customSort)
                     .map((task) => (
                         <div key={task.itemID}><Task {...task} /></div>

@@ -6,17 +6,20 @@ import type {Task as TaskType} from "@/types/Task.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
-import {showExactDatesAtom, showEditDialog} from '@/global/atoms.ts';
+import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
 
 const Task = (task: TaskType) => {
     const saveTaskMutation = useSaveTask();
 
     const showExactDates = useAtomValue(showExactDatesAtom);
 
-    const triggerEdit = useSetAtom(showEditDialog);
+    const setShowDialog = useSetAtom(showAddDialog);
+
+    const setEditItem = useSetAtom(existingItemForEdit);
 
     const handleClick = () => {
-        triggerEdit(task);
+        setEditItem(task);
+        setShowDialog(true);
     };
 
     const handleCompleteClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
