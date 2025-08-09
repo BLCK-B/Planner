@@ -3,7 +3,7 @@ import Header from "@/components/header/Header.tsx";
 
 function LandingPage() {
     return (
-        <Box w="100vw" h="100vh" bg="base.100">
+        <Box w="100vw" h="100vh" bg="base.100" textStyle="body">
             <Grid templateRows="auto 1fr" templateColumns="repeat(7, 1fr)" gap={2} h="100%">
                 {/* header */}
                 <GridItem h="4em" colSpan={7} rowSpan={1} bg="#dcdcdc">

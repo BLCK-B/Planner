@@ -1,4 +1,4 @@
-import {Dialog, Button, Portal, Flex, Input, Checkbox, Show, Spacer} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Checkbox, Show, Spacer} from "@chakra-ui/react";
 import {Field} from "@/components/ui/field";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
@@ -8,6 +8,9 @@ import SelectTabs from "@/components/base/SelectTabs.tsx";
 import OneTag from "@/components/base/OneTag.tsx";
 import {Tag} from "@/components/ui/tag";
 import {newTask} from "@/types/Task.ts";
+import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
+import ButtonCancel from "@/components/base/ButtonCancel.tsx";
+import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 
 const CreatorMenu = () => {
 
@@ -86,13 +89,11 @@ const CreatorMenu = () => {
                     <Dialog.Positioner>
                         <Dialog.Content>
                             <Dialog.Header>
-                                <Flex>
+                                <Flex justifyContent="space-between" w="100%">
                                     <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
                                                 valueChanged={(value) => updateItem("itemType", value)}/>
-                                    <Spacer/>
                                     <Show when={newItem !== newTask}>
-                                        <Button size="xs" variant="subtle" color="red.500"
-                                                onClick={deleteItem}>Delete</Button>
+                                        <ButtonDelete onClick={deleteItem}/>
                                     </Show>
                                 </Flex>
                             </Dialog.Header>
@@ -138,10 +139,8 @@ const CreatorMenu = () => {
                                 </Flex>
                             </Dialog.Body>
                             <Dialog.Footer>
-                                <Button size="xs" onClick={saveItem}
-                                        disabled={disableSaveRules()}>Save</Button>
-                                <Button size="xs" variant="outline"
-                                        onClick={() => setShowDialog(false)}>Cancel</Button>
+                                <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
+                                <ButtonCancel onClick={() => setShowDialog(false)}/>
                             </Dialog.Footer>
                         </Dialog.Content>
                     </Dialog.Positioner>

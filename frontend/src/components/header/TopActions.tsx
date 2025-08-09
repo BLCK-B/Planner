@@ -1,8 +1,9 @@
-import {Button, Flex, Heading, Spacer, Show, IconButton} from "@chakra-ui/react";
+import {Button, Flex, IconButton} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import {useAtom, useSetAtom} from 'jotai';
 import {existingItemForEdit, showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
 import {newTask} from "@/types/Task.ts";
+import ButtonAdd from "@/components/base/ButtonAdd.tsx";
 
 const TopActions = () => {
 
@@ -27,7 +28,7 @@ const TopActions = () => {
             <IconButton onClick={() => setShowExactDates(!showExactDates)} bg="none">
                 <IoCalendarNumber color={activeColor(showExactDates)} aria-label="Complete"/>
             </IconButton>
-            <Button size="xs" onClick={createNewItem}>Add</Button>
+            <ButtonAdd onClick={createNewItem}/>
         </Flex>
     );
 

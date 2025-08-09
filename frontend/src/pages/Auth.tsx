@@ -41,7 +41,7 @@ const Auth = () => {
     };
 
     return (
-        <Box w="100vw" h="100vh" bg="base.200">
+        <Box w="100vw" h="100vh" bg="base.200" textStyle="body">
             <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
                 {/* header */}
                 <GridItem h="3em" colSpan={1} rowSpan={1} bg="#dcdcdc">

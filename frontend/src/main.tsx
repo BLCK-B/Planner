@@ -1,15 +1,27 @@
 import {StrictMode} from "react";
 import {createRoot} from "react-dom/client";
-import {ChakraProvider, createSystem, defaultConfig} from "@chakra-ui/react";
+import {ChakraProvider, createSystem, defaultConfig, defineConfig, defineTextStyles} from "@chakra-ui/react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import MainPage from "./pages/MainPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import Auth from "./pages/Auth.tsx";
 import {QueryClient} from '@tanstack/react-query';
 import {QueryClientProvider} from '@tanstack/react-query';
+import "@fontsource/roboto";
 
-const system = createSystem(defaultConfig, {
+const textStyles = defineTextStyles({
+    body: {
+        value: {
+            fontFamily: "Roboto, sans-serif",
+            fontWeight: "500",
+            // fontSize: "20px",
+        },
+    },
+})
+
+const config = defineConfig({
     theme: {
+        textStyles,
         tokens: {
             colors: {
                 base: {
@@ -20,10 +32,19 @@ const system = createSystem(defaultConfig, {
                     500: "#989898",
                     600: "#7D7D7D",
                 },
+                theme: {
+                    1: "#071E22",
+                    2: "#1D7874",
+                    3: "#679289",
+                    4: "#F4C095",
+                    5: "#EE2E31",
+                },
             },
         },
     },
 });
+
+const system = createSystem(defaultConfig, config);
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {

@@ -28,7 +28,7 @@ const MainPage = () => {
     }, [error]);
 
     return (
-        <Box w="100vw" h="100vh" bg="base.300" fontSize="17px">
+        <Box w="100vw" h="100vh" bg="base.300" fontSize="17px" textStyle="body">
             <Grid
                 templateRows={{
                     base: "auto 1fr 1fr auto", // 4 rows
