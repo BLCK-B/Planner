@@ -1,5 +1,5 @@
 import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
-import {isDatePast, textualTimeToDate, getDateToday, ddMMyyyy} from "@/scripts/Dates.tsx";
+import {isDatePast, textualTimeToDate, getDateToday, ddMMyyyy, getNextDate} from "@/scripts/Dates.tsx";
 import ButtonComplete from "@/components/base/ButtonComplete.tsx";
 import Tags from "@/components/base/Tags.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
@@ -22,11 +22,19 @@ const Task = (task: TaskType) => {
         setShowDialog(true);
     };
 
-    const handleCompleteClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation(); // prevent triggering handleClick
+    const completeTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
         const newTask = task;
         newTask.data.completed = String(getDateToday());
         await saveTaskMutation.mutateAsync(newTask);
+        // TODO: load only once if both mutations
+        if (newTask.data.repeatEvent) {
+            const newRepeatedTask = structuredClone(task);
+            newRepeatedTask.itemID = '';
+            newRepeatedTask.data.completed = '';
+            newRepeatedTask.data.date = getNextDate(newTask.data.date, newTask.data.repeatEvent);
+            await saveTaskMutation.mutateAsync(newRepeatedTask);
+        }
     };
 
     const dateFormatter = (task: TaskType) => {
@@ -47,8 +55,8 @@ const Task = (task: TaskType) => {
             mb="3.5"
             onClick={handleClick}
             cursor="button"
-            {...(isDatePast(task.data.date) && {bg: "red.400"})}
-            {...(task.data.completed && {bg: "green.100"})}
+            {...(isDatePast(task.data.date) && {bg: "theme.ReddishLight"})}
+            {...(task.data.completed && {bg: "theme.LightGreen"})}
         >
             <Flex align="center" justifyContent="space-between">
                 <Show when={task.data.itemType === "Task"}>
@@ -57,7 +65,7 @@ const Task = (task: TaskType) => {
                 <Text>{task.data.name}</Text>
                 <Spacer/>
                 <Show when={!task.data.completed}>
-                    <ButtonComplete onClick={handleCompleteClick}/>
+                    <ButtonComplete onClick={completeTask}/>
                 </Show>
                 <Show when={task.data.completed}>
                     Completed: {task.data.completed}

@@ -7,6 +7,8 @@ export type Task = {
         deadline: boolean;
         tags: string[];
         completed: string;
+        // TODO: with time, causes near end days to clip to shortest month last day
+        repeatEvent: '' | 'week' | 'two-weeks' | 'month';
     };
 };
 
@@ -18,6 +20,7 @@ export const newTask: Task = {
         date: '',
         deadline: true,
         tags: [],
-        completed: ''
+        completed: '',
+        repeatEvent: ''
     },
 } as const;

@@ -63,3 +63,30 @@ export const ddMMyyyy = (date: string) => {
     // return `${day}. ${month}. ${year}`;
     return `${day}. ${month}.`;
 }
+
+export const getNextDate = (originalDate: string, repeat: string): string => {
+    const date = new Date(originalDate);
+    // avoid hour offset chaging date
+    date.setHours(12, 0, 0, 0);
+
+    switch (repeat) {
+        case "week":
+            date.setDate(date.getDate() + 7);
+            break;
+        case "two-weeks":
+            date.setDate(date.getDate() + 14);
+            break;
+        case "month": {
+            const day = date.getDate();
+            const month = date.getMonth();
+            const year = date.getFullYear();
+            const nextMonth = month + 1;
+            const lastDayNextMonth = new Date(year, nextMonth + 1, 0).getDate();
+            // months have different number of days
+            const newDay = Math.min(day, lastDayNextMonth);
+            date.setFullYear(year, nextMonth, newDay);
+            break;
+        }
+    }
+    return date.toISOString().split("T")[0];
+};

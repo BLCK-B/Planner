@@ -1,4 +1,4 @@
-import {Dialog, Portal, Flex, Input, Checkbox, Show, Spacer} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Checkbox, Show} from "@chakra-ui/react";
 import {Field} from "@/components/ui/field";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
@@ -11,6 +11,7 @@ import {newTask} from "@/types/Task.ts";
 import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import ButtonCancel from "@/components/base/ButtonCancel.tsx";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
+import DropSelection from "@/components/base/DropSelection.tsx";
 
 const CreatorMenu = () => {
 
@@ -81,72 +82,78 @@ const CreatorMenu = () => {
         return !newItem.data.name || (newItem.data.itemType === "Task" && !newItem.data.date);
     };
 
+    const repeatOptions = [
+        {label: "repeat every week", value: "week"},
+        {label: "repeat every 2 weeks", value: "two-weeks"},
+        {label: "repeat this day every month", value: "month"},
+    ];
+
     return (
-        <>
-            <Dialog.Root size={"sm"} open={showDialog}>
-                <Portal>
-                    <Dialog.Backdrop/>
-                    <Dialog.Positioner>
-                        <Dialog.Content>
-                            <Dialog.Header>
-                                <Flex justifyContent="space-between" w="100%">
-                                    <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
-                                                valueChanged={(value) => updateItem("itemType", value)}/>
-                                    <Show when={newItem !== newTask}>
-                                        <ButtonDelete onClick={deleteItem}/>
-                                    </Show>
-                                </Flex>
-                            </Dialog.Header>
-                            <Dialog.Body>
-                                <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                    <Field invalid={!newItem.data.name}>
-                                        <Input p="2px" variant="subtle" value={newItem.data.name}
-                                               placeholder="Task name"
-                                               onChange={(e) => updateItem("name", e.target.value)}/>
-                                    </Field>
-                                    <Show when={newItem.data.itemType === "Task"}>
-                                        <Flex style={styles.dateFlex}>
-                                            <Field invalid={!newItem.data.date}>
-                                                <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
-                                                       onChange={(e) => updateItem("date", e.target.value)}/>
-                                            </Field>
-                                            <Checkbox.Root checked={newItem.data.deadline}
-                                                           onCheckedChange={(e) => updateItem("deadline", e.checked)}
-                                                           size={"md"}>
-                                                <Checkbox.HiddenInput/>
-                                                <Checkbox.Label>Deadline</Checkbox.Label>
-                                                <Checkbox.Control>
-                                                    <Checkbox.Indicator/>
-                                                </Checkbox.Control>
-                                            </Checkbox.Root>
-                                        </Flex>
-                                    </Show>
-                                    {/* tags */}
-                                    <Flex>
-                                        {/* tag list */}
-                                        {newItem.data.tags.map((tagName, index) => (
-                                            <OneTag key={index} name={tagName}
-                                                    setNewName={(newName: string) => setNewNameAt(index, newName)}
-                                                    deleteTag={removeTag}/>
-                                        ))}
-                                        {/* add tag button */}
-                                        <Show when={newItem.data.tags.length <= 2}>
-                                            <Tag onClick={handleAddTag} variant="surface">
-                                                + tag
-                                            </Tag>
-                                        </Show>
+        <Dialog.Root size={"sm"} open={showDialog}>
+            <Portal>
+                <Dialog.Backdrop/>
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Flex justifyContent="space-between" w="100%">
+                                <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
+                                            valueChanged={(value) => updateItem("itemType", value)}/>
+                                <Show when={newItem !== newTask}>
+                                    <ButtonDelete onClick={deleteItem}/>
+                                </Show>
+                            </Flex>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <Flex gap="6" align="start" justifyContent="start" direction="column">
+                                <Field invalid={!newItem.data.name}>
+                                    <Input p="2px" variant="subtle" value={newItem.data.name}
+                                           placeholder="Task name"
+                                           onChange={(e) => updateItem("name", e.target.value)}/>
+                                </Field>
+                                <Show when={newItem.data.itemType === "Task"}>
+                                    <Flex style={styles.dateFlex}>
+                                        <Field invalid={!newItem.data.date}>
+                                            <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
+                                                   onChange={(e) => updateItem("date", e.target.value)}/>
+                                        </Field>
+                                        <Checkbox.Root checked={newItem.data.deadline}
+                                                       onCheckedChange={(e) => updateItem("deadline", e.checked)}
+                                                       size={"md"}>
+                                            <Checkbox.HiddenInput/>
+                                            <Checkbox.Label>Deadline</Checkbox.Label>
+                                            <Checkbox.Control>
+                                                <Checkbox.Indicator/>
+                                            </Checkbox.Control>
+                                        </Checkbox.Root>
                                     </Flex>
+                                </Show>
+                                <DropSelection items={repeatOptions}
+                                               onSelect={(repeat) => updateItem("repeatEvent", repeat)}/>
+                                {/* tags */}
+                                <Flex>
+                                    {/* tag list */}
+                                    {newItem.data.tags.map((tagName, index) => (
+                                        <OneTag key={index} name={tagName}
+                                                setNewName={(newName: string) => setNewNameAt(index, newName)}
+                                                deleteTag={removeTag}/>
+                                    ))}
+                                    {/* add tag button */}
+                                    <Show when={newItem.data.tags.length <= 2}>
+                                        <Tag onClick={handleAddTag} variant="surface">
+                                            + tag
+                                        </Tag>
+                                    </Show>
                                 </Flex>
-                            </Dialog.Body>
-                            <Dialog.Footer>
-                                <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
-                                <ButtonCancel onClick={() => setShowDialog(false)}/>
-                            </Dialog.Footer>
-                        </Dialog.Content>
-                    </Dialog.Positioner>
-                </Portal>
-            </Dialog.Root>
-        </>
+                            </Flex>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
+                            <ButtonCancel onClick={() => setShowDialog(false)}/>
+                        </Dialog.Footer>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Portal>
+        </Dialog.Root>
     );
 };
 

@@ -15,7 +15,6 @@ const TopActions = () => {
 
     const createNewItem = () => {
         setEditItem(newTask);
-        console.log(newTask);
         setShowAddDialog(true);
     };
 
