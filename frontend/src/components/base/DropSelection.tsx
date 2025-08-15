@@ -7,10 +7,11 @@ type SelectItem = {
 
 type Props = {
     items: SelectItem[];
+    selectedRepeat: string;
     onSelect: (selected: string) => void;
 }
 
-const DropSelection = ({items, onSelect}: Props) => {
+const DropSelection = ({items, selectedRepeat, onSelect}: Props) => {
 
     const selectOptions = createListCollection({items});
 
@@ -21,9 +22,8 @@ const DropSelection = ({items, onSelect}: Props) => {
     return (
         <Select.Root
             collection={selectOptions}
-            defaultValue={[""]}
+            defaultValue={[selectedRepeat]}
             size="sm"
-            width="320px"
             positioning={{placement: "top", flip: false}}
             onValueChange={handleValueChange}
         >
@@ -34,7 +34,6 @@ const DropSelection = ({items, onSelect}: Props) => {
                 </Select.Trigger>
                 <Select.IndicatorGroup>
                     <Select.ClearTrigger/>
-                    <Select.Indicator/>
                 </Select.IndicatorGroup>
             </Select.Control>
 

@@ -1,7 +1,7 @@
 export type Task = {
     itemID: string;
     data: {
-        itemType: string;
+        itemType: 'Task' | 'Goal';
         name: string;
         date: string;
         deadline: boolean;

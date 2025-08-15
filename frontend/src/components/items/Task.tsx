@@ -7,6 +7,7 @@ import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
+import {MdEventRepeat} from "react-icons/md";
 
 const Task = (task: TaskType) => {
     const saveTaskMutation = useSaveTask();
@@ -28,7 +29,7 @@ const Task = (task: TaskType) => {
         newTask.data.completed = String(getDateToday());
         await saveTaskMutation.mutateAsync(newTask);
         // TODO: load only once if both mutations
-        if (newTask.data.repeatEvent) {
+        if (newTask.data.repeatEvent && newTask.data.itemType === 'Task') {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
@@ -57,10 +58,16 @@ const Task = (task: TaskType) => {
             cursor="button"
             {...(isDatePast(task.data.date) && {bg: "theme.ReddishLight"})}
             {...(task.data.completed && {bg: "theme.LightGreen"})}
+            position="relative"
         >
             <Flex align="center" justifyContent="space-between">
                 <Show when={task.data.itemType === "Task"}>
-                    <Text w="120px">{dateFormatter(task)}</Text>
+                    <Flex w="120px" align="center" gap="5px">
+                        <Text>{dateFormatter(task)}</Text>
+                        <Show when={task.data.repeatEvent}>
+                            <MdEventRepeat color="grey"/>
+                        </Show>
+                    </Flex>
                 </Show>
                 <Text>{task.data.name}</Text>
                 <Spacer/>
@@ -68,7 +75,7 @@ const Task = (task: TaskType) => {
                     <ButtonComplete onClick={completeTask}/>
                 </Show>
                 <Show when={task.data.completed}>
-                    Completed: {task.data.completed}
+                    ✔ {task.data.completed}
                 </Show>
             </Flex>
             <Tags taskTags={task.data.tags!}/>

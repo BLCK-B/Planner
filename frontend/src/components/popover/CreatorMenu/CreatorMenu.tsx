@@ -1,4 +1,4 @@
-import {Dialog, Portal, Flex, Input, Checkbox, Show} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Checkbox, Show, Box} from "@chakra-ui/react";
 import {Field} from "@/components/ui/field";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
@@ -83,9 +83,9 @@ const CreatorMenu = () => {
     };
 
     const repeatOptions = [
-        {label: "repeat every week", value: "week"},
-        {label: "repeat every 2 weeks", value: "two-weeks"},
-        {label: "repeat this day every month", value: "month"},
+        {label: "Repeat every week", value: "week"},
+        {label: "Repeat every 2 weeks", value: "two-weeks"},
+        {label: "Repeat every month", value: "month"},
     ];
 
     return (
@@ -126,9 +126,11 @@ const CreatorMenu = () => {
                                             </Checkbox.Control>
                                         </Checkbox.Root>
                                     </Flex>
+                                    <Box w="215px">
+                                        <DropSelection items={repeatOptions} selectedRepeat={newItem.data.repeatEvent}
+                                                       onSelect={(repeat) => updateItem("repeatEvent", repeat)}/>
+                                    </Box>
                                 </Show>
-                                <DropSelection items={repeatOptions}
-                                               onSelect={(repeat) => updateItem("repeatEvent", repeat)}/>
                                 {/* tags */}
                                 <Flex>
                                     {/* tag list */}
