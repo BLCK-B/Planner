@@ -1,5 +1,10 @@
 import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
-import {isDatePast, textualTimeToDate, getDateToday, ddMMyyyy, getNextDate} from "@/scripts/Dates.tsx";
+import {
+    isDatePast,
+    getDateToday,
+    getNextDate,
+    globalDateFormatter
+} from "@/scripts/Dates.tsx";
 import ButtonComplete from "@/components/base/ButtonComplete.tsx";
 import Tags from "@/components/base/Tags.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
@@ -38,14 +43,6 @@ const Task = (task: TaskType) => {
         }
     };
 
-    const dateFormatter = (task: TaskType) => {
-        if (showExactDates) {
-            return ddMMyyyy(task.data.date);
-        } else {
-            return textualTimeToDate(task.data.date, String(task.data.deadline));
-        }
-    };
-
     return (
         <Box
             p="2"
@@ -61,9 +58,9 @@ const Task = (task: TaskType) => {
             position="relative"
         >
             <Flex align="center" justifyContent="space-between">
-                <Show when={task.data.itemType === "Task"}>
+                <Show when={task.data.itemType === "Task" && !task.data.completed}>
                     <Flex w="120px" align="center" gap="5px">
-                        <Text>{dateFormatter(task)}</Text>
+                        <Text>{globalDateFormatter(task, showExactDates)}</Text>
                         <Show when={task.data.repeatEvent}>
                             <MdEventRepeat color="grey"/>
                         </Show>
@@ -75,7 +72,7 @@ const Task = (task: TaskType) => {
                     <ButtonComplete onClick={completeTask}/>
                 </Show>
                 <Show when={task.data.completed}>
-                    ✔ {task.data.completed}
+                    <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
                 </Show>
             </Flex>
             <Tags taskTags={task.data.tags!}/>

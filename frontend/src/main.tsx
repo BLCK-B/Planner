@@ -2,12 +2,13 @@ import {StrictMode} from "react";
 import {createRoot} from "react-dom/client";
 import {ChakraProvider, createSystem, defaultConfig, defineConfig, defineTextStyles} from "@chakra-ui/react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import MainPage from "./pages/MainPage.tsx";
+import MainPage from "./pages/main/MainPage.tsx";
 import LandingPage from "./pages/LandingPage.tsx";
 import Auth from "./pages/Auth.tsx";
 import {QueryClient} from '@tanstack/react-query';
 import {QueryClientProvider} from '@tanstack/react-query';
 import "@fontsource/roboto";
+import PlansPage from "@/pages/main/PlansPage.tsx";
 
 const textStyles = defineTextStyles({
     body: {
@@ -74,6 +75,8 @@ createRoot(rootElement).render(
                         <Route path="/auth/:formType" element={<Auth/>}/>
                         {/* main page */}
                         <Route path="/main" element={<MainPage/>}/>
+                        {/* plans page */}
+                        <Route path="/plans" element={<PlansPage/>}/>
                     </Routes>
                 </Router>
             </ChakraProvider>

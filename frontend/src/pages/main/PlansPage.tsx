@@ -1,7 +1,5 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
 import Header from "@/components/header/Header.tsx";
-import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
-import ItemsWithoutDate from "@/components/lists/ItemsWithoutDate.tsx";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
 import {checkAuthStateQuery} from "@/queries/CheckAuthStateQuery.tsx";
@@ -11,7 +9,7 @@ import {useEffect} from "react";
 import type {FetchError} from "@/types/FetchError.ts";
 import {useNavigate} from "react-router-dom";
 
-const MainPage = () => {
+const PlansPage = () => {
     const navigate = useNavigate();
 
     const {error} = useQuery<TaskType[]>(checkAuthStateQuery());
@@ -55,20 +53,7 @@ const MainPage = () => {
                 {/* minHeight is for scrolling */}
                 <GridItem minHeight="0px" colSpan={5} bg="base.200" style={styles.gridSection}
                           order={{base: 2, md: 1}}>
-                    <ItemsWithDate/>
-                </GridItem>
-
-                <GridItem
-                    colSpan={{
-                        base: 4,
-                        sm: 4,
-                        md: 4,
-                    }}
-                    order={{base: 1, md: 2}}
-                    bg="base.200"
-                    minHeight="300px"
-                    style={styles.gridSection}>
-                    <ItemsWithoutDate/>
+                    lorem ipsum
                 </GridItem>
 
                 <CreatorMenu/>
@@ -77,7 +62,7 @@ const MainPage = () => {
     );
 };
 
-export default MainPage;
+export default PlansPage;
 
 const styles = {
     gridSection: {

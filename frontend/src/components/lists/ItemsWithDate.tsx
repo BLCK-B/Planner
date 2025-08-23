@@ -15,6 +15,12 @@ const ItemsWithDate = () => {
 
     const tasks = itemList.filter((task) => task.data.itemType === "Task");
 
+    const goals = itemList
+        .filter((goal) => goal.data.itemType === "Goal")
+        .filter((goal) => !goal.data.completed)
+        .filter((goal) => !isDatePast(goal.data.date))
+        .sort(customSort);
+
     const futureTasks = tasks
         .filter((task) => !task.data.completed)
         .filter((task) => !isDatePast(task.data.date))
@@ -25,11 +31,11 @@ const ItemsWithDate = () => {
         .filter((task) => isDatePast(task.data.date))
         .sort(customSort);
 
-    const completedTasks = tasks.filter((task) => task.data.completed).sort(customSort);
+    const completedTasks = itemList.filter((item) => item.data.completed).sort(customSort);
 
-    const groupByMonth = (tasks: TaskType[]) => {
+    const groupByMonth = (tasks: TaskType[], byCompleted = false) => {
         return tasks.reduce<Record<string, TaskType[]>>((acc, task) => {
-            const ym = task.data.date.slice(0, 7);
+            const ym = byCompleted ? task.data.completed.slice(0, 7) : task.data.date.slice(0, 7);
             if (!acc[ym]) {
                 acc[ym] = [];
             }
@@ -37,11 +43,11 @@ const ItemsWithDate = () => {
             return acc;
         }, {});
     };
-    
-    const renderGroupedTasks = (tasks: TaskType[]) => {
-        const groups = groupByMonth(tasks);
 
+    const renderGroupedTasks = (tasks: TaskType[], byCompleted = false) => {
+        const groups = groupByMonth(tasks);
         return Object.entries(groups).map(([ym, groupTasks]) => {
+            // markers
             const dateMarker = (
                 <Flex
                     direction="column"
@@ -57,14 +63,22 @@ const ItemsWithDate = () => {
                     align="center"
                 >
                     <Text color="gray.500" whiteSpace="nowrap">
-                        {new Date(groupTasks[0].data.date).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "short",
-                        })}
+                        <Show when={!byCompleted}>
+                            {new Date(groupTasks[0].data.date).toLocaleDateString(undefined, {
+                                year: "numeric",
+                                month: "short",
+                            })}
+                        </Show>
+                        <Show when={byCompleted}>
+                            {new Date(groupTasks[0].data.completed).toLocaleDateString(undefined, {
+                                year: "numeric",
+                                month: "short",
+                            })}
+                        </Show>
                     </Text>
                 </Flex>
             );
-
+            // marked list
             return (
                 <Box key={ym} position="relative">
                     {dateMarker}
@@ -78,27 +92,65 @@ const ItemsWithDate = () => {
         });
     };
 
+    const renderGoals = (goals: TaskType[]) => {
+        const dateMarker = (
+            <Flex
+                direction="column"
+                justify="center"
+                position="absolute"
+                ml="-120px"
+                top="50%"
+                transform="translateY(-50%)"
+                height="100%"
+                bg="theme.Peach"
+                borderRadius="5px"
+                w="80px"
+                align="center"
+            >
+                <Text color="gray.500" whiteSpace="nowrap">
+                    Goals
+                </Text>
+            </Flex>
+        );
+
+        return (
+            <Box position="relative">
+                {dateMarker}
+                {goals.map((goal) => (
+                    <Box key={goal.itemID} position="relative" mb="2">
+                        <Task {...goal} />
+                    </Box>
+                ))}
+            </Box>
+        );
+    };
+
     return (
-        <Flex direction="column" height="100%" w="100%" style={styles.deadlineList}>
+        <Flex direction="column" height="100%" w={{base: "90%", sm: "75%", md: "65%"}} style={styles.deadlineList}>
             <Box style={{overflowY: "scroll", scrollbarWidth: "none"}}>
                 <Box w={{base: "82%", sm: "70%", md: "65%"}} mx="auto" position="relative" top="150px">
                     {renderGroupedTasks(futureTasks)}
 
                     <Show when={overdueTasks.length > 0}>
-                        <Text color="red">
+                        <Text color="red" mt="30px">
                             Late
                         </Text>
                     </Show>
-
                     {renderGroupedTasks(overdueTasks)}
 
+                    <Show when={goals.length > 0}>
+                        <Text color="gray.600" mt="30px">
+                            Goals
+                        </Text>
+                    </Show>
+                    {renderGoals(goals)}
+
                     <Show when={completedTasks.length > 0}>
-                        <Text color="gray.600">
+                        <Text color="gray.600" mt="30px">
                             Completed
                         </Text>
                     </Show>
-
-                    {renderGroupedTasks(completedTasks)}
+                    {renderGroupedTasks(completedTasks, true)}
                 </Box>
             </Box>
         </Flex>

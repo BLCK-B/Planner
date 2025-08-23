@@ -1,19 +1,35 @@
-import { Tabs } from "@chakra-ui/react";
+import SelectTabs from "@/components/base/SelectTabs.tsx";
+import {useNavigate} from "react-router-dom";
+import {useAtom} from 'jotai';
+import {activePage} from "@/global/atoms.ts";
 
 const Menu = () => {
-  return (
-    <Tabs.Root defaultValue="tasks" orientation="vertical" variant="subtle">
-      <Tabs.List bg="base.300" p="1" display="flex" flexDirection={{ base: "row", sm: "row", md: "column" }} w="100%">
-        <Tabs.Trigger value="tasks" mb="2">
-          Tab 1
-        </Tabs.Trigger>
-        <Tabs.Trigger value="notes" mb="2">
-          Tab 2
-        </Tabs.Trigger>
-        <Tabs.Trigger value="todos">Tab 3</Tabs.Trigger>
-      </Tabs.List>
-    </Tabs.Root>
-  );
+
+    const navigate = useNavigate();
+
+    const tabs = ["Tasks", "Plans", "Tab 3"];
+
+    const [selectedTab, setSelectedTab] = useAtom(activePage);
+
+    const tabSelected = (tab: string) => {
+        setSelectedTab(tab);
+        switch (tab) {
+            case tabs[0]:
+                navigate("/main");
+                break;
+            case tabs[1]:
+                navigate("/plans");
+                break;
+            case tabs[2]:
+                navigate("/main");
+                break;
+        }
+    };
+
+    return (
+        <SelectTabs tabs={tabs} selected={selectedTab} valueChanged={tabSelected} orientation={"vertical"}
+                    responsive={true}/>
+    );
 };
 
 export default Menu;

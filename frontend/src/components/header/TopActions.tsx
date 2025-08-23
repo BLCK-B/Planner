@@ -1,4 +1,4 @@
-import {Button, Flex, IconButton} from "@chakra-ui/react";
+import {Flex, IconButton} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import {useAtom, useSetAtom} from 'jotai';
 import {existingItemForEdit, showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
@@ -23,7 +23,7 @@ const TopActions = () => {
     };
 
     return (
-        <Flex style={styles.filters} justify="center">
+        <Flex style={styles.filters} justify="center" w="80%" ml="20px" justifyContent="flex-start" gap="1em">
             <IconButton onClick={() => setShowExactDates(!showExactDates)} bg="none">
                 <IoCalendarNumber color={activeColor(showExactDates)} aria-label="Complete"/>
             </IconButton>
@@ -36,8 +36,5 @@ const TopActions = () => {
 export default TopActions;
 
 const styles = {
-    filters: {
-        height: "3em",
-        // backgroundColor: "white",
-    },
+    filters: {},
 };

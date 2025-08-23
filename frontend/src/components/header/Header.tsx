@@ -1,4 +1,4 @@
-import {Button, Flex, Heading, Spacer, Show} from "@chakra-ui/react";
+import {Button, Flex, Heading, Spacer, Show, Image} from "@chakra-ui/react";
 import {useNavigate, useLocation} from "react-router-dom";
 import {FaUserCircle} from "react-icons/fa";
 import TopActions from "@/components/header/TopActions.tsx";
@@ -16,9 +16,8 @@ const Header = () => {
     };
 
     return (
-        <Flex p="2">
-            <Heading>Planner</Heading>
-            <Heading>🦥</Heading>
+        <Flex p="2" align="center">
+            <Image src="/plannertext.png" height="20px"/>
             <Show when={location.pathname === "/main"}>
                 <TopActions/>
                 <Spacer/>
