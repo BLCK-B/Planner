@@ -48,7 +48,7 @@ const MainPage = () => {
                 </GridItem>
 
                 {/* minHeight is for scrolling */}
-                <GridItem minHeight="0px" colSpan={9} bg="base.200" style={styles.gridSection}>
+                <GridItem rowSpan={9} minHeight="0px" colSpan={9} bg="base.200" style={styles.gridSection}>
                     <ItemsWithDate/>
                 </GridItem>
 

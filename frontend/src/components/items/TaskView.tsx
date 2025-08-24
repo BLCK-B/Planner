@@ -1,0 +1,48 @@
+import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
+import {
+    isDatePast,
+    globalDateFormatter
+} from "@/scripts/Dates.tsx";
+import Tags from "@/components/base/Tags.tsx";
+import type {Task as TaskType} from "@/types/Task.ts";
+import {useAtomValue} from 'jotai';
+import {showExactDatesAtom} from '@/global/atoms.ts';
+import {MdEventRepeat} from "react-icons/md";
+
+const TaskView = (task: TaskType) => {
+
+    const showExactDates = useAtomValue(showExactDatesAtom);
+
+    return (
+        <Box
+            p="2"
+            bg="base.100"
+            color="black"
+            borderRadius="md"
+            boxShadow="sm"
+            mb="3.5"
+            {...(isDatePast(task.data.date) && {bg: "theme.ReddishLight"})}
+            {...(task.data.completed && {bg: "theme.LightGreen"})}
+            position="relative"
+        >
+            <Flex align="center" justifyContent="space-between">
+                <Show when={task.data.itemType === "Task" && !task.data.completed}>
+                    <Flex w="120px" align="center" gap="5px">
+                        <Text>{globalDateFormatter(task, showExactDates)}</Text>
+                        <Show when={task.data.repeatEvent}>
+                            <MdEventRepeat color="grey"/>
+                        </Show>
+                    </Flex>
+                </Show>
+                <Text>{task.data.name}</Text>
+                <Spacer/>
+                <Show when={task.data.completed}>
+                    <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
+                </Show>
+            </Flex>
+            <Tags taskTags={task.data.tags!}/>
+        </Box>
+    );
+};
+
+export default TaskView;
