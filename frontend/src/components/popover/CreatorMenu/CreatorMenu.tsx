@@ -1,4 +1,4 @@
-import {Dialog, Portal, Flex, Input, Checkbox, Show, Box} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Checkbox, Show, Box, Button} from "@chakra-ui/react";
 import {Field} from "@/components/ui/field";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
@@ -149,6 +149,9 @@ const CreatorMenu = () => {
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
+                            <Show when={newItem.data.completed}>
+                                <Button onClick={() => updateItem("completed", '')}>Uncomplete</Button>
+                            </Show>
                             <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
                             <ButtonCancel onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
