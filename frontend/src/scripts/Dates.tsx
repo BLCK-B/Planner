@@ -1,6 +1,6 @@
 import type {Task as TaskType} from "@/types/Task.ts";
 
-export const calcTimeToDate = (dateString: string) => {
+export const daysFromToday = (dateString: string) => {
     const date = new Date(dateString);
     const present = new Date();
     date.setHours(0, 0, 0, 0);
@@ -9,8 +9,8 @@ export const calcTimeToDate = (dateString: string) => {
     return Math.round((date.getTime() - present.getTime()) / oneDay);
 };
 
-export const textualTimeToDate = (dateString: string, isDeadline: string) => {
-    const numberOfDays = calcTimeToDate(dateString);
+export const readableTimeToDate = (dateString: string) => {
+    const numberOfDays = daysFromToday(dateString);
     if (numberOfDays === 0) return "today";
     else if (numberOfDays === 1) return "tomorrow";
     else if (numberOfDays === -1) return "yesterday";
@@ -18,11 +18,7 @@ export const textualTimeToDate = (dateString: string, isDeadline: string) => {
     let lastPart = "";
     let firstPart = "";
     if (numberOfDays > 0) {
-        if (isDeadline !== "false") {
-            lastPart = " left";
-        } else {
-            firstPart = "in ";
-        }
+        firstPart = "in ";
     } else if (numberOfDays < 0) {
         lastPart = " ago";
     }
@@ -34,7 +30,7 @@ export const textualTimeToDate = (dateString: string, isDeadline: string) => {
     const parts = [];
     if (years > 0) {
         parts.push(`${years}y`);
-        if (months > 0) parts.push(`${months}m`);
+        if (months > 0 && years < 3) parts.push(`${months}m`);
     } else if (months > 2) {
         parts.push(`${months}mo`);
     } else {
@@ -49,19 +45,20 @@ export const isDatePast = (dateString: string) => {
     const present = new Date();
     date.setHours(0, 0, 0, 0);
     present.setHours(0, 0, 0, 0);
-    return date.getTime() - present.getTime() + 1 < 1;
+    return date.getTime() - present.getTime() < 0;
 };
 
-export const getDateToday = () => {
+/**
+ * returns yyyy-MM-dd in UTC including timezone
+ */
+export const getTodaysDate = () => {
     return new Date().toISOString().slice(0, 10);
 };
 
-export const dateTOddMMyyyy = (date: string) => {
+export const dateToReadableDDMM = (date: string) => {
     const asDate = new Date(date);
     const day = asDate.getDate();
     const month = asDate.getMonth() + 1;
-    const year = asDate.getFullYear();
-    // return `${day}. ${month}. ${year}`;
     return `${day}. ${month}.`;
 }
 
@@ -94,15 +91,15 @@ export const getNextDate = (originalDate: string, repeat: string): string => {
 
 export const globalDateFormatter = (task: TaskType, showExactDates: boolean) => {
     if (!task.data.completed && showExactDates) {
-        return dateTOddMMyyyy(task.data.date);
+        return dateToReadableDDMM(task.data.date);
     }
     if (!task.data.completed && !showExactDates) {
-        return textualTimeToDate(task.data.date, String(task.data.deadline));
+        return readableTimeToDate(task.data.date);
     }
     if (task.data.completed && showExactDates) {
-        return dateTOddMMyyyy(task.data.completed);
+        return dateToReadableDDMM(task.data.completed);
     }
     if (task.data.completed && !showExactDates) {
-        return textualTimeToDate(task.data.completed, String(task.data.deadline));
+        return readableTimeToDate(task.data.completed);
     }
 };

@@ -1,7 +1,7 @@
 import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
 import {
     isDatePast,
-    getDateToday,
+    getTodaysDate,
     getNextDate,
     globalDateFormatter
 } from "@/scripts/Dates.tsx";
@@ -31,7 +31,7 @@ const Task = (task: TaskType) => {
     const completeTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         const newTask = task;
-        newTask.data.completed = String(getDateToday());
+        newTask.data.completed = String(getTodaysDate());
         await saveTaskMutation.mutateAsync(newTask);
         // TODO: load only once if both mutations
         if (newTask.data.repeatEvent && newTask.data.itemType === 'Task') {
