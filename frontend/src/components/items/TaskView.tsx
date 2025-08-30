@@ -3,11 +3,11 @@ import {
     isDatePast,
     globalDateFormatter
 } from "@/scripts/Dates.tsx";
-import Tags from "@/components/base/Tags.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
+import TagView from "@/components/base/TagView.tsx";
 
 const TaskView = (task: TaskType) => {
 
@@ -40,7 +40,9 @@ const TaskView = (task: TaskType) => {
                     <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
                 </Show>
             </Flex>
-            <Tags taskTags={task.data.tags!}/>
+            {task.data.tags!.map((tagName, index) => (
+                <TagView key={index} name={tagName}/>
+            ))}
         </Box>
     );
 };

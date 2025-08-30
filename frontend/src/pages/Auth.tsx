@@ -1,12 +1,15 @@
-import {useParams, useNavigate, useLocation} from "react-router-dom";
-import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center} from "@chakra-ui/react";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Field} from "@/components/ui/field";
+import {useParams, useNavigate} from "react-router-dom";
+import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
 import Header from "@/components/header/Header.tsx";
-import {useForm} from "react-hook-form";
-import OAuthProviders from "@/components/base/OAuthProviders.tsx";
+import {type SubmitHandler, useForm} from "react-hook-form";
+// import OAuthProviders from "@/components/base/OAuthProviders.tsx";
 import fetchRequest from "@/scripts/fetchRequest.tsx";
+
+type credentials = {
+    username: string;
+    password: string;
+};
 
 const Auth = () => {
     const {formType} = useParams();
@@ -16,11 +19,9 @@ const Auth = () => {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm();
+    } = useForm<credentials>();
 
-    const onSubmit = async (data, event) => {
-        event.preventDefault();
-        console.log(data);
+    const onSubmit: SubmitHandler<credentials> = async (data) => {
         if (formType === "log-in") {
             const response = await sendPostRequest("/auth/login", data);
             if (!response.error) {
@@ -28,15 +29,19 @@ const Auth = () => {
             } else {
                 alert("Login failed: " + (response?.error || "Unknown error"));
             }
-        } else if (formType === "register") sendPostRequest("/auth/register", data);
+        } else if (formType === "register") await sendPostRequest("/auth/register", data);
     };
 
-    const sendPostRequest = async (request, content) => {
+    const sendPostRequest = async (request: string, content: credentials) => {
         const body = {username: content.username, password: content.password};
         try {
             return await fetchRequest("POST", request, body);
         } catch (error) {
-            return {error: error.message};
+            if (error instanceof Error) {
+                return {error: error.message};
+            } else {
+                return {error: "An unknown error occurred"};
+            }
         }
     };
 
@@ -65,18 +70,20 @@ const Auth = () => {
                             <Card.Body gap="2">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
-                                        <OAuthProviders/>
+                                        {/*<OAuthProviders/>*/}
 
-                                        <Field label="E-mail" invalid={!!errors.username}
-                                               errorText={errors.username?.message}>
+                                        <Field.Root invalid={!!errors.username}>
+                                            <Field.Label>E-mail</Field.Label>
                                             <Input
                                                 placeholder="me@example.com" {...register("username", {required: "Username is required"})} />
-                                        </Field>
+                                            <Field.ErrorText>{String(errors.username?.message)}</Field.ErrorText>
+                                        </Field.Root>
 
-                                        <Field label="Password" invalid={!!errors.password}
-                                               errorText={errors.password?.message}>
+                                        <Field.Root invalid={!!errors.password}>
+                                            <Field.Label>Password</Field.Label>
                                             <PasswordInput {...register("password", {required: "Password is required"})} />
-                                        </Field>
+                                            <Field.ErrorText>{String(errors.password?.message)}</Field.ErrorText>
+                                        </Field.Root>
 
                                         <Button type="submit">Submit</Button>
 

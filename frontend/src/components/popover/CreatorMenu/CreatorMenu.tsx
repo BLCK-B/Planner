@@ -1,12 +1,10 @@
-import {Dialog, Portal, Flex, Input, Checkbox, Show, Box, Button} from "@chakra-ui/react";
-import {Field} from "@/components/ui/field";
+import {Dialog, Portal, Flex, Input, Checkbox, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
-import OneTag from "@/components/base/OneTag.tsx";
-import {Tag} from "@/components/ui/tag";
+import EditableTag from "@/components/base/EditableTag.tsx";
 import {newTask} from "@/types/Task.ts";
 import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import ButtonCancel from "@/components/base/ButtonCancel.tsx";
@@ -34,10 +32,10 @@ const CreatorMenu = () => {
     };
 
     // TODO: not working, instead handleAddTag
-    const addTag = (name: string) => {
-        const currentTags = newItem.data.tags ?? [];
-        updateItem("tags", [...currentTags, name]);
-    };
+    // const addTag = (name: string) => {
+    //     const currentTags = newItem.data.tags ?? [];
+    //     updateItem("tags", [...currentTags, name]);
+    // };
 
     const handleAddTag = () => {
         setNewItem(prev => ({
@@ -105,17 +103,17 @@ const CreatorMenu = () => {
                         </Dialog.Header>
                         <Dialog.Body>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                <Field invalid={!newItem.data.name}>
+                                <Field.Root invalid={!newItem.data.name}>
                                     <Input p="2px" variant="subtle" value={newItem.data.name}
                                            placeholder="Task name"
                                            onChange={(e) => updateItem("name", e.target.value)}/>
-                                </Field>
+                                </Field.Root>
                                 <Show when={newItem.data.itemType === "Task"}>
                                     <Flex style={styles.dateFlex}>
-                                        <Field invalid={!newItem.data.date}>
+                                        <Field.Root invalid={!newItem.data.date}>
                                             <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
                                                    onChange={(e) => updateItem("date", e.target.value)}/>
-                                        </Field>
+                                        </Field.Root>
                                         <Checkbox.Root checked={newItem.data.deadline}
                                                        onCheckedChange={(e) => updateItem("deadline", e.checked)}
                                                        size={"md"}>
@@ -135,15 +133,15 @@ const CreatorMenu = () => {
                                 <Flex>
                                     {/* tag list */}
                                     {newItem.data.tags.map((tagName, index) => (
-                                        <OneTag key={index} name={tagName}
-                                                setNewName={(newName: string) => setNewNameAt(index, newName)}
-                                                deleteTag={removeTag}/>
+                                        <EditableTag key={index} name={tagName}
+                                                     setNewName={(newName: string) => setNewNameAt(index, newName)}
+                                                     deleteTag={removeTag}/>
                                     ))}
                                     {/* add tag button */}
                                     <Show when={newItem.data.tags.length <= 2}>
-                                        <Tag onClick={handleAddTag} variant="surface">
-                                            + tag
-                                        </Tag>
+                                        <Tag.Root onClick={handleAddTag} variant="surface">
+                                            <Tag.Label>+ tag</Tag.Label>
+                                        </Tag.Root>
                                     </Show>
                                 </Flex>
                             </Flex>
@@ -166,7 +164,7 @@ export default CreatorMenu;
 
 const styles = {
     dateFlex: {
-        position: "relative",
+        position: "relative" as "relative",
         width: "65%",
         gap: "2rem",
     }

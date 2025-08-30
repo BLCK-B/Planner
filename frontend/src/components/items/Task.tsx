@@ -6,13 +6,13 @@ import {
     globalDateFormatter
 } from "@/scripts/Dates.tsx";
 import ButtonComplete from "@/components/base/ButtonComplete.tsx";
-import Tags from "@/components/base/Tags.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
+import TagView from "@/components/base/TagView.tsx";
 
 const Task = (task: TaskType) => {
     const saveTaskMutation = useSaveTask();
@@ -75,7 +75,9 @@ const Task = (task: TaskType) => {
                     <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
                 </Show>
             </Flex>
-            <Tags taskTags={task.data.tags!}/>
+            {task.data.tags!.map((tagName, index) => (
+                <TagView key={index} name={tagName}/>
+            ))}
         </Box>
     );
 };

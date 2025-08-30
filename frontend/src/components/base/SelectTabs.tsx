@@ -4,8 +4,8 @@ type Props = {
     tabs: string[];
     selected: string;
     valueChanged: (selectedTab: string) => void;
-    orientation: "horizontal" | "vertical";
-    responsive: boolean;
+    orientation?: "horizontal" | "vertical";
+    responsive?: boolean;
 };
 
 const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", responsive = false}: Props) => {
