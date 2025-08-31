@@ -4,7 +4,7 @@ const URL = "http://localhost:8081";
 
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 
-const fetchRequest = async (method: Methods, request: string, body?: object | null) => {
+const FetchRequest = async (method: Methods, request: string, body?: object | null) => {
     const headers = {
         "Content-Type": "application/json",
     };
@@ -36,4 +36,4 @@ const fetchRequest = async (method: Methods, request: string, body?: object | nu
     }
 };
 
-export default fetchRequest;
+export default FetchRequest;

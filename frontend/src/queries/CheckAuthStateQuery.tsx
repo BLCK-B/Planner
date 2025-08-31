@@ -1,10 +1,10 @@
-import fetchRequest from "@/scripts/fetchRequest.tsx";
+import FetchRequest from "@/scripts/FetchRequest.tsx";
 
 export const checkAuthStateQuery = () => {
     return ({
         queryKey: ['userItems'],
         queryFn: async () => {
-            return await fetchRequest("GET", "/users/authCheck")
+            return await FetchRequest("GET", "/users/authCheck")
         },
         retry: false,
     });

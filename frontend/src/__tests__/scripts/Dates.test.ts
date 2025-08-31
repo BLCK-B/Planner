@@ -1,7 +1,7 @@
 import {expect, test, beforeEach, vi, afterAll} from 'vitest'
 import {
     dateToReadableDDMM,
-    daysFromToday,
+    daysFromToday, getNextDate,
     getTodaysDate,
     isDatePast,
     readableTimeToDate
@@ -53,7 +53,6 @@ test('isDatePast', () => {
     expect(isDatePast("2025-06-20")).toBeFalsy();
 });
 
-
 test('getTodaysDate', () => {
     vi.setSystemTime(new Date(2025, 4, 20, 12));
 
@@ -64,7 +63,14 @@ test('dateToReadableDDMM', () => {
     expect(dateToReadableDDMM(String(new Date(2025, 4, 20, 12)))).toBe("20. 5.");
 });
 
-// TODO: needs original date field
-// test('getNextDate', () => {
-//     expect(getNextDate()).toBe();
-// });
+test('getNextDate', () => {
+    expect(getNextDate("2025-05-20", "week", 1)).toBe("2025-05-27");
+    expect(getNextDate("2025-05-20", "two-weeks", 1)).toBe("2025-06-03");
+    expect(getNextDate("2025-05-20", "month", 20)).toBe("2025-06-20");
+
+    expect(getNextDate("2025-01-30", "month", 30)).toBe("2025-02-28");
+    expect(getNextDate("2025-02-28", "month", 30)).toBe("2025-03-30");
+
+    expect(getNextDate("2025-12-30", "week", 30)).toBe("2026-01-06");
+    expect(getNextDate("2025-12-30", "month", 30)).toBe("2026-01-30");
+});

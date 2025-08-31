@@ -55,6 +55,11 @@ export const getTodaysDate = () => {
     return new Date().toISOString().slice(0, 10);
 };
 
+export const getDayNumber = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.getDate();
+};
+
 export const dateToReadableDDMM = (date: string) => {
     const asDate = new Date(date);
     const day = asDate.getDate();
@@ -62,8 +67,8 @@ export const dateToReadableDDMM = (date: string) => {
     return `${day}. ${month}.`;
 }
 
-export const getNextDate = (originalDate: string, repeat: string): string => {
-    const date = new Date(originalDate);
+export const getNextDate = (previousDate: string, repeat: string, originDay: number): string => {
+    const date = new Date(previousDate);
     // avoid hour offset changing date
     date.setHours(12, 0, 0, 0);
 
@@ -75,13 +80,12 @@ export const getNextDate = (originalDate: string, repeat: string): string => {
             date.setDate(date.getDate() + 14);
             break;
         case "month": {
-            const day = date.getDate();
             const month = date.getMonth();
             const year = date.getFullYear();
             const nextMonth = month + 1;
             const lastDayNextMonth = new Date(year, nextMonth + 1, 0).getDate();
             // months have different number of days
-            const newDay = Math.min(day, lastDayNextMonth);
+            const newDay = Math.min(originDay, lastDayNextMonth);
             date.setFullYear(year, nextMonth, newDay);
             break;
         }

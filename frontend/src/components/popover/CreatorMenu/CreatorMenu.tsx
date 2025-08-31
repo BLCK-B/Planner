@@ -10,8 +10,13 @@ import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import ButtonCancel from "@/components/base/ButtonCancel.tsx";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
+import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
+import {useQueryClient} from "@tanstack/react-query";
+import {getDayNumber} from "@/scripts/Dates.tsx";
 
 const CreatorMenu = () => {
+
+    const queryClient = useQueryClient();
 
     const [showDialog, setShowDialog] = useAtom(showAddDialog);
 
@@ -56,6 +61,9 @@ const CreatorMenu = () => {
         await saveTaskMutation.mutateAsync(newItem);
         setNewItem(newTask);
         setShowDialog(false);
+
+        const queryKey = loadItemsQuery().queryKey;
+        await queryClient.invalidateQueries({queryKey});
     };
 
     const deleteItem = async () => {
@@ -85,6 +93,11 @@ const CreatorMenu = () => {
         {label: "Repeat every 2 weeks", value: "two-weeks"},
         {label: "Repeat every month", value: "month"},
     ];
+
+    const setEventRepeat = (repeat: string) => {
+        updateItem("repeatOriginDay", getDayNumber(newItem.data.date));
+        updateItem("repeatEvent", repeat);
+    };
 
     return (
         <Dialog.Root size={"sm"} open={showDialog}>
@@ -126,7 +139,7 @@ const CreatorMenu = () => {
                                     </Flex>
                                     <Box w="215px">
                                         <DropSelection items={repeatOptions} selectedRepeat={newItem.data.repeatEvent}
-                                                       onSelect={(repeat) => updateItem("repeatEvent", repeat)}/>
+                                                       onSelect={(repeat) => setEventRepeat(repeat)}/>
                                     </Box>
                                 </Show>
                                 {/* tags */}

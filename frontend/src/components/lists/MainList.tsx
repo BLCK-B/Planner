@@ -3,10 +3,10 @@ import {Box, Flex, Show, Text} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
-import {customSort, sortCompletedTasks, sortFutureTasks, sortGoals} from '@/scripts/Sorting.tsx'
+import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/scripts/Sorting.tsx'
 import {isDatePast} from "@/scripts/Dates.tsx";
 
-const ItemsWithDate = () => {
+const MainList = () => {
     const {data: itemList} = useQuery<TaskType[]>(loadItemsQuery());
 
     if (!itemList) {
@@ -33,19 +33,19 @@ const ItemsWithDate = () => {
 
     const completedTasks = itemList.filter((item) => item.data.completed).sort(sortCompletedTasks);
 
-    const groupByMonth = (tasks: TaskType[], byCompleted = false) => {
-        return tasks.reduce<Record<string, TaskType[]>>((acc, task) => {
-            const ym = byCompleted ? task.data.completed.slice(0, 7) : task.data.date.slice(0, 7);
-            if (!acc[ym]) {
-                acc[ym] = [];
+    const groupByMonth = (tasks: TaskType[], byCompleted: boolean) => {
+        return tasks.reduce<Record<string, TaskType[]>>((groupedTasks, task) => {
+            const monthKey = byCompleted ? task.data.completed.slice(0, 7) : task.data.date.slice(0, 7);
+            if (!groupedTasks[monthKey]) {
+                groupedTasks[monthKey] = [];
             }
-            acc[ym].push(task);
-            return acc;
+            groupedTasks[monthKey].push(task);
+            return groupedTasks;
         }, {});
     };
 
     const renderGroupedTasks = (tasks: TaskType[], byCompletedDate = false) => {
-        const groups = groupByMonth(tasks);
+        const groups = groupByMonth(tasks, byCompletedDate);
         return Object.entries(groups).map(([ym, groupTasks]) => {
             // markers
             const dateMarker = (
@@ -157,7 +157,7 @@ const ItemsWithDate = () => {
     );
 };
 
-export default ItemsWithDate;
+export default MainList;
 
 const styles = {
     deadlineList: {

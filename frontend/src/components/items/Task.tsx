@@ -13,8 +13,12 @@ import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
 import TagView from "@/components/base/TagView.tsx";
+import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
+import {useQueryClient} from "@tanstack/react-query";
 
 const Task = (task: TaskType) => {
+    const queryClient = useQueryClient();
+
     const saveTaskMutation = useSaveTask();
 
     const showExactDates = useAtomValue(showExactDatesAtom);
@@ -33,14 +37,17 @@ const Task = (task: TaskType) => {
         const newTask = task;
         newTask.data.completed = String(getTodaysDate());
         await saveTaskMutation.mutateAsync(newTask);
-        // TODO: load only once if both mutations
+
         if (newTask.data.repeatEvent && newTask.data.itemType === 'Task') {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
-            newRepeatedTask.data.date = getNextDate(newTask.data.date, newTask.data.repeatEvent);
+            newRepeatedTask.data.date = getNextDate(newTask.data.date, newTask.data.repeatEvent, newTask.data.repeatOriginDay);
             await saveTaskMutation.mutateAsync(newRepeatedTask);
         }
+
+        const queryKey = loadItemsQuery().queryKey;
+        await queryClient.invalidateQueries({queryKey});
     };
 
     return (

@@ -1,6 +1,6 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
 import Header from "@/components/header/Header.tsx";
-import ItemsWithDate from "@/components/lists/ItemsWithDate.tsx";
+import MainList from "@/components/lists/MainList.tsx";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
 import {checkAuthStateQuery} from "@/queries/CheckAuthStateQuery.tsx";
@@ -49,7 +49,7 @@ const MainPage = () => {
 
                 {/* minHeight is for scrolling */}
                 <GridItem rowSpan={9} minHeight="0px" colSpan={9} bg="base.200" style={styles.gridSection}>
-                    <ItemsWithDate/>
+                    <MainList/>
                 </GridItem>
 
                 {/* popover */}

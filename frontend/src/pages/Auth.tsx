@@ -4,7 +4,7 @@ import {PasswordInput} from "@/components/ui/password-input";
 import Header from "@/components/header/Header.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 // import OAuthProviders from "@/components/base/OAuthProviders.tsx";
-import fetchRequest from "@/scripts/fetchRequest.tsx";
+import FetchRequest from "@/scripts/FetchRequest.tsx";
 
 type credentials = {
     username: string;
@@ -35,7 +35,7 @@ const Auth = () => {
     const sendPostRequest = async (request: string, content: credentials) => {
         const body = {username: content.username, password: content.password};
         try {
-            return await fetchRequest("POST", request, body);
+            return await FetchRequest("POST", request, body);
         } catch (error) {
             if (error instanceof Error) {
                 return {error: error.message};
