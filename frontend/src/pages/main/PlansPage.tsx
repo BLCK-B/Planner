@@ -2,34 +2,9 @@ import {Box, GridItem, Grid} from "@chakra-ui/react";
 import Header from "@/components/header/Header.tsx";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
-import {checkAuthStateQuery} from "@/queries/CheckAuthStateQuery.tsx";
-import {useQuery} from "@tanstack/react-query";
-import type {Task as TaskType} from "@/types/Task.ts";
-import {useEffect} from "react";
-import type {FetchError} from "@/types/FetchError.ts";
-import {useRouter} from '@tanstack/react-router';
 import PlansGrid from "@/components/lists/PlansGrid.tsx";
-import {authRoute} from '@/routes/__root.tsx';
 
 const PlansPage = () => {
-    const router = useRouter();
-
-    const {error} = useQuery<TaskType[]>(checkAuthStateQuery());
-
-    useEffect(() => {
-        if (error) {
-            const fetchError = error as FetchError
-            if (fetchError.status === 401) {
-                router.navigate({
-                    to: authRoute.fullPath,
-                    params: {formType: 'log-in'},
-                });
-            } else {
-                console.error(fetchError);
-            }
-        }
-    }, [error]);
-
     return (
         <Box w="100vw" h="100vh" bg="base.300" fontSize="17px" textStyle="body">
             <Grid

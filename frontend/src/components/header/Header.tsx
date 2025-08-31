@@ -2,6 +2,7 @@ import {Button, Flex, Spacer, Show, Image} from "@chakra-ui/react";
 import {useRouter, useLocation} from '@tanstack/react-router';
 import {FaUserCircle} from "react-icons/fa";
 import TopActions from "@/components/header/TopActions.tsx";
+import {authRoute} from "@/routes/__root.tsx";
 
 const Header = () => {
     const router = useRouter();
@@ -9,14 +10,14 @@ const Header = () => {
 
     const handleLogInClick = () => {
         router.navigate({
-            to: '/auth/$formType',
+            to: authRoute.fullPath,
             params: {formType: 'log-in'},
         });
     };
 
     const handleSignUpClick = () => {
         router.navigate({
-            to: '/auth/$formType',
+            to: authRoute.fullPath,
             params: {formType: 'register'},
         });
     };

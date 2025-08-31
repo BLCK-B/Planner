@@ -2,6 +2,7 @@ import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useRouter} from '@tanstack/react-router';
 import {useAtom} from 'jotai';
 import {activePage} from "@/global/atoms.ts";
+import {mainRoute, plansRoute} from "@/routes/__root.tsx";
 
 const Menu = () => {
 
@@ -15,13 +16,13 @@ const Menu = () => {
         setSelectedTab(tab);
         switch (tab) {
             case tabs[0]:
-                router.navigate({to: "/main"});
+                router.navigate({to: mainRoute.fullPath});
                 break;
             case tabs[1]:
-                router.navigate({to: "/plans"});
+                router.navigate({to: plansRoute.fullPath});
                 break;
             case tabs[2]:
-                router.navigate({to: "/main"});
+                router.navigate({to: mainRoute.fullPath});
                 break;
         }
     };

@@ -3,14 +3,11 @@ package com.blck.central_persistence_service.userData;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -27,11 +24,6 @@ public class UserController {
 	public UserController(UserItemRepository userItemRepository, ReactiveMongoTemplate mongoTemplate) {
 		this.userItemRepository = userItemRepository;
 		this.mongoTemplate = mongoTemplate;
-	}
-
-	@GetMapping(value = "/authCheck", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<String> authCheck(@AuthenticationPrincipal Jwt jwt) {
-		return Mono.just(jwt.getSubject());
 	}
 
 	@GetMapping(value = "/userAccountInfo", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -5,7 +5,7 @@ import Header from "@/components/header/Header.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 // import OAuthProviders from "@/components/base/OAuthProviders.tsx";
 import FetchRequest from "@/scripts/FetchRequest.tsx";
-import {authRoute} from "@/routes/__root.tsx";
+import {authRoute, mainRoute} from "@/routes/__root.tsx";
 
 type credentials = {
     username: string;
@@ -26,7 +26,7 @@ const Auth = () => {
         if (formType === "log-in") {
             const response = await sendPostRequest("/auth/login", data);
             if (!response.error) {
-                await router.navigate({to: "/main"});
+                await router.navigate({to: mainRoute.fullPath});
             } else {
                 alert("Login failed: " + (response?.error || "Unknown error"));
             }

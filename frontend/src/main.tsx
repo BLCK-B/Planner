@@ -1,10 +1,10 @@
 import {StrictMode} from "react";
 import {createRoot} from "react-dom/client";
 import {ChakraProvider, createSystem, defaultConfig, defineConfig, defineTextStyles} from "@chakra-ui/react";
-import {QueryClient} from '@tanstack/react-query';
 import {QueryClientProvider} from '@tanstack/react-query';
 import {RouterProvider} from '@tanstack/react-router'
 import {router} from '@/routes/__root';
+import {queryClient} from "@/QueryClient.tsx";
 import "@fontsource/roboto";
 
 declare module '@tanstack/react-router' {
@@ -63,8 +63,6 @@ const rootElement = document.getElementById("root");
 if (!rootElement) {
     throw new Error("Root element not found");
 }
-
-const queryClient = new QueryClient();
 
 createRoot(rootElement).render(
     <StrictMode>

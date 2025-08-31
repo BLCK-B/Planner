@@ -1,32 +1,7 @@
 import {Grid} from "@chakra-ui/react";
-import {checkAuthStateQuery} from "@/queries/CheckAuthStateQuery.tsx";
-import {useQuery} from "@tanstack/react-query";
-import type {Task as TaskType} from "@/types/Task.ts";
-import {useEffect} from "react";
-import type {FetchError} from "@/types/FetchError.ts";
-import {useRouter} from '@tanstack/react-router';
 import Plan from '@/components/items/Plan.tsx'
-import {authRoute} from '@/routes/__root.tsx';
 
 const PlansGrid = () => {
-    const router = useRouter();
-
-    const {error} = useQuery<TaskType[]>(checkAuthStateQuery());
-
-    useEffect(() => {
-        if (error) {
-            const fetchError = error as FetchError
-            if (fetchError.status === 401) {
-                router.navigate({
-                    to: authRoute.fullPath,
-                    params: {formType: 'log-in'},
-                });
-            } else {
-                console.error(fetchError);
-            }
-        }
-    }, [error]);
-
     return (
         <Grid templateColumns={{
             base: "repeat(1, 1fr)", // 1 column
