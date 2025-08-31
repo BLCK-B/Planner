@@ -1,47 +1,53 @@
-import {useParams, useNavigate, useLocation} from "react-router-dom";
-import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center} from "@chakra-ui/react";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Field} from "@/components/ui/field";
+import {useParams, useRouter} from '@tanstack/react-router';
+import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
-import Header from "@/components/layout/Header.tsx";
-import {useForm} from "react-hook-form";
-import OAuthProviders from "@/components/base/OAuthProviders.tsx";
-import fetchRequest from "@/scripts/fetchRequest.tsx";
+import Header from "@/components/header/Header.tsx";
+import {type SubmitHandler, useForm} from "react-hook-form";
+// import OAuthProviders from "@/components/base/OAuthProviders.tsx";
+import FetchRequest from "@/scripts/FetchRequest.tsx";
+import {authRoute, mainRoute} from "@/routes/__root.tsx";
+
+type credentials = {
+    username: string;
+    password: string;
+};
 
 const Auth = () => {
-    const {formType} = useParams();
-    const navigate = useNavigate();
+    const {formType} = useParams({from: authRoute.id});
+    const router = useRouter();
 
     const {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm();
+    } = useForm<credentials>();
 
-    const onSubmit = async (data, event) => {
-        event.preventDefault();
-        console.log(data);
+    const onSubmit: SubmitHandler<credentials> = async (data) => {
         if (formType === "log-in") {
             const response = await sendPostRequest("/auth/login", data);
             if (!response.error) {
-                navigate("/main");
+                await router.navigate({to: mainRoute.fullPath});
             } else {
                 alert("Login failed: " + (response?.error || "Unknown error"));
             }
-        } else if (formType === "register") sendPostRequest("/auth/register", data);
+        } else if (formType === "register") await sendPostRequest("/auth/register", data);
     };
 
-    const sendPostRequest = async (request, content) => {
+    const sendPostRequest = async (request: string, content: credentials) => {
         const body = {username: content.username, password: content.password};
         try {
-            return await fetchRequest("POST", request, body);
+            return await FetchRequest("POST", request, body);
         } catch (error) {
-            return {error: error.message};
+            if (error instanceof Error) {
+                return {error: error.message};
+            } else {
+                return {error: "An unknown error occurred"};
+            }
         }
     };
 
     return (
-        <Box w="100vw" h="100vh" bg="base.200">
+        <Box w="100vw" h="100vh" bg="base.200" textStyle="body">
             <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
                 {/* header */}
                 <GridItem h="3em" colSpan={1} rowSpan={1} bg="#dcdcdc">
@@ -65,18 +71,20 @@ const Auth = () => {
                             <Card.Body gap="2">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
-                                        <OAuthProviders/>
+                                        {/*<OAuthProviders/>*/}
 
-                                        <Field label="E-mail" invalid={!!errors.username}
-                                               errorText={errors.username?.message}>
+                                        <Field.Root invalid={!!errors.username}>
+                                            <Field.Label>E-mail</Field.Label>
                                             <Input
                                                 placeholder="me@example.com" {...register("username", {required: "Username is required"})} />
-                                        </Field>
+                                            <Field.ErrorText>{String(errors.username?.message)}</Field.ErrorText>
+                                        </Field.Root>
 
-                                        <Field label="Password" invalid={!!errors.password}
-                                               errorText={errors.password?.message}>
+                                        <Field.Root invalid={!!errors.password}>
+                                            <Field.Label>Password</Field.Label>
                                             <PasswordInput {...register("password", {required: "Password is required"})} />
-                                        </Field>
+                                            <Field.ErrorText>{String(errors.password?.message)}</Field.ErrorText>
+                                        </Field.Root>
 
                                         <Button type="submit">Submit</Button>
 
