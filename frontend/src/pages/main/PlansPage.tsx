@@ -7,11 +7,12 @@ import {useQuery} from "@tanstack/react-query";
 import type {Task as TaskType} from "@/types/Task.ts";
 import {useEffect} from "react";
 import type {FetchError} from "@/types/FetchError.ts";
-import {useNavigate} from "react-router-dom";
+import {useRouter} from '@tanstack/react-router';
 import PlansGrid from "@/components/lists/PlansGrid.tsx";
+import {authRoute} from '@/routes/__root.tsx';
 
 const PlansPage = () => {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const {error} = useQuery<TaskType[]>(checkAuthStateQuery());
 
@@ -19,7 +20,10 @@ const PlansPage = () => {
         if (error) {
             const fetchError = error as FetchError
             if (fetchError.status === 401) {
-                navigate("/auth/log-in");
+                router.navigate({
+                    to: authRoute.fullPath,
+                    params: {formType: 'log-in'},
+                });
             } else {
                 console.error(fetchError);
             }

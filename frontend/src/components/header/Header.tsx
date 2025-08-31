@@ -1,18 +1,24 @@
-import {Button, Flex, Heading, Spacer, Show, Image} from "@chakra-ui/react";
-import {useNavigate, useLocation} from "react-router-dom";
+import {Button, Flex, Spacer, Show, Image} from "@chakra-ui/react";
+import {useRouter, useLocation} from '@tanstack/react-router';
 import {FaUserCircle} from "react-icons/fa";
 import TopActions from "@/components/header/TopActions.tsx";
 
 const Header = () => {
-    const navigate = useNavigate();
+    const router = useRouter();
     const location = useLocation();
 
     const handleLogInClick = () => {
-        navigate("/auth/log-in");
+        router.navigate({
+            to: '/auth/$formType',
+            params: {formType: 'log-in'},
+        });
     };
 
     const handleSignUpClick = () => {
-        navigate("/auth/register");
+        router.navigate({
+            to: '/auth/$formType',
+            params: {formType: 'register'},
+        });
     };
 
     return (

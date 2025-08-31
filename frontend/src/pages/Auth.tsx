@@ -1,10 +1,11 @@
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams, useRouter} from '@tanstack/react-router';
 import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
 import Header from "@/components/header/Header.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 // import OAuthProviders from "@/components/base/OAuthProviders.tsx";
 import FetchRequest from "@/scripts/FetchRequest.tsx";
+import {authRoute} from "@/routes/__root.tsx";
 
 type credentials = {
     username: string;
@@ -12,8 +13,8 @@ type credentials = {
 };
 
 const Auth = () => {
-    const {formType} = useParams();
-    const navigate = useNavigate();
+    const {formType} = useParams({from: authRoute.id});
+    const router = useRouter();
 
     const {
         register,
@@ -25,7 +26,7 @@ const Auth = () => {
         if (formType === "log-in") {
             const response = await sendPostRequest("/auth/login", data);
             if (!response.error) {
-                navigate("/main");
+                await router.navigate({to: "/main"});
             } else {
                 alert("Login failed: " + (response?.error || "Unknown error"));
             }
