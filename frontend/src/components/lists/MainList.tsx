@@ -126,9 +126,9 @@ const MainList = () => {
     };
 
     return (
-        <Flex direction="column" height="100%" w={{base: "90%", sm: "75%", md: "65%"}} style={styles.deadlineList}>
+        <Flex direction="column" height="100%" style={styles.deadlineList}>
             <Box style={{overflowY: "scroll", scrollbarWidth: "none"}}>
-                <Box w={{base: "82%", sm: "70%", md: "65%"}} mx="auto" position="relative" top="150px">
+                <Box w={{base: "90%", sm: "90%", md: "40%"}} mx="auto" position="relative" top="150px">
                     {renderGroupedTasks(futureTasks)}
 
                     <Show when={overdueTasks.length > 0}>

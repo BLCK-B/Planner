@@ -1,8 +1,8 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
-import Header from "@/components/header/Header.tsx";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
 import PlansGrid from "@/components/lists/PlansGrid.tsx";
+import HeaderPlansPage from "@/components/header/HeaderPlansPage.tsx";
 
 const PlansPage = () => {
     return (
@@ -17,8 +17,8 @@ const PlansPage = () => {
                 gap={1}
             >
                 {/* header */}
-                <GridItem colSpan={10} rowSpan={1} bg="base.200">
-                    <Header/>
+                <GridItem colSpan={10} rowSpan={1}>
+                    <HeaderPlansPage/>
                 </GridItem>
 
                 {/* page menu */}

@@ -1,7 +1,7 @@
 import {createRootRoute, createRoute, createRouter, Outlet} from '@tanstack/react-router'
 import LandingPage from '@/pages/LandingPage.tsx'
 import MainPage from '@/pages/main/MainPage.tsx'
-import Auth from '@/pages/Auth.tsx'
+import AuthPage from '@/pages/AuthPage.tsx'
 import PlansPage from '@/pages/main/PlansPage.tsx'
 
 export const rootRoute = createRootRoute({
@@ -19,7 +19,7 @@ export const landingRoute = createRoute({
 export const authRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: 'auth/$formType',
-    component: Auth,
+    component: AuthPage,
 })
 
 export const mainRoute = createRoute({
