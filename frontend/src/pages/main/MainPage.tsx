@@ -1,7 +1,7 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
 import MainList from "@/components/lists/MainList.tsx";
 import Menu from "@/components/sidemenu/Menu.tsx";
-import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
+import TaskCreator from "@/components/popover/CreatorMenu/TaskCreator.tsx";
 import HeaderMainPage from "@/components/header/HeaderMainPage.tsx";
 
 const MainPage = () => {
@@ -43,7 +43,7 @@ const MainPage = () => {
                 </GridItem>
 
                 {/* popover */}
-                <CreatorMenu/>
+                <TaskCreator/>
             </Grid>
         </Box>
     );

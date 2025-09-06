@@ -3,9 +3,9 @@ export type Plan = {
     data: {
         name: string;
         description: string;
-        taskIDs: string[];
+        taskIDs: string[]; // tasks in plan, a task can be in more plans
         color: string;
-        status: 'active' | 'paused' | 'completed' | 'cancelled';
+        completed: string;
     };
 };
 
@@ -15,7 +15,7 @@ export const newPlan: Plan = {
         name: '',
         description: '',
         taskIDs: [],
-        color: '',
-        status: 'active',
+        color: 'rgb(255, 255, 255)',
+        completed: '',
     },
 } as const;

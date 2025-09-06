@@ -1,8 +1,8 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
 import Menu from "@/components/sidemenu/Menu.tsx";
-import CreatorMenu from "@/components/popover/CreatorMenu/CreatorMenu.tsx";
 import PlansGrid from "@/components/lists/PlansGrid.tsx";
 import HeaderPlansPage from "@/components/header/HeaderPlansPage.tsx";
+import PlanCreator from "@/components/popover/CreatorMenu/PlanCreator.tsx";
 
 const PlansPage = () => {
     return (
@@ -43,7 +43,7 @@ const PlansPage = () => {
                 </GridItem>
 
                 {/* popover */}
-                <CreatorMenu/>
+                <PlanCreator/>
             </Grid>
         </Box>
     );

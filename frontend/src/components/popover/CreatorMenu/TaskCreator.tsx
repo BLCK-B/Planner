@@ -14,7 +14,7 @@ import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/scripts/Dates.tsx";
 
-const CreatorMenu = () => {
+const TaskCreator = () => {
 
     const queryClient = useQueryClient();
 
@@ -173,7 +173,7 @@ const CreatorMenu = () => {
     );
 };
 
-export default CreatorMenu;
+export default TaskCreator;
 
 const styles = {
     dateFlex: {
