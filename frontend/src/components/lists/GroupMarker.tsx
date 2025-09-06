@@ -31,7 +31,6 @@ const GroupMarker = ({text, adjacent, color = "gray.100"}: Props) => {
         return (
             <Box
                 height="100%"
-                borderRadius="5px"
                 bg={color}
             >
                 <Text color="gray.500" whiteSpace="nowrap">

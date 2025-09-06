@@ -9,9 +9,9 @@ const PlansPage = () => {
         <Box w="100vw" h="100vh" bg="base.300" fontSize="17px" textStyle="body">
             <Grid
                 templateColumns={{
-                    base: "repeat(1, 1fr)", // 1 column
-                    sm: "repeat(1, 1fr)", // 1 column
-                    md: "repeat(10, 1fr)", // 7 columns
+                    base: "1fr", // 1 column
+                    sm: "1fr", // 1 column
+                    md: "repeat(10, 1fr)", // 10 columns
                 }}
                 h="100%"
                 gap={1}
@@ -22,12 +22,23 @@ const PlansPage = () => {
                 </GridItem>
 
                 {/* page menu */}
-                <GridItem colSpan={1} bg="base.200" style={styles.gridSection} gridRow={{base: 4, sm: 4, md: 2}}>
+                <GridItem
+                    colSpan={{base: 10, sm: 10, md: 1}}
+                    bg="base.200"
+                    style={styles.gridSection}
+                    gridRow={{base: 3, sm: 3, md: 2}}
+                >
                     <Menu/>
                 </GridItem>
 
-                {/* minHeight is for scrolling */}
-                <GridItem rowSpan={9} minHeight="0px" colSpan={9} bg="base.200" style={styles.gridSection}>
+                {/* content */}
+                <GridItem
+                    rowSpan={{base: 1, sm: 1, md: 9}}
+                    colSpan={{base: 10, sm: 10, md: 9}}
+                    minHeight="0px" // minHeight is for scrolling
+                    bg="base.200"
+                    style={styles.gridSection}
+                >
                     <PlansGrid/>
                 </GridItem>
 

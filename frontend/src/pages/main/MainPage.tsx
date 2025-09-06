@@ -44,7 +44,6 @@ const MainPage = () => {
 
                 {/* popover */}
                 <CreatorMenu/>
-
             </Grid>
         </Box>
     );

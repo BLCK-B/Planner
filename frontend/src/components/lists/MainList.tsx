@@ -6,9 +6,13 @@ import type {Task as TaskType} from "@/types/Task.ts";
 import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/scripts/Sorting.tsx'
 import {isDatePast} from "@/scripts/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
+import {useBreakpointValue} from "@chakra-ui/react";
 
 const MainList = () => {
+
     const {data: itemList} = useQuery<TaskType[]>(loadItemsQuery());
+
+    const adjacent = useBreakpointValue({base: false, md: true}) as boolean;
 
     if (!itemList) {
         return <div>Loading...</div>;
@@ -49,8 +53,6 @@ const MainList = () => {
         const groups = groupByMonth(tasks, byCompletedDate);
         return Object.entries(groups).map(([ym, groupTasks]) => {
 
-            const adjacent = true;
-
             const dateString = new Date(
                 byCompletedDate
                     ? groupTasks[0].data.completed
@@ -79,7 +81,7 @@ const MainList = () => {
                 </Box>
             ) : (
                 <Box key={ym} position="relative" mt="30px">
-                    <Box key={ym} bg="gray.100" position="relative" p="15px" mb="0.5rem">
+                    <Box key={ym} bg="gray.100" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
                         <Show when={byCompletedDate}>
                             {groupMarker}
                         </Show>
@@ -96,7 +98,7 @@ const MainList = () => {
     const renderGoals = (goals: TaskType[]) => {
         return (
             <Box position="relative" mt="30px">
-                <Box bg="theme.Peach" position="relative" p="15px" mb="0.5rem">
+                <Box bg="theme.Peach" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
                     <GroupMarker text={"Goals"} adjacent={false} color={"theme.Peach"}/>
                     {goals.map((goal) => (
                         <Box key={goal.itemID} position="relative" mb="2">
