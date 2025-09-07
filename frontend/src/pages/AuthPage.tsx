@@ -46,7 +46,7 @@ const AuthPage = () => {
     };
 
     return (
-        <Box w="100vw" h="100vh" bg="base.200" textStyle="body">
+        <Box w="100vw" h="100vh" bg="primary.base" textStyle="body">
             <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
 
                 <GridItem h="3em" colSpan={1} rowSpan={1}>
@@ -54,9 +54,9 @@ const AuthPage = () => {
                 </GridItem>
 
                 <Center>
-                    <GridItem colSpan={1} bg="#dcdcdc">
-                        <Card.Root width="320px" variant="elevated">
-                            <Card.Header>
+                    <GridItem colSpan={1}>
+                        <Card.Root width="320px" variant="elevated" bg="primary.lighter">
+                            <Card.Header color="primary.contrast">
                                 <Show when={formType === "register"}>
                                     <Card.Title>Sign up</Card.Title>
                                     <Card.Description>Create an account.</Card.Description>
@@ -66,7 +66,7 @@ const AuthPage = () => {
                                     <Card.Description>Welcome back.</Card.Description>
                                 </Show>
                             </Card.Header>
-                            <Card.Body gap="2">
+                            <Card.Body gap="2" color="primary.contrast">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
                                         {/*<OAuthProviders/>*/}

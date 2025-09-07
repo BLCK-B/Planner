@@ -15,10 +15,11 @@ import useDeletePlan from "@/queries/UseDeletePlan.tsx";
 import {showPlanCreator, existingPlanForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
-import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
+import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
 import ButtonCancel from "@/components/base/ButtonCancel.tsx";
+import {newPlan} from "@/types/Plan.ts";
 
 const CreatorMenu = () => {
 
@@ -26,14 +27,14 @@ const CreatorMenu = () => {
 
     const [showDialog, setShowDialog] = useAtom(showPlanCreator);
 
-    const [newPlan, setNewPlan] = useAtom(existingPlanForEdit);
+    const [newItem, setNewItem] = useAtom(existingPlanForEdit);
 
     const savePlanMutation = useSavePlan();
 
     const deletePlanMutation = useDeletePlan();
 
-    const updateItem = (key: keyof typeof newPlan.data, value: any) => {
-        setNewPlan(prev => ({
+    const updateItem = (key: keyof typeof newItem.data, value: any) => {
+        setNewItem(prev => ({
             ...prev,
             data: {
                 ...prev.data,
@@ -43,22 +44,22 @@ const CreatorMenu = () => {
     };
 
     const saveItem = async () => {
-        await savePlanMutation.mutateAsync(newPlan);
-        setNewPlan(newPlan);
+        await savePlanMutation.mutateAsync(newItem);
+        setNewItem(newItem);
         setShowDialog(false);
 
-        const queryKey = loadItemsQuery().queryKey;
+        const queryKey = loadPlansQuery().queryKey;
         await queryClient.invalidateQueries({queryKey});
     };
 
     const deleteItem = async () => {
-        await deletePlanMutation.mutateAsync(newPlan);
-        setNewPlan(newPlan);
+        await deletePlanMutation.mutateAsync(newItem);
+        setNewItem(newItem);
         setShowDialog(false);
     };
 
     const disableSaveRules = () => {
-        return !newPlan.data.name;
+        return !newItem.data.name;
     };
 
     return (
@@ -70,25 +71,25 @@ const CreatorMenu = () => {
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 Plan
-                                <Show when={newPlan !== newPlan}>
+                                <Show when={newItem !== newPlan}>
                                     <ButtonDelete onClick={deleteItem}/>
                                 </Show>
                             </Flex>
                         </Dialog.Header>
                         <Dialog.Body>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                <Field.Root invalid={!newPlan.data.name}>
-                                    <Input p="2px" variant="subtle" value={newPlan.data.name}
+                                <Field.Root invalid={!newItem.data.name}>
+                                    <Input p="2px" variant="subtle" value={newItem.data.name}
                                            placeholder="Task name"
                                            onChange={(e) => updateItem("name", e.target.value)}/>
                                 </Field.Root>
                                 <Field.Root>
-                                    <Textarea p="2px" h="100px" variant="subtle" value={newPlan.data.description}
+                                    <Textarea p="2px" h="100px" variant="subtle" value={newItem.data.description}
                                               placeholder="Description"
                                               onChange={(e) => updateItem("description", e.target.value)}/>
                                 </Field.Root>
                             </Flex>
-                            <ColorPicker.Root value={parseColor(newPlan.data.color)} format="rgba" maxW="200px"
+                            <ColorPicker.Root value={parseColor(newItem.data.color)} format="rgba" maxW="200px"
                                               onValueChange={(e) => updateItem("color", e.value.toString("rgb"))}>
                                 <ColorPicker.HiddenInput/>
                                 <ColorPicker.Label>Color</ColorPicker.Label>

@@ -6,7 +6,7 @@ import PlanCreator from "@/components/popover/CreatorMenu/PlanCreator.tsx";
 
 const PlansPage = () => {
     return (
-        <Box w="100vw" h="100vh" bg="base.300" fontSize="17px" textStyle="body">
+        <Box w="100vw" h="100vh" bg="primary.darker" fontSize="17px" textStyle="body">
             <Grid
                 templateColumns={{
                     base: "1fr", // 1 column
@@ -24,7 +24,7 @@ const PlansPage = () => {
                 {/* page menu */}
                 <GridItem
                     colSpan={{base: 10, sm: 10, md: 1}}
-                    bg="base.200"
+                    bg="primary.base"
                     style={styles.gridSection}
                     gridRow={{base: 3, sm: 3, md: 2}}
                 >
@@ -36,7 +36,7 @@ const PlansPage = () => {
                     rowSpan={{base: 1, sm: 1, md: 9}}
                     colSpan={{base: 10, sm: 10, md: 9}}
                     minHeight="0px" // minHeight is for scrolling
-                    bg="base.200"
+                    bg="primary.base"
                     style={styles.gridSection}
                 >
                     <PlansGrid/>

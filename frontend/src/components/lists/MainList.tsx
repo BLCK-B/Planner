@@ -67,7 +67,7 @@ const MainList = () => {
             const groupList = (
                 <>
                     {groupTasks.map((task) => (
-                        <Box key={task.itemID} position="relative" mb="2">
+                        <Box key={task.itemID} position="relative">
                             <Task {...task} />
                         </Box>
                     ))}
@@ -75,13 +75,13 @@ const MainList = () => {
             );
 
             return adjacent ? (
-                <Box key={ym} position="relative" mt="30px">
+                <Box key={ym} position="relative" mt="38px">
                     {groupMarker}
                     {groupList}
                 </Box>
             ) : (
-                <Box key={ym} position="relative" mt="30px">
-                    <Box key={ym} bg="gray.100" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
+                <Box key={ym} position="relative" mt="15px">
+                    <Box key={ym} bg="primary.darker" position="relative" p="10px" borderRadius="5px">
                         <Show when={byCompletedDate}>
                             {groupMarker}
                         </Show>
@@ -98,8 +98,8 @@ const MainList = () => {
     const renderGoals = (goals: TaskType[]) => {
         return (
             <Box position="relative" mt="30px">
-                <Box bg="theme.Peach" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
-                    <GroupMarker text={"Goals"} adjacent={false} color={"theme.Peach"}/>
+                <Box bg="primary.darker" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
+                    <GroupMarker text={"Goals"} adjacent={false} color={"primary.darker"}/>
                     {goals.map((goal) => (
                         <Box key={goal.itemID} position="relative" mb="2">
                             <Task {...goal} />

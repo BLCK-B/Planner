@@ -6,7 +6,7 @@ type Props = {
     color?: string;
 };
 
-const GroupMarker = ({text, adjacent, color = "gray.100"}: Props) => {
+const GroupMarker = ({text, adjacent, color = "primary.darker"}: Props) => {
     if (adjacent) {
         return (
             <Flex
@@ -17,10 +17,9 @@ const GroupMarker = ({text, adjacent, color = "gray.100"}: Props) => {
                 top="50%"
                 transform="translateY(-50%)"
                 height="100%"
-                borderRadius="5px"
+                borderRadius="0px"
                 w="80px"
                 align="center"
-                bg={color}
             >
                 <Text color="gray.500" whiteSpace="nowrap">
                     {text}
