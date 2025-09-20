@@ -23,7 +23,6 @@ const MainList = () => {
     const goals = itemList
         .filter((goal) => goal.data.itemType === "Goal")
         .filter((goal) => !goal.data.completed)
-        .filter((goal) => !isDatePast(goal.data.date))
         .sort(sortGoals);
 
     const futureTasks = tasks
@@ -81,7 +80,8 @@ const MainList = () => {
                 </Box>
             ) : (
                 <Box key={ym} position="relative" mt="15px">
-                    <Box key={ym} bg="primary.darker" position="relative" p="10px" borderRadius="5px">
+                    <Box key={ym} bg="primary.base" position="relative" p="10px" borderRadius="5px"
+                         border="2px solid #d0d0d0">
                         <Show when={byCompletedDate}>
                             {groupMarker}
                         </Show>
@@ -99,7 +99,7 @@ const MainList = () => {
         return (
             <Box position="relative" mt="30px">
                 <Box bg="primary.darker" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
-                    <GroupMarker text={"Goals"} adjacent={false} color={"primary.darker"}/>
+                    <GroupMarker text={"Goals"} adjacent={false}/>
                     {goals.map((goal) => (
                         <Box key={goal.itemID} position="relative" mb="2">
                             <Task {...goal} />
@@ -113,7 +113,7 @@ const MainList = () => {
     return (
         <Flex direction="column" height="100%" style={styles.deadlineList}>
             <Box style={{overflowY: "scroll", scrollbarWidth: "none"}}>
-                <Box w={{base: "90%", sm: "90%", md: "40%"}} mx="auto" position="relative" top="150px">
+                <Box w={{base: "90%", sm: "90%", md: "50%"}} mx="auto" position="relative" top="150px">
                     {renderGroupedTasks(futureTasks)}
 
                     {renderGroupedTasks(overdueTasks)}

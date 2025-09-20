@@ -54,14 +54,13 @@ const Task = (task: TaskType) => {
         <Box
             p="2"
             bg="primary.lighter"
-            color="black"
+            color="primary.contrast"
             borderRadius="md"
             mb="3.5"
             onClick={handleClick}
             cursor="button"
-            {...(!task.data.completed && isDatePast(task.data.date) && {bg: "theme.ReddishLight"})}
+            {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.ReddishLight"})}
             position="relative"
-            color="primary.contrast"
         >
             <Flex align="center" justifyContent="space-between">
                 <Show when={task.data.itemType === "Task" && !task.data.completed}>

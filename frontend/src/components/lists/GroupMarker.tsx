@@ -3,10 +3,9 @@ import {Box, Flex, Text} from "@chakra-ui/react";
 type Props = {
     text: string;
     adjacent: boolean;
-    color?: string;
 };
 
-const GroupMarker = ({text, adjacent, color = "primary.darker"}: Props) => {
+const GroupMarker = ({text, adjacent}: Props) => {
     if (adjacent) {
         return (
             <Flex
@@ -30,7 +29,6 @@ const GroupMarker = ({text, adjacent, color = "primary.darker"}: Props) => {
         return (
             <Box
                 height="100%"
-                bg={color}
             >
                 <Text color="gray.500" whiteSpace="nowrap">
                     {text}

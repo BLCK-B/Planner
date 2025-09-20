@@ -28,18 +28,18 @@ const config = defineConfig({
         textStyles,
         tokens: {
             colors: {
-                primary: {
-                    "contrast": "#000000",
-                    "lighter": "#FFFFFF",
-                    "base": "#ebebeb",
-                    "darker": "#d0d0d0",
-                },
                 // primary: {
-                //     "contrast": "#FFFFFF",
-                //     "lighter": "#454545",
-                //     "base": "#262626",
-                //     "darker": "#1a1a1a",
+                //     "contrast": "#000000",
+                //     "lighter": "#FFFFFF",
+                //     "base": "#ebebeb",
+                //     "darker": "#d0d0d0",
                 // },
+                primary: {
+                    "contrast": "#FFFFFF",
+                    "lighter": "#454545",
+                    "base": "#262626",
+                    "darker": "#1a1a1a",
+                },
                 // theme: {
                 //     "Peach": "#F4C095",
                 //     "Flame": "#CF5C36",
