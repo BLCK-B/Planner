@@ -1,4 +1,4 @@
-import {Dialog, Portal, Flex, Input, Checkbox, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
@@ -104,7 +104,7 @@ const TaskCreator = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>
-                    <Dialog.Content>
+                    <Dialog.Content bg="primary.base" color="primary.contrast">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
@@ -119,28 +119,24 @@ const TaskCreator = () => {
                                 <Field.Root invalid={!newItem.data.name}>
                                     <Input p="2px" variant="subtle" value={newItem.data.name}
                                            placeholder="Task name"
-                                           onChange={(e) => updateItem("name", e.target.value)}/>
+                                           onChange={(e) => updateItem("name", e.target.value)}
+                                           bg="primary.lighter"/>
                                 </Field.Root>
                                 <Show when={newItem.data.itemType === "Task"}>
                                     <Flex style={styles.dateFlex}>
-                                        <Field.Root invalid={!newItem.data.date}>
-                                            <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
-                                                   onChange={(e) => updateItem("date", e.target.value)}/>
-                                        </Field.Root>
-                                        <Checkbox.Root checked={newItem.data.deadline}
-                                                       onCheckedChange={(e) => updateItem("deadline", e.checked)}
-                                                       size={"md"}>
-                                            <Checkbox.HiddenInput/>
-                                            <Checkbox.Label>Deadline</Checkbox.Label>
-                                            <Checkbox.Control>
-                                                <Checkbox.Indicator/>
-                                            </Checkbox.Control>
-                                        </Checkbox.Root>
+                                        <Box w="160px">
+                                            <Field.Root invalid={!newItem.data.date}>
+                                                <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
+                                                       value={newItem.data.date}
+                                                       onChange={(e) => updateItem("date", e.target.value)}/>
+                                            </Field.Root>
+                                        </Box>
+                                        <Box w="215px">
+                                            <DropSelection items={repeatOptions}
+                                                           selected={newItem.data.repeatEvent}
+                                                           onSelect={(repeat) => setEventRepeat(repeat)}/>
+                                        </Box>
                                     </Flex>
-                                    <Box w="215px">
-                                        <DropSelection items={repeatOptions} selectedRepeat={newItem.data.repeatEvent}
-                                                       onSelect={(repeat) => setEventRepeat(repeat)}/>
-                                    </Box>
                                 </Show>
                                 {/* tags */}
                                 <Flex>
@@ -152,11 +148,19 @@ const TaskCreator = () => {
                                     ))}
                                     {/* add tag button */}
                                     <Show when={newItem.data.tags.length <= 2}>
-                                        <Tag.Root onClick={handleAddTag} variant="surface">
+                                        <Tag.Root onClick={handleAddTag} variant="surface"
+                                                  bg="primary.base"
+                                                  color="primary.contrast">
                                             <Tag.Label>+ tag</Tag.Label>
                                         </Tag.Root>
                                     </Show>
                                 </Flex>
+                                {/* plan assignment */}
+                                <Box w="215px">
+                                    <DropSelection items={repeatOptions}
+                                                   selected={newItem.data.repeatEvent}
+                                                   onSelect={(repeat) => setEventRepeat(repeat)}/>
+                                </Box>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
@@ -178,7 +182,7 @@ export default TaskCreator;
 const styles = {
     dateFlex: {
         position: "relative" as "relative",
-        width: "65%",
+        width: "90%",
         gap: "2rem",
     }
 };

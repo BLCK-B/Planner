@@ -67,7 +67,7 @@ const CreatorMenu = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>
-                    <Dialog.Content>
+                    <Dialog.Content bg="primary.base" color="primary.contrast">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 Plan
@@ -81,18 +81,20 @@ const CreatorMenu = () => {
                                 <Field.Root invalid={!newItem.data.name}>
                                     <Input p="2px" variant="subtle" value={newItem.data.name}
                                            placeholder="Task name"
-                                           onChange={(e) => updateItem("name", e.target.value)}/>
+                                           onChange={(e) => updateItem("name", e.target.value)}
+                                           bg="primary.lighter"/>
                                 </Field.Root>
                                 <Field.Root>
                                     <Textarea p="2px" h="100px" variant="subtle" value={newItem.data.description}
                                               placeholder="Description"
-                                              onChange={(e) => updateItem("description", e.target.value)}/>
+                                              onChange={(e) => updateItem("description", e.target.value)}
+                                              bg="primary.lighter"/>
                                 </Field.Root>
                             </Flex>
                             <ColorPicker.Root value={parseColor(newItem.data.color)} format="rgba" maxW="200px"
                                               onValueChange={(e) => updateItem("color", e.value.toString("rgb"))}>
                                 <ColorPicker.HiddenInput/>
-                                <ColorPicker.Label>Color</ColorPicker.Label>
+                                <ColorPicker.Label color="primary.contrast">Color</ColorPicker.Label>
                                 <ColorPicker.Control>
                                     <ColorPicker.Trigger/>
                                 </ColorPicker.Control>

@@ -40,15 +40,6 @@ const config = defineConfig({
                     "base": "#262626",
                     "darker": "#1a1a1a",
                 },
-                // theme: {
-                //     "Peach": "#F4C095",
-                //     "Flame": "#CF5C36",
-                //     "Red": "#EE2E31",
-                //     "MossGreen": "#c7e4b5",
-                //     "LightGreen": "#b1d09e",
-                //     "Reddish": "#f87171",
-                //     "ReddishLight": "#f9dbdb",
-                // },
                 theme: {
                     "Peach": "#F4C095",
                     "Flame": "#CF5C36",
@@ -56,6 +47,7 @@ const config = defineConfig({
                     "Success": "#505c48",
                     "Reddish": "#f87171",
                     "ReddishLight": "#f9dbdb",
+                    "Main": "#619324",
                 },
             },
         },

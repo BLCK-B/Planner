@@ -1,13 +1,8 @@
 import {Box, Flex, Text, ProgressCircle, Spacer} from "@chakra-ui/react";
-import {newTask} from "@/types/Task.ts";
 import TaskView from "@/components/items/TaskView.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import {useSetAtom} from "jotai";
 import {existingPlanForEdit, showPlanCreator} from "@/global/atoms.ts";
-
-const dummyTask = newTask;
-dummyTask.data.date = String(new Date());
-dummyTask.data.name = "Some name";
 
 const Plan = (plan: PlanType) => {
 
@@ -25,16 +20,17 @@ const Plan = (plan: PlanType) => {
             h="20rem"
             p="2"
             bg="primary.lighter"
-            color="black"
+            color="primary.contrast"
             borderRadius="md"
             boxShadow="sm"
             mb="3.5"
             position="relative"
             cursor="button"
             onClick={handleClick}
+            border={"2px solid " + plan.data.color}
         >
             <Flex align="center" justifyContent="space-between">
-                <Text>{plan.data.name}</Text>
+                <Text fontWeight="bold">{plan.data.name}</Text>
                 <Spacer/>
                 <ProgressCircle.Root size={"sm"} value={75}>
                     <ProgressCircle.Circle>
@@ -45,10 +41,7 @@ const Plan = (plan: PlanType) => {
             </Flex>
             <Text>{plan.data.description}</Text>
             <Flex direction="column" height="100%">
-                <TaskView {...dummyTask}/>
-                <TaskView {...dummyTask}/>
-                <TaskView {...dummyTask}/>
-                <TaskView {...dummyTask}/>
+                {/*<TaskView {...dummyTask}/>*/}
             </Flex>
         </Box>
     );

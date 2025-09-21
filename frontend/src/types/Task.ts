@@ -4,7 +4,6 @@ export type Task = {
         itemType: 'Task' | 'Goal';
         name: string;
         date: string; // target completion date
-        deadline: boolean;
         tags: string[];
         completed: string; // date of completion - empty if not completed
         repeatEvent: '' | 'week' | 'two-weeks' | 'month'; // create copy when completed
@@ -18,7 +17,6 @@ export const newTask: Task = {
         itemType: 'Task',
         name: '',
         date: '',
-        deadline: true,
         tags: [],
         completed: '',
         repeatEvent: '',

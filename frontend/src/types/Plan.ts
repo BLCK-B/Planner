@@ -3,7 +3,7 @@ export type Plan = {
     data: {
         name: string;
         description: string;
-        taskIDs: string[]; // tasks in plan, a task can be in more plans
+        taskIDs: string[]; // tasks in plan, a task can be a part of more plans
         color: string;
         completed: string;
     };
