@@ -2,7 +2,6 @@ package com.blck.planner.userData;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,12 +17,9 @@ public class PlanController {
 
     private final UserPlanRepository userPlanRepository;
 
-    private final ReactiveMongoTemplate mongoTemplate;
-
     @Autowired
-    public PlanController(UserPlanRepository userPlanRepository, ReactiveMongoTemplate mongoTemplate) {
+    public PlanController(UserPlanRepository userPlanRepository) {
         this.userPlanRepository = userPlanRepository;
-        this.mongoTemplate = mongoTemplate;
     }
 
     @GetMapping(value = "/userPlans", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +34,7 @@ public class PlanController {
             itemID = null;
         }
         Plan plan = new Plan(itemID, jwt.getSubject(), userItem.get("data").toString());
-        return mongoTemplate.save(plan);
+        return userPlanRepository.save(plan);
     }
 
     @DeleteMapping(value = "/userPlan/{planID}", consumes = MediaType.APPLICATION_JSON_VALUE)

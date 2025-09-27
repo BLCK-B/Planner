@@ -1,10 +1,10 @@
 package com.blck.planner.userData;
 
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface UserPlanRepository extends ReactiveMongoRepository<Plan, String> {
+public interface UserPlanRepository extends ReactiveCrudRepository<Plan, String> {
     Flux<Plan> findByUserID(String userId);
 
     Mono<Plan> findByUserIDAndItemID(String userId, String itemId);

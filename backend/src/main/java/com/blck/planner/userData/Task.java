@@ -2,12 +2,14 @@ package com.blck.planner.userData;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.util.List;
 
-@Document(collection = "migratedUserTasks")
+@Table("user_tasks")
 public record Task(
-		@Id @JsonProperty("itemID")
+		@Id
+		@JsonProperty("itemID")
 		String itemID,
 		String userID,
 		Data data

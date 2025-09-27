@@ -10,33 +10,17 @@ spring:
     web-application-type: reactive
   application:
     name: planner
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/personaldb
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/personaldb
+    username: username
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   security:
     user:
       name: user
       password: password
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: https://idp.example.com/issuer
-#      authorizationserver:
-#        client:
-#          oidc-client:
-#            registration:
-#              client-id: "oidc-client"
-#              client-secret: "{noop}secret"
-#              client-authentication-methods:
-#                - "client_secret_basic"
-#              authorization-grant-types:
-#                - "authorization_code"
-#                - "refresh_token"
-#              redirect-uris:
-#                - "http://127.0.0.1:8080/login/oauth2/code/oidc-client"
-#              post-logout-redirect-uris:
-#                - "http://127.0.0.1:8080/"
-#              scopes:
-#                - "openid"
-#                - "profile"
-#            require-authorization-consent: true

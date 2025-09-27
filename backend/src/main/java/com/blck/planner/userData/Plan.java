@@ -2,9 +2,9 @@ package com.blck.planner.userData;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Document(collection = "userPlans")
+@Table("user_plans")
 public record Plan (
         @Id @JsonProperty("itemID") String itemID,
         String userID,

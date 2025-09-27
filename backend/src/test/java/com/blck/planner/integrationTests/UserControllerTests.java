@@ -21,7 +21,7 @@ public class UserControllerTests {
 	void unauthenticatedUserIsUnauthorized() {
 		webTestClient
 			.get()
-			.uri("/users/loadItems")
+			.uri("/users/userTasks")
 			.exchange()
 			.expectStatus().isUnauthorized();
 	}
@@ -32,7 +32,7 @@ public class UserControllerTests {
 			.mutateWith(mockJwt()
 					.jwt(jwt -> jwt.subject("username")))
 			.get()
-			.uri("/users/loadItems")
+			.uri("/users/userTasks")
 			.exchange()
 			.expectStatus().isForbidden();
 	}
@@ -44,7 +44,7 @@ public class UserControllerTests {
 					.jwt(jwt -> jwt.subject("username"))
 					.authorities(createAuthorityList("ROLE_USER")))
 			.get()
-			.uri("/users/loadItems")
+			.uri("/users/userTasks")
 			.exchange()
 			.expectStatus().isOk();
 	}

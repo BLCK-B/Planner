@@ -3,7 +3,6 @@ package com.blck.planner.userData;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,14 +18,11 @@ public class TaskController {
 
     private final UserTaskRepository userTaskRepository;
 
-    private final ReactiveMongoTemplate mongoTemplate;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public TaskController(UserTaskRepository userTaskRepository, ReactiveMongoTemplate mongoTemplate) {
+    public TaskController(UserTaskRepository userTaskRepository) {
         this.userTaskRepository = userTaskRepository;
-        this.mongoTemplate = mongoTemplate;
     }
 
     @GetMapping(value = "/userAccountInfo", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +43,7 @@ public class TaskController {
         }
         Task.Data data = objectMapper.convertValue(userItem.get("data"), Task.Data.class);
         Task task = new Task(itemID, jwt.getSubject(), data);
-        return mongoTemplate.save(task);
+        return userTaskRepository.save(task);
     }
 
     @DeleteMapping(value = "/userTask/{taskID}", consumes = MediaType.APPLICATION_JSON_VALUE)
