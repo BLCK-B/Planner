@@ -1,6 +1,7 @@
 import {Dialog, Portal, Flex, Input, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
+import LoadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
@@ -11,8 +12,10 @@ import ButtonCancel from "@/components/base/ButtonCancel.tsx";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import {useQueryClient} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/scripts/Dates.tsx";
+import type {Plan as PlanType} from "@/types/Plan.ts";
+import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 
 const TaskCreator = () => {
 
@@ -25,6 +28,8 @@ const TaskCreator = () => {
     const saveTaskMutation = useSaveTask();
 
     const deleteTaskMutation = useDeleteTask();
+
+    const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
@@ -94,6 +99,11 @@ const TaskCreator = () => {
         {label: "Repeat every month", value: "month"},
     ];
 
+    const planOptions = plans?.map(plan => ({
+        label: plan.data.name,
+        value: plan.itemID,
+    })) ?? [];
+
     const setEventRepeat = (repeat: string) => {
         updateItem("repeatOriginDay", getDayNumber(newItem.data.date));
         updateItem("repeatEvent", repeat);
@@ -156,11 +166,9 @@ const TaskCreator = () => {
                                     </Show>
                                 </Flex>
                                 {/* plan assignment */}
-                                <Box w="215px">
-                                    <DropSelection items={repeatOptions}
-                                                   selected={newItem.data.repeatEvent}
-                                                   onSelect={(repeat) => setEventRepeat(repeat)}/>
-                                </Box>
+                                <DropSelection items={planOptions}
+                                               selected={newItem.data.planID}
+                                               onSelect={(planID) => updateItem("planID", planID)}/>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>

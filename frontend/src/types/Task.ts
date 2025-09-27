@@ -8,6 +8,7 @@ export type Task = {
         completed: string; // date of completion - empty if not completed
         repeatEvent: '' | 'week' | 'two-weeks' | 'month'; // create copy when completed
         repeatOriginDay: number; // for month repeat option to prevent day shifting
+        planID: string; // task can be a part of plan
     };
 };
 
@@ -21,5 +22,6 @@ export const newTask: Task = {
         completed: '',
         repeatEvent: '',
         repeatOriginDay: 0,
+        planID: '',
     },
 } as const;

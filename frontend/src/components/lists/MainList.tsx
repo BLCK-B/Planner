@@ -96,6 +96,8 @@ const MainList = () => {
     };
 
     const renderGoals = (goals: TaskType[]) => {
+        if (goals.length === 0)
+            return;
         return (
             <Box position="relative" mt="30px">
                 <Box bg="primary.darker" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
