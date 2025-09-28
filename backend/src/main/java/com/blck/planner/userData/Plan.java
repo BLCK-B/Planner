@@ -6,7 +6,8 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Table("user_plans")
 public record Plan (
-        @Id @JsonProperty("itemID") String itemID,
+        @Id
+        @JsonProperty("itemID") String itemID,
         String userID,
         String data
 ) {}

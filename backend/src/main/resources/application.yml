@@ -11,7 +11,7 @@ spring:
   application:
     name: planner
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/personaldb
+    url: r2dbc:postgresql://localhost:5432/personaldb?currentSchema=myschema
     username: username
     password: password
   jpa:
@@ -24,3 +24,9 @@ spring:
     user:
       name: user
       password: password
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog.groovy
+    user: username
+    password: password
+    url: jdbc:postgresql://localhost:5432/personaldb
