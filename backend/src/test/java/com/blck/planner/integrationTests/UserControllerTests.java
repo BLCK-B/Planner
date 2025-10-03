@@ -11,6 +11,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
@@ -20,47 +22,47 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 @AutoConfigureWebTestClient
 public class UserControllerTests {
 
-	@MockitoBean
-	private UserTaskRepository userTaskRepository;
+    @MockitoBean
+    private UserTaskRepository userTaskRepository;
 
-	@Autowired
-	private WebTestClient webTestClient;
+    @Autowired
+    private WebTestClient webTestClient;
 
-	@BeforeEach
-	public void setup() {
-		when(userTaskRepository.findByUserID(any())).thenReturn(Flux.just(new Task("id", "userid", null)));
-	}
+    @BeforeEach
+    public void setup() {
+        when(userTaskRepository.findByUserID(any())).thenReturn(Flux.just(new Task(UUID.randomUUID(), "userid", "", "", "", null, "", "", 0, "")));
+    }
 
-	@Test
-	void unauthenticatedUserIsUnauthorized() {
-		webTestClient
-			.get()
-			.uri("/users/userTasks")
-			.exchange()
-			.expectStatus().isUnauthorized();
-	}
+    @Test
+    void unauthenticatedUserIsUnauthorized() {
+        webTestClient
+                .get()
+                .uri("/users/userTasks")
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
 
-	@Test
-	void authenticatedUserWithoutUserRoleIsForbidden() {
-		webTestClient
-			.mutateWith(mockJwt()
-					.jwt(jwt -> jwt.subject("username")))
-			.get()
-			.uri("/users/userTasks")
-			.exchange()
-			.expectStatus().isForbidden();
-	}
+    @Test
+    void authenticatedUserWithoutUserRoleIsForbidden() {
+        webTestClient
+                .mutateWith(mockJwt()
+                        .jwt(jwt -> jwt.subject("username")))
+                .get()
+                .uri("/users/userTasks")
+                .exchange()
+                .expectStatus().isForbidden();
+    }
 
-	@Test
-	void authenticatedUserHasAccess() {
-		webTestClient
-			.mutateWith(mockJwt()
-					.jwt(jwt -> jwt.subject("username"))
-					.authorities(createAuthorityList("ROLE_USER")))
-			.get()
-			.uri("/users/userTasks")
-			.exchange()
-			.expectStatus().isOk();
-	}
+    @Test
+    void authenticatedUserHasAccess() {
+        webTestClient
+                .mutateWith(mockJwt()
+                        .jwt(jwt -> jwt.subject("username"))
+                        .authorities(createAuthorityList("ROLE_USER")))
+                .get()
+                .uri("/users/userTasks")
+                .exchange()
+                .expectStatus().isOk();
+    }
 
 }

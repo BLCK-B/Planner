@@ -20,10 +20,10 @@
             <column name="id" type="UUID" defaultValueComputed="uuid_generate_v4()">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="username" type="VARCHAR(255)">
+            <column name="username" type="TEXT">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="password" type="VARCHAR(255)">
+            <column name="password" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="enabled" type="BOOLEAN">
@@ -35,28 +35,31 @@
 
     <changeSet id="create-user-tasks-table" author="BLCK">
         <createTable tableName="user_tasks" schemaName="myschema">
-            <column name="item_id" type="VARCHAR(255)" defaultValueComputed="uuid_generate_v4()">
+            <column name="item_id" type="UUID" defaultValueComputed="uuid_generate_v4()">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="user_id" type="VARCHAR(255)"/>
-            <column name="item_type" type="VARCHAR(255)"/>
-            <column name="name" type="VARCHAR(255)"/>
-            <column name="date" type="VARCHAR(255)"/>
+            <column name="user_id" type="TEXT"/>
+            <column name="item_type" type="TEXT"/>
+            <column name="name" type="TEXT"/>
+            <column name="date" type="TEXT"/>
             <column name="tags" type="TEXT[]"/>
-            <column name="completed" type="VARCHAR(255)"/>
-            <column name="repeat_event" type="VARCHAR(255)"/>
+            <column name="completed" type="TEXT"/>
+            <column name="repeat_event" type="TEXT"/>
             <column name="repeat_origin_day" type="INT"/>
-            <column name="plan_id" type="VARCHAR(255)"/>
+            <column name="plan_id" type="TEXT"/>
         </createTable>
     </changeSet>
 
     <changeSet id="create-user-plans-table" author="BLCK">
         <createTable tableName="user_plans" schemaName="myschema">
-            <column name="item_id" type="VARCHAR(255)" defaultValueComputed="uuid_generate_v4()">
+            <column name="item_id" type="UUID" defaultValueComputed="uuid_generate_v4()">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="user_id" type="VARCHAR(255)"/>
-            <column name="data" type="TEXT"/>
+            <column name="user_id" type="TEXT"/>
+            <column name="name" type="TEXT"/>
+            <column name="description" type="TEXT"/>
+            <column name="color" type="TEXT"/>
+            <column name="completed" type="TEXT"/>
         </createTable>
     </changeSet>
 

@@ -4,10 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.UUID;
+
 @Table("user_plans")
-public record Plan (
+public record Plan(
         @Id
-        @JsonProperty("itemID") String itemID,
+        @JsonProperty("itemID")
+        UUID itemID,
         String userID,
-        String data
-) {}
+        String name,
+        String description,
+        String color,
+        String completed
+) {
+    public PlanDTO toDTO() {
+        var data = new PlanDTO.Data(name, description, color, completed);
+        return new PlanDTO(itemID, userID, data);
+    }
+}

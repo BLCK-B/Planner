@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/users")
 @PreAuthorize("hasRole('ROLE_USER')")
@@ -25,28 +27,29 @@ public class TaskController {
         this.userTaskRepository = userTaskRepository;
     }
 
-    @GetMapping(value = "/userAccountInfo", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/userAccountInfo")
     public Mono<String> getUserAccountInfo(@AuthenticationPrincipal Jwt jwt) {
         return Mono.just(jwt.getSubject());
     }
 
-    @GetMapping(value = "/userTasks", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<Task> getTasks(@AuthenticationPrincipal Jwt jwt) {
-        return userTaskRepository.findByUserID(jwt.getSubject());
+    @GetMapping(value = "/userTasks")
+    public Flux<TaskDTO> getTasks(@AuthenticationPrincipal Jwt jwt) {
+        return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
     }
 
-    @PutMapping(value = "/userTask", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Task> setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode userItem) {
-        String itemID = userItem.get("itemID").asText();
-        if (itemID == null || itemID.isBlank()) {
-            itemID = null;
+    @PutMapping(value = "/userTask")
+    public Mono<TaskDTO> setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode userItem) {
+        String itemIdString = userItem.get("itemID").asText(null);
+        UUID itemID = null;
+        if (itemIdString != null && !itemIdString.isBlank()) {
+            itemID = UUID.fromString(itemIdString);
         }
-        Task.Data data = objectMapper.convertValue(userItem.get("data"), Task.Data.class);
-        Task task = new Task(itemID, jwt.getSubject(), data);
-        return userTaskRepository.save(task);
+        TaskDTO.Data data = objectMapper.convertValue(userItem.get("data"), TaskDTO.Data.class);
+        TaskDTO dto = new TaskDTO(itemID, jwt.getSubject(), data);
+        return userTaskRepository.save(dto.toTask()).map(Task::toDTO);
     }
 
-    @DeleteMapping(value = "/userTask/{taskID}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/userTask/{taskID}")
     public Mono<String> deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
         return userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), taskID)
                 .thenReturn("User task removed successfully.");
