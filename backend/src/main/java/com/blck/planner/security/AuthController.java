@@ -45,7 +45,7 @@ public class AuthController {
 				.defaultIfEmpty(ResponseEntity.badRequest().build());
 	}
 
-	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/login")
 	public Mono<ResponseEntity<String>> login(@RequestBody JsonNode credentials, ServerWebExchange exchange) {
 		Authentication authRequest = new UsernamePasswordAuthenticationToken(
 				credentials.get("username").asText(),

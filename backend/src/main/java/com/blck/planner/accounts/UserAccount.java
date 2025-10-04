@@ -1,7 +1,7 @@
 package com.blck.planner.accounts;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +10,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// thisistest: pass
-@Document(collection = "accounts")
+// test: pass
+@Table("accounts")
 public record UserAccount (
 	@Id String id,
 	String username,

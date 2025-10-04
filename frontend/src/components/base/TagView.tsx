@@ -6,7 +6,7 @@ type Props = {
 
 const TagView = ({name}: Props) => {
     return (
-        <Tag.Root variant="surface" style={styles.tag}>
+        <Tag.Root variant="surface" style={styles.tag} bg="primary.base" color="primary.contrast">
             <Tag.Label>
                 {name}
             </Tag.Label>

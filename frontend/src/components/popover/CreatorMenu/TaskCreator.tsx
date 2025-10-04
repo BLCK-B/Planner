@@ -1,6 +1,7 @@
-import {Dialog, Portal, Flex, Input, Checkbox, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
+import LoadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
@@ -11,10 +12,12 @@ import ButtonCancel from "@/components/base/ButtonCancel.tsx";
 import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import {useQueryClient} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/scripts/Dates.tsx";
+import type {Plan as PlanType} from "@/types/Plan.ts";
+import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 
-const CreatorMenu = () => {
+const TaskCreator = () => {
 
     const queryClient = useQueryClient();
 
@@ -25,6 +28,8 @@ const CreatorMenu = () => {
     const saveTaskMutation = useSaveTask();
 
     const deleteTaskMutation = useDeleteTask();
+
+    const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
@@ -94,6 +99,11 @@ const CreatorMenu = () => {
         {label: "Repeat every month", value: "month"},
     ];
 
+    const planOptions = plans?.map(plan => ({
+        label: plan.data.name,
+        value: plan.itemID,
+    })) ?? [];
+
     const setEventRepeat = (repeat: string) => {
         updateItem("repeatOriginDay", getDayNumber(newItem.data.date));
         updateItem("repeatEvent", repeat);
@@ -104,7 +114,7 @@ const CreatorMenu = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>
-                    <Dialog.Content>
+                    <Dialog.Content bg="primary.base" color="primary.contrast">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
@@ -119,28 +129,24 @@ const CreatorMenu = () => {
                                 <Field.Root invalid={!newItem.data.name}>
                                     <Input p="2px" variant="subtle" value={newItem.data.name}
                                            placeholder="Task name"
-                                           onChange={(e) => updateItem("name", e.target.value)}/>
+                                           onChange={(e) => updateItem("name", e.target.value)}
+                                           bg="primary.lighter"/>
                                 </Field.Root>
                                 <Show when={newItem.data.itemType === "Task"}>
                                     <Flex style={styles.dateFlex}>
-                                        <Field.Root invalid={!newItem.data.date}>
-                                            <Input p="2px" variant="subtle" type="date" value={newItem.data.date}
-                                                   onChange={(e) => updateItem("date", e.target.value)}/>
-                                        </Field.Root>
-                                        <Checkbox.Root checked={newItem.data.deadline}
-                                                       onCheckedChange={(e) => updateItem("deadline", e.checked)}
-                                                       size={"md"}>
-                                            <Checkbox.HiddenInput/>
-                                            <Checkbox.Label>Deadline</Checkbox.Label>
-                                            <Checkbox.Control>
-                                                <Checkbox.Indicator/>
-                                            </Checkbox.Control>
-                                        </Checkbox.Root>
+                                        <Box w="160px">
+                                            <Field.Root invalid={!newItem.data.date}>
+                                                <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
+                                                       value={newItem.data.date}
+                                                       onChange={(e) => updateItem("date", e.target.value)}/>
+                                            </Field.Root>
+                                        </Box>
+                                        <Box w="215px">
+                                            <DropSelection items={repeatOptions}
+                                                           selected={newItem.data.repeatEvent}
+                                                           onSelect={(repeat) => setEventRepeat(repeat)}/>
+                                        </Box>
                                     </Flex>
-                                    <Box w="215px">
-                                        <DropSelection items={repeatOptions} selectedRepeat={newItem.data.repeatEvent}
-                                                       onSelect={(repeat) => setEventRepeat(repeat)}/>
-                                    </Box>
                                 </Show>
                                 {/* tags */}
                                 <Flex>
@@ -152,11 +158,17 @@ const CreatorMenu = () => {
                                     ))}
                                     {/* add tag button */}
                                     <Show when={newItem.data.tags.length <= 2}>
-                                        <Tag.Root onClick={handleAddTag} variant="surface">
+                                        <Tag.Root onClick={handleAddTag} variant="surface"
+                                                  bg="primary.base"
+                                                  color="primary.contrast">
                                             <Tag.Label>+ tag</Tag.Label>
                                         </Tag.Root>
                                     </Show>
                                 </Flex>
+                                {/* plan assignment */}
+                                <DropSelection items={planOptions}
+                                               selected={newItem.data.planID}
+                                               onSelect={(planID) => updateItem("planID", planID)}/>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
@@ -173,12 +185,12 @@ const CreatorMenu = () => {
     );
 };
 
-export default CreatorMenu;
+export default TaskCreator;
 
 const styles = {
     dateFlex: {
         position: "relative" as "relative",
-        width: "65%",
+        width: "90%",
         gap: "2rem",
     }
 };

@@ -8,7 +8,7 @@ type Props = {
 
 const EditableTag = ({name, setNewName, deleteTag}: Props) => {
     return (
-        <Tag.Root variant="surface" style={styles.tag}>
+        <Tag.Root variant="outline" style={styles.tag} color="primary.contrast">
             <Tag.Label>
                 <Editable.Root textAlign="start" value={name}
                                onValueChange={(e) => setNewName(e.value)}
@@ -31,6 +31,7 @@ export default EditableTag;
 const styles = {
     tag: {
         height: "25px",
+        backgroundColor: "primary.lighter",
     },
     editable: {
         height: "24px",

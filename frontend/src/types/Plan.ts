@@ -3,9 +3,8 @@ export type Plan = {
     data: {
         name: string;
         description: string;
-        taskIDs: string[];
         color: string;
-        status: 'active' | 'paused' | 'completed' | 'cancelled';
+        completed: string;
     };
 };
 
@@ -14,8 +13,7 @@ export const newPlan: Plan = {
     data: {
         name: '',
         description: '',
-        taskIDs: [],
-        color: '',
-        status: 'active',
+        color: 'rgb(255, 255, 255)',
+        completed: '',
     },
 } as const;

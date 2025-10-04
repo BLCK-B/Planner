@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="setup-uuid-generation" author="BLCK" runOnChange="true" runAlways="true">
+        <sql>CREATE EXTENSION IF NOT EXISTS "uuid-ossp";</sql>
+    </changeSet>
+
+    <changeSet id="create-schema" author="BLCK">
+        <sql>
+            CREATE SCHEMA myschema;
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-accounts-table" author="BLCK">
+        <createTable tableName="accounts" schemaName="myschema">
+            <column name="id" type="UUID" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="roles" type="TEXT[]"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-user-tasks-table" author="BLCK">
+        <createTable tableName="user_tasks" schemaName="myschema">
+            <column name="item_id" type="UUID" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="TEXT"/>
+            <column name="item_type" type="TEXT"/>
+            <column name="name" type="TEXT"/>
+            <column name="date" type="TEXT"/>
+            <column name="tags" type="TEXT[]"/>
+            <column name="completed" type="TEXT"/>
+            <column name="repeat_event" type="TEXT"/>
+            <column name="repeat_origin_day" type="INT"/>
+            <column name="plan_id" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-user-plans-table" author="BLCK">
+        <createTable tableName="user_plans" schemaName="myschema">
+            <column name="item_id" type="UUID" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="TEXT"/>
+            <column name="name" type="TEXT"/>
+            <column name="description" type="TEXT"/>
+            <column name="color" type="TEXT"/>
+            <column name="completed" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -9,7 +9,7 @@ type Props = {
 
 const ButtonCancel = ({onClick, disabled = false}: Props) => {
     return (
-        <IconButton onClick={onClick} disabled={disabled} size="xs" variant="outline">
+        <IconButton onClick={onClick} disabled={disabled} size="xs" variant="outline" bg="primary.contrast">
             <RxCross2 aria-label="Cancel"/>
         </IconButton>
     );

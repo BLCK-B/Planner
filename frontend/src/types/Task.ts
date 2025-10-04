@@ -4,11 +4,11 @@ export type Task = {
         itemType: 'Task' | 'Goal';
         name: string;
         date: string; // target completion date
-        deadline: boolean;
         tags: string[];
         completed: string; // date of completion - empty if not completed
         repeatEvent: '' | 'week' | 'two-weeks' | 'month'; // create copy when completed
         repeatOriginDay: number; // for month repeat option to prevent day shifting
+        planID: string; // task can be a part of plan
     };
 };
 
@@ -18,10 +18,10 @@ export const newTask: Task = {
         itemType: 'Task',
         name: '',
         date: '',
-        deadline: true,
         tags: [],
         completed: '',
         repeatEvent: '',
         repeatOriginDay: 0,
+        planID: '',
     },
 } as const;

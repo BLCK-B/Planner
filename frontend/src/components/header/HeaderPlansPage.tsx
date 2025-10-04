@@ -1,20 +1,21 @@
+import BaseHeader from "@/components/header/BaseHeader.tsx";
 import {Flex, IconButton} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
-import {useAtom, useSetAtom} from 'jotai';
-import {existingItemForEdit, showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
-import {newTask} from "@/types/Task.ts";
 import ButtonAdd from "@/components/base/ButtonAdd.tsx";
+import {useAtom, useSetAtom} from "jotai";
+import {existingPlanForEdit, showPlanCreator, showExactDatesAtom} from "@/global/atoms.ts";
+import {newPlan} from "@/types/Plan.ts";
 
-const TopActions = () => {
+const HeaderPlansPage = () => {
 
     const [showExactDates, setShowExactDates] = useAtom(showExactDatesAtom);
 
-    const setShowAddDialog = useSetAtom(showAddDialog);
+    const setShowAddDialog = useSetAtom(showPlanCreator);
 
-    const setEditItem = useSetAtom(existingItemForEdit);
+    const setEditPlan = useSetAtom(existingPlanForEdit);
 
-    const createNewItem = () => {
-        setEditItem(newTask);
+    const createNewPlan = () => {
+        setEditPlan(newPlan);
         setShowAddDialog(true);
     };
 
@@ -22,18 +23,20 @@ const TopActions = () => {
         return active ? "black" : "grey";
     };
 
-    return (
+    const leftContent = (
         <Flex style={styles.filters} justify="center" w="80%" ml="20px" justifyContent="flex-start" gap="1em">
             <IconButton onClick={() => setShowExactDates(!showExactDates)} bg="none">
                 <IoCalendarNumber color={activeColor(showExactDates)} aria-label="Complete"/>
             </IconButton>
-            <ButtonAdd onClick={createNewItem}/>
+            <ButtonAdd onClick={createNewPlan}/>
         </Flex>
     );
 
+    return (
+        <BaseHeader leftSide={leftContent} menu={true}/>
+    );
 };
-
-export default TopActions;
+export default HeaderPlansPage;
 
 const styles = {
     filters: {},

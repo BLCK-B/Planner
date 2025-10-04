@@ -1,4 +1,4 @@
-export type BackendResponse = {
+export type BackendResponseItem = {
     itemID: string;
     userID: string;
     data: string;

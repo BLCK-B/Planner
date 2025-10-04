@@ -16,7 +16,7 @@ const TaskView = (task: TaskType) => {
     return (
         <Box
             p="2"
-            bg="base.100"
+            bg="primary.lighter"
             color="black"
             borderRadius="md"
             boxShadow="sm"
