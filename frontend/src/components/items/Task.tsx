@@ -1,11 +1,10 @@
-import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
+import {Box, Text, Flex, Show} from "@chakra-ui/react";
 import {
     isDatePast,
     getTodaysDate,
     getNextDate,
     globalDateFormatter
 } from "@/scripts/Dates.tsx";
-import ButtonComplete from "@/components/base/ButtonComplete.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
@@ -15,6 +14,7 @@ import {MdEventRepeat} from "react-icons/md";
 import TagView from "@/components/base/TagView.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
+import CompleteSection from "@/components/base/CompleteSection.tsx";
 
 const Task = (task: TaskType) => {
     const queryClient = useQueryClient();
@@ -32,13 +32,17 @@ const Task = (task: TaskType) => {
         setShowDialog(true);
     };
 
-    const completeTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const toggleCompleted = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         const newTask = task;
-        newTask.data.completed = String(getTodaysDate());
+        if (!task.data.completed) {
+            newTask.data.completed = String(getTodaysDate());
+        } else {
+            newTask.data.completed = '';
+        }
         await saveTaskMutation.mutateAsync(newTask);
 
-        if (newTask.data.repeatEvent && newTask.data.itemType === 'Task') {
+        if (newTask.data.repeatEvent && newTask.data.itemType === 'Task' && newTask.data.completed) {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
@@ -51,39 +55,33 @@ const Task = (task: TaskType) => {
     };
 
     return (
-        <Box
-            p="2"
-            bg="primary.lighter"
-            color="primary.contrast"
-            borderRadius="md"
-            mb="3.5"
-            onClick={handleClick}
-            cursor="button"
-            {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.ReddishLight"})}
-            position="relative"
-        >
-            <Flex align="center" justifyContent="space-between">
-                <Show when={task.data.itemType === "Task" && !task.data.completed}>
-                    <Flex w="120px" align="center" gap="5px">
-                        <Text>{globalDateFormatter(task, showExactDates)}</Text>
-                        <Show when={task.data.repeatEvent}>
-                            <MdEventRepeat color="grey"/>
-                        </Show>
-                    </Flex>
-                </Show>
-                <Text>{task.data.name}</Text>
-                <Spacer/>
-                <Show when={!task.data.completed}>
-                    <ButtonComplete onClick={completeTask}/>
-                </Show>
-                <Show when={task.data.completed}>
-                    <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
-                </Show>
-            </Flex>
-            {task.data.tags!.map((tagName, index) => (
-                <TagView key={index} name={tagName}/>
-            ))}
-        </Box>
+        <Flex bg="primary.lighter"
+              color="primary.contrast"
+              mb="3.5"
+              borderRadius="md"
+              cursor="button"
+              position="relative"
+              justifyContent="space-between"
+              onClick={handleClick}
+              {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.Reddish"})}>
+            <Box p="2">
+                <Flex align="center" justifyContent="space-between">
+                    <Show when={task.data.itemType === "Task" && !task.data.completed}>
+                        <Flex w="120px" align="center" gap="5px">
+                            <Text>{globalDateFormatter(task, showExactDates)}</Text>
+                            <Show when={task.data.repeatEvent}>
+                                <MdEventRepeat color="grey"/>
+                            </Show>
+                        </Flex>
+                    </Show>
+                    <Text>{task.data.name}</Text>
+                </Flex>
+                {task.data.tags!.map((tagName, index) => (
+                    <TagView key={index} name={tagName}/>
+                ))}
+            </Box>
+            <CompleteSection onClick={toggleCompleted} isCompleted={task.data.completed}/>
+        </Flex>
     );
 };
 
