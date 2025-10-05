@@ -14,6 +14,7 @@ const HeaderMainPage = () => {
 
     const setEditItem = useSetAtom(existingItemForEdit);
 
+
     const createNewItem = () => {
         setEditItem(newTask);
         setShowAddDialog(true);

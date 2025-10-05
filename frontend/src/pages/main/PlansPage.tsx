@@ -13,11 +13,19 @@ const PlansPage = () => {
                     sm: "1fr", // 1 column
                     md: "repeat(10, 1fr)", // 10 columns
                 }}
+                templateRows={{
+                    base: "auto 1fr auto",
+                    sm: "auto 1fr auto",
+                    md: "auto repeat(9, 1fr)" // 9 rows header on large screen
+                }}
                 h="100%"
                 gap={1}
             >
                 {/* header */}
-                <GridItem colSpan={10} rowSpan={1}>
+                <GridItem
+                    colSpan={{base: 10, sm: 10, md: 9}} colStart={{base: 1, sm: 1, md: 2}}
+                    rowSpan={1} rowStart={1}
+                >
                     <HeaderPlansPage/>
                 </GridItem>
 
@@ -33,9 +41,9 @@ const PlansPage = () => {
 
                 {/* content */}
                 <GridItem
-                    rowSpan={{base: 1, sm: 1, md: 9}}
-                    colSpan={{base: 10, sm: 10, md: 9}}
-                    minHeight="0px" // minHeight is for scrolling
+                    colSpan={{base: 10, sm: 10, md: 9}} colStart={{base: 1, sm: 1, md: 2}}
+                    rowSpan={{base: 1, sm: 1, md: 9}} rowStart={{base: 2, sm: 2, md: 2}}
+                    minHeight="0px"
                     bg="primary.base"
                     style={styles.gridSection}
                 >

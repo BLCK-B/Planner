@@ -76,11 +76,13 @@ const Task = (task: TaskType) => {
                     </Show>
                     <Text>{task.data.name}</Text>
                 </Flex>
-                {task.data.tags!.map((tagName, index) => (
-                    <TagView key={index} name={tagName}/>
-                ))}
+                <Box mt="5px">
+                    {task.data.tags!.map((tagName, index) => (
+                        <TagView key={index} name={tagName}/>
+                    ))}
+                </Box>
             </Box>
-            <CompleteSection onClick={toggleCompleted} isCompleted={task.data.completed}/>
+            <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}/>
         </Flex>
     );
 };
