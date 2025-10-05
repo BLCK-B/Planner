@@ -1,7 +1,6 @@
-import {Dialog, Portal, Flex, Input, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
-import LoadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
@@ -172,9 +171,6 @@ const TaskCreator = () => {
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Show when={newItem.data.completed}>
-                                <Button onClick={() => updateItem("completed", '')}>Uncomplete</Button>
-                            </Show>
                             <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
                             <ButtonCancel onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
