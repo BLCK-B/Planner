@@ -5,6 +5,8 @@ import {activePage} from "@/global/atoms.ts";
 import {mainRoute, plansRoute} from "@/routes/__root.tsx";
 import {Box, Show, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
+import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
+import ActionButtonsPlansPage from "@/components/actions/ActionButtonsPlansPage.tsx";
 
 const Menu = () => {
 
@@ -33,13 +35,27 @@ const Menu = () => {
 
     return (
         <Box>
+            <Box bg="primary.base" borderRadius="5px" p="5px">
+                <Show when={isLargeScreen}>
+                    <Box m="0.5rem">
+                        <PlannerLogo/>
+                    </Box>
+                </Show>
+
+                <SelectTabs tabs={tabs} selected={selectedTab} valueChanged={tabSelected} orientation={"vertical"}
+                            responsive={true}/>
+
+            </Box>
             <Show when={isLargeScreen}>
-                <Box m="0.5rem">
-                    <PlannerLogo/>
+                <Box mt="10px" bg="primary.base" borderRadius="5px" p="5px">
+                    <Show when={selectedTab === "Tasks"}>
+                        <ActionButtonsMainPage/>
+                    </Show>
+                    <Show when={selectedTab === "Plans"}>
+                        <ActionButtonsPlansPage/>
+                    </Show>
                 </Box>
             </Show>
-            <SelectTabs tabs={tabs} selected={selectedTab} valueChanged={tabSelected} orientation={"vertical"}
-                        responsive={true}/>
         </Box>
     );
 };

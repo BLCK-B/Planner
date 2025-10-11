@@ -36,8 +36,6 @@ const PageLayout = ({header, content, popover}: Props) => {
                 {/* page menu */}
                 <GridItem
                     colSpan={{base: 10, sm: 10, md: 1}}
-                    bg="primary.base"
-                    style={styles.gridSection}
                     gridRow={{base: 3, sm: 3, md: 2}}
                 >
                     <Menu/>

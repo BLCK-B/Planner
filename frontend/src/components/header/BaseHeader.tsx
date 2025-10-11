@@ -19,8 +19,8 @@ const BaseHeader = ({leftSide = <></>, rightSide = <></>, menu = false}: Props) 
               width={isLargeScreen ? "90%" : "100%"}>
             <Show when={!isLargeScreen}>
                 <PlannerLogo/>
+                {leftSide}
             </Show>
-            {leftSide}
             <Spacer/>
             <Flex gap="10px">
                 {rightSide}

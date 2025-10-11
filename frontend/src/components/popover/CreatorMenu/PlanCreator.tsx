@@ -14,11 +14,9 @@ import useSavePlan from "@/queries/UseSavePlan.tsx";
 import useDeletePlan from "@/queries/UseDeletePlan.tsx";
 import {showPlanCreator, existingPlanForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
-import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
-import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
-import ButtonCancel from "@/components/base/ButtonCancel.tsx";
+import MyButton from "@/components/base/MyButton.tsx";
 import {newPlan} from "@/types/Plan.ts";
 
 const CreatorMenu = () => {
@@ -72,7 +70,7 @@ const CreatorMenu = () => {
                             <Flex justifyContent="space-between" w="100%">
                                 Plan
                                 <Show when={newItem !== newPlan}>
-                                    <ButtonDelete onClick={deleteItem}/>
+                                    <MyButton type="delete" onClick={deleteItem}/>
                                 </Show>
                             </Flex>
                         </Dialog.Header>
@@ -109,8 +107,8 @@ const CreatorMenu = () => {
                             </ColorPicker.Root>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
-                            <ButtonCancel onClick={() => setShowDialog(false)}/>
+                            <MyButton type="confirm" onClick={saveItem} disabled={disableSaveRules()}/>
+                            <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>
