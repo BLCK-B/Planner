@@ -10,7 +10,7 @@ import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {getDayNumber} from "@/scripts/Dates.tsx";
+import {getDayNumber} from "@/functions/Dates.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 

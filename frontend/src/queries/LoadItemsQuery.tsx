@@ -1,4 +1,4 @@
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import type {BackendResponseItem} from "@/types/BackendResponseItem.ts";
 

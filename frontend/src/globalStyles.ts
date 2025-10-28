@@ -32,7 +32,7 @@ export const styles = defineConfig({
         textStyles,
         tokens: {
             colors: {
-                primary: light,
+                primary: dark,
                 theme: {
                     "Peach": "#F4C095",
                     "Flame": "#CF5C36",

@@ -4,7 +4,7 @@ import {
     getTodaysDate,
     getNextDate,
     globalDateFormatter
-} from "@/scripts/Dates.tsx";
+} from "@/functions/Dates.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
@@ -76,11 +76,13 @@ const Task = (task: TaskType) => {
                     </Show>
                     <Text>{task.data.name}</Text>
                 </Flex>
-                <Box mt="5px">
-                    {task.data.tags!.map((tagName, index) => (
-                        <TagView key={index} name={tagName}/>
-                    ))}
-                </Box>
+                <Show when={task.data.tags.length}>
+                    <Box mt="5px">
+                        {task.data.tags!.map((tagName, index) => (
+                            <TagView key={index} name={tagName}/>
+                        ))}
+                    </Box>
+                </Show>
             </Box>
             <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}/>
         </Flex>

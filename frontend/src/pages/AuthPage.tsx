@@ -2,13 +2,20 @@ import {useParams, useRouter} from '@tanstack/react-router';
 import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
 import {type SubmitHandler, useForm} from "react-hook-form";
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import {authRoute, mainRoute} from "@/routes/__root.tsx";
 import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
+import {deriveAuthHash, generateNewSalt} from "@/functions/Crypto.ts";
 
 type credentials = {
     username: string;
     password: string;
+};
+
+type backendCredentials = {
+    username: string;
+    passwordHash: string;
+    salt: string;
 };
 
 const AuthPage = () => {
@@ -21,19 +28,40 @@ const AuthPage = () => {
         formState: {errors},
     } = useForm<credentials>();
 
-    const onSubmit: SubmitHandler<credentials> = async (data) => {
+    const registerNewAccount = async (credentials: credentials) => {
+        const salt = generateNewSalt();
+        const newFrontendAuthHash = deriveAuthHash(salt, credentials.password);
+
+        const backendCredentials = {username: credentials.username, password: newFrontendAuthHash, salt: salt};
+        await sendAuthRequest("/auth/register", backendCredentials);
+
+        //     on success, call login()
+    };
+
+    const login = async (credentials: credentials) => {
+        //    fetch existing auth salt
+        //    create frontendauthhash
+        //    login using this hash async
+        //    assemble encryption key to secure medium
+    };
+
+    const createEncryptionKey = async (credentials: credentials) => {
+
+    };
+
+    const onSubmit: SubmitHandler<credentials> = async (credentials: credentials) => {
         if (formType === "log-in") {
-            const response = await sendPostRequest("/auth/login", data);
+            const response = await sendAuthRequest("/auth/login", credentials);
             if (!response.error) {
                 await router.navigate({to: mainRoute.fullPath});
             } else {
                 alert("Login failed: " + (response?.error || "Unknown error"));
             }
-        } else if (formType === "register") await sendPostRequest("/auth/register", data);
+        } else if (formType === "register") registerNewAccount(credentials);
     };
 
-    const sendPostRequest = async (request: string, content: credentials) => {
-        const body = {username: content.username, password: content.password};
+    const sendAuthRequest = async (request: string, credentials: backendCredentials) => {
+        const body = {...credentials};
         try {
             return await FetchRequest("POST", request, body);
         } catch (error) {

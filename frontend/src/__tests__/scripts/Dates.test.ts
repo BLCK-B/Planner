@@ -5,7 +5,7 @@ import {
     getTodaysDate,
     isDatePast,
     readableTimeToDate
-} from '@/scripts/Dates'
+} from '@/functions/Dates'
 
 beforeEach(() => {
     vi.useFakeTimers();

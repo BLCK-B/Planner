@@ -3,8 +3,8 @@ import {Box, Flex, Show} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
-import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/scripts/Sorting.tsx'
-import {isDatePast} from "@/scripts/Dates.tsx";
+import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/functions/Sorting.tsx'
+import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
 

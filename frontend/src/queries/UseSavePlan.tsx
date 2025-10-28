@@ -1,5 +1,5 @@
 import {useMutation} from "@tanstack/react-query";
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 
 const saveRequest = async (plan: PlanType): Promise<PlanType[]> => {
