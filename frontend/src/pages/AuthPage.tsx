@@ -5,7 +5,7 @@ import {type SubmitHandler, useForm} from "react-hook-form";
 import FetchRequest from "@/functions/FetchRequest.tsx";
 import {authRoute, mainRoute} from "@/routes/__root.tsx";
 import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
-import {deriveAuthHash, generateNewSalt} from "@/functions/Crypto.ts";
+import {decodeFromBase64, deriveAuthHash, encodeToBase64, generateNewSalt} from "@/functions/Crypto.ts";
 
 type credentials = {
     username: string;
@@ -14,8 +14,8 @@ type credentials = {
 
 type backendCredentials = {
     username: string;
-    passwordHash: string;
-    salt: string;
+    frontendPasswordHash: string;
+    passwordAuthSalt: string;
 };
 
 const AuthPage = () => {
@@ -29,35 +29,56 @@ const AuthPage = () => {
     } = useForm<credentials>();
 
     const registerNewAccount = async (credentials: credentials) => {
-        const salt = generateNewSalt();
-        const newFrontendAuthHash = deriveAuthHash(salt, credentials.password);
+        const newAuthSalt = generateNewSalt();
+        const newEncryptionKeySalt = generateNewSalt();
 
-        const backendCredentials = {username: credentials.username, password: newFrontendAuthHash, salt: salt};
+        const newFrontendAuthHash = await deriveAuthHash(newAuthSalt, credentials.password);
+
+        const backendCredentials = {
+            username: credentials.username,
+            frontendPasswordHash: newFrontendAuthHash,
+            passwordAuthSalt: encodeToBase64(newAuthSalt),
+            encryptionKeySalt: encodeToBase64(newEncryptionKeySalt),
+        };
         await sendAuthRequest("/auth/register", backendCredentials);
 
         //     on success, call login()
     };
 
+    // TODO: simple register / login tests
+
     const login = async (credentials: credentials) => {
-        //    fetch existing auth salt
-        //    create frontendauthhash
-        //    login using this hash async
-        //    assemble encryption key to secure medium
+        const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
+        if (frontendAuthSalt.error) {
+            alert("Login failed: " + (frontendAuthSalt?.error || "Unknown error"));
+            return;
+        }
+        const authHash = await deriveAuthHash(decodeFromBase64(frontendAuthSalt), credentials.password);
+
+        const backendCredentials = {
+            username: credentials.username,
+            frontendPasswordHash: authHash,
+            passwordAuthSalt: encodeToBase64(frontendAuthSalt)
+        };
+
+        // consider another async and calling from outer scope
+        const encryptionKeySalt = await sendAuthRequest("/auth/login", backendCredentials);
+        if (encryptionKeySalt.error) {
+            alert("Login failed: " + (encryptionKeySalt?.error || "Unknown error"));
+            return;
+        }
+        await createEncryptionKey(credentials, decodeFromBase64(encryptionKeySalt));
+
+        await router.navigate({to: mainRoute.fullPath});
     };
 
-    const createEncryptionKey = async (credentials: credentials) => {
+    const createEncryptionKey = async (credentials: credentials, encryptionKeySalt: Uint8Array) => {
 
     };
 
     const onSubmit: SubmitHandler<credentials> = async (credentials: credentials) => {
-        if (formType === "log-in") {
-            const response = await sendAuthRequest("/auth/login", credentials);
-            if (!response.error) {
-                await router.navigate({to: mainRoute.fullPath});
-            } else {
-                alert("Login failed: " + (response?.error || "Unknown error"));
-            }
-        } else if (formType === "register") registerNewAccount(credentials);
+        if (formType === "log-in") await login(credentials);
+        else if (formType === "register") await registerNewAccount(credentials);
     };
 
     const sendAuthRequest = async (request: string, credentials: backendCredentials) => {

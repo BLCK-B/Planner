@@ -1,6 +1,7 @@
 package com.blck.planner.accounts;
 
 import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
+import com.blck.planner.security.CredentialsDTO;
 import com.blck.planner.security.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -23,7 +24,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
@@ -47,7 +47,8 @@ public class AccountService implements ReactiveUserDetailsService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	public Mono<UserAccount> registerUser(String username, String password) {
+	public Mono<UserAccount> registerUser(CredentialsDTO credentials) {
+        String username = credentials.username();
 		return accountRepository.findByUsername(username)
 			.hasElement()
 			.flatMap(hasAccount -> {
@@ -59,7 +60,9 @@ public class AccountService implements ReactiveUserDetailsService {
 				UserAccount userAccount = new UserAccount(
 					null,
 					username,
-					passwordEncoder.encode(password),
+					passwordEncoder.encode(credentials.frontendPasswordHash()),
+                    credentials.passwordAuthSalt(),
+                    credentials.encryptionKeySalt(),
 					true,
 					roles
 				);

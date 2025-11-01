@@ -4,6 +4,7 @@ import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.accounts.AccountRepository;
 import com.blck.planner.accounts.AccountService;
 import com.blck.planner.accounts.UserAccount;
+import com.blck.planner.security.CredentialsDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +49,7 @@ class AccountServiceTest {
 	@InjectMocks
 	AccountService accountService;
 
-	final UserAccount existingUserAccount = new UserAccount(null, "username", "encoded", true, Set.of("ROLE_USER"));
+	final UserAccount existingUserAccount = new UserAccount(null, "username", "encoded", "frontendSalt", "encryptionSalt", true, Set.of("ROLE_USER"));
 
 	private final Jwt mockJwt = new Jwt(
 		"token-value",
@@ -71,7 +72,7 @@ class AccountServiceTest {
 	void registerExceptionWhenUserAlreadyExists() {
 		when(accountRepository.findByUsername(anyString())).thenReturn(Mono.just(existingUserAccount));
 
-		Mono<UserAccount> result = accountService.registerUser("username", "password");
+		Mono<UserAccount> result = accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt"));
 
 		StepVerifier.create(result)
 			.expectError(AccountAlreadyExistsException.class)
@@ -80,7 +81,7 @@ class AccountServiceTest {
 
 	@Test
 	void registerAccountHasCorrectData() {
-		Mono<UserAccount> result = accountService.registerUser("username", "password");
+		Mono<UserAccount> result = accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt"));
 
 		StepVerifier.create(result)
 			.expectNextMatches(user -> user.equals(existingUserAccount))

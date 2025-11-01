@@ -16,6 +16,8 @@ public record UserAccount (
 	@Id String id,
 	String username,
 	String password,
+    String passwordAuthSalt,
+    String encryptionKeySalt,
 	boolean enabled,
 	Set<String> roles
 ) implements UserDetails {

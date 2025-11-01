@@ -2,6 +2,7 @@ package com.blck.planner.integrationTests;
 
 import com.blck.planner.accounts.AccountRepository;
 import com.blck.planner.accounts.UserAccount;
+import com.blck.planner.security.CredentialsDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,15 +39,12 @@ class AuthControllerTests {
 	AccountRepository accountRepository;
 
 	final ObjectMapper objectMapper = new ObjectMapper();
-	JsonNode credentials = objectMapper.createObjectNode()
-			.put("username", "username")
-			.put("password", "password");
+	CredentialsDTO credentials = new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt");
 
 	final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", true, Set.of("ROLE_USER"));
-	final UserAccount encodedAccount = new UserAccount(null, "username", bCryptPasswordEncoder.encode("password"), true, Set.of("ROLE_USER"));
-	final UserAccount encodedAccountDiffPswd = new UserAccount(null, "username", bCryptPasswordEncoder.encode("different"), true, Set.of("ROLE_USER"));
-
+	final UserAccount existingUserAccount = new UserAccount(null, "username", "password", "frontendSalt", "encryptionSalt", true, Set.of("ROLE_USER"));
+	final UserAccount encodedAccount = new UserAccount(null, "username", bCryptPasswordEncoder.encode("password"), "frontendSalt", "encryptionSalt",  true, Set.of("ROLE_USER"));
+	final UserAccount encodedAccountDiffPswd = new UserAccount(null, "username", bCryptPasswordEncoder.encode("different"), "frontendSalt", "encryptionSalt",  true, Set.of("ROLE_USER"));
 
 	@Test
 	void registerUserSuccess() {
@@ -143,9 +141,7 @@ class AuthControllerTests {
 	@Test
 	void loginUserWrongCredentialsReturnsUnauthorized() {
 		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
-		credentials = objectMapper.createObjectNode()
-			.put("username", "username")
-			.put("password", "wrongPassword");
+		credentials = new CredentialsDTO("username", "wrongPassword", "frontendSalt", "encryptionSalt");
 
 		webTestClient
 			.post()
@@ -170,7 +166,7 @@ class AuthControllerTests {
 			.expectBody()
 			.consumeWith(response -> {
 				assertAll(
-						() -> assertEquals("Authentication successful", new String(Objects.requireNonNull(response.getResponseBody()), StandardCharsets.UTF_8)),
+						() -> assertEquals("encryptionSalt", new String(Objects.requireNonNull(response.getResponseBody()), StandardCharsets.UTF_8)),
 						() -> assertNull(response.getResponseHeaders().getFirst(HttpHeaders.AUTHORIZATION))
 				);
 			});
