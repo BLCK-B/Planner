@@ -5,7 +5,13 @@ import {type SubmitHandler, useForm} from "react-hook-form";
 import FetchRequest from "@/functions/FetchRequest.tsx";
 import {authRoute, mainRoute} from "@/routes/__root.tsx";
 import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
-import {decodeFromBase64, deriveAuthHash, encodeToBase64, generateNewSalt} from "@/functions/Crypto.ts";
+import {
+    createEncryptionKey,
+    decodeFromBase64,
+    deriveAuthHash,
+    encodeToBase64,
+    generateNewSalt
+} from "@/functions/Crypto.ts";
 
 type credentials = {
     username: string;
@@ -27,7 +33,7 @@ const AuthPage = () => {
         handleSubmit,
         formState: {errors},
     } = useForm<credentials>();
-
+// TODO: simple register / login tests
     const registerNewAccount = async (credentials: credentials) => {
         const newAuthSalt = generateNewSalt();
         const newEncryptionKeySalt = generateNewSalt();
@@ -42,10 +48,11 @@ const AuthPage = () => {
         };
         await sendAuthRequest("/auth/register", backendCredentials);
 
-        //     on success, call login()
+        await router.navigate({
+            to: authRoute.fullPath,
+            params: {formType: 'log-in'},
+        });
     };
-
-    // TODO: simple register / login tests
 
     const login = async (credentials: credentials) => {
         const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
@@ -67,13 +74,9 @@ const AuthPage = () => {
             alert("Login failed: " + (encryptionKeySalt?.error || "Unknown error"));
             return;
         }
-        await createEncryptionKey(credentials, decodeFromBase64(encryptionKeySalt));
+        await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
 
         await router.navigate({to: mainRoute.fullPath});
-    };
-
-    const createEncryptionKey = async (credentials: credentials, encryptionKeySalt: Uint8Array) => {
-
     };
 
     const onSubmit: SubmitHandler<credentials> = async (credentials: credentials) => {

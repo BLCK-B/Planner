@@ -8,5 +8,6 @@
     <include file="changelogs/2025-09-28-init.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/2025-10-31-add-fe-salt-col.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/2025-11-01-add-encryption-salt-col.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/2025-11-02-convert-tags-to-string.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

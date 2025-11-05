@@ -1,6 +1,5 @@
 package com.blck.planner.userData;
 
-import java.util.List;
 import java.util.UUID;
 
 public record TaskDTO(
@@ -12,7 +11,7 @@ public record TaskDTO(
             String itemType,
             String name,
             String date,
-            List<String> tags,
+            String tags,
             String completed,
             String repeatEvent,
             int repeatOriginDay,

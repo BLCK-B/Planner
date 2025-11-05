@@ -12,6 +12,21 @@ export type Task = {
     };
 };
 
+type EncryptSpec = {
+    [K in keyof Task["data"]]: boolean;
+};
+
+export const TaskEncryptSpec: EncryptSpec = {
+    itemType: false,
+    name: true,
+    date: true,
+    tags: true,
+    completed: true,
+    repeatEvent: false,
+    repeatOriginDay: false,
+    planID: false,
+};
+
 export const newTask: Task = {
     itemID: '',
     data: {
