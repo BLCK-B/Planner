@@ -20,7 +20,7 @@ export const TaskEncryptSpec: EncryptSpec = {
     itemType: false,
     name: true,
     date: true,
-    tags: true,
+    tags: false,
     completed: true,
     repeatEvent: false,
     repeatOriginDay: false,

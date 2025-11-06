@@ -8,21 +8,43 @@ const URL = "http://localhost:8081";
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 type Encryptable = Task | Plan;
 
-async function FetchRequest(method: Methods, request: string, body?: Encryptable): Promise<Encryptable>;
-async function FetchRequest(method: Methods, request: string, body?: Encryptable[]): Promise<Encryptable[]>;
-async function FetchRequest(method: Methods, request: string, body?: object | null): Promise<any>;
+const encryptBody = async (body: any) => {
+    if (Array.isArray(body) && body.length && ("data" in body[0])) {
+        return await Promise.all(body.map((item) => encrypt(item)));
+    } else if ("data" in body) {
+        return await encrypt(body);
+    }
+    return body;
+};
 
-async function FetchRequest(method: Methods, request: string, body?: any): Promise<any> {
-    const headers = {"Content-Type": "application/json"};
-    const options: RequestInit = {method, headers, credentials: "include"};
+const decryptBody = async (body: any) => {
+    if (Array.isArray(body) && body.length && ("data" in body[0])) {
+        return await Promise.all(body.map((item) => decrypt(item)));
+    } else if ("data" in body) {
+        return await decrypt(body);
+    }
+    return body;
+}
+
+type FetchRequestFunction = {
+    (method: Methods, request: string, body?: object | null): Promise<any>;
+    (method: Methods, request: string, body?: Encryptable): Promise<Encryptable>;
+    (method: Methods, request: string, body?: Encryptable[]): Promise<Encryptable[]>;
+};
+
+const FetchRequest: FetchRequestFunction = async (method, request, body) => {
+    const headers = {
+        "Content-Type": "application/json"
+    };
+
+    const options: RequestInit = {
+        method,
+        headers,
+        credentials: "include"
+    };
 
     if (body) {
-        if (Array.isArray(body) && body.length && ("data" in body[0])) {
-            body = await Promise.all(body.map((item) => encrypt(item)));
-        } else if ("data" in body) {
-            body = await encrypt(body);
-        }
-
+        body = await encryptBody(body);
         options.body = JSON.stringify(body);
     }
 
@@ -34,21 +56,14 @@ async function FetchRequest(method: Methods, request: string, body?: any): Promi
         throw error;
     }
 
-    const text = await response.text();
-    if (!text) return null;
-
+    const responseText = await response.text();
+    if (!responseText) return null;
     try {
-        const parsed = JSON.parse(text);
-
-        // if (Array.isArray(parsed) && parsed.length && ("data" in parsed[0])) {
-        //     return await Promise.all(parsed.map((item) => decrypt(item)));
-        // } else if ("data" in parsed) {
-        //     return await decrypt(parsed);
-        // }
-
-        return parsed;
+        const receivedBody = JSON.parse(responseText);
+        return receivedBody;
+        // return await decryptBody(receivedBody);
     } catch {
-        return text;
+        return responseText;
     }
 }
 

@@ -169,7 +169,9 @@ export const decryptFields = async (
     return result;
 };
 
-export const encrypt = async (item: Task | Plan): Promise<Task | Plan> => {
+export async function encrypt(item: Task): Promise<Task>;
+export async function encrypt(item: Plan): Promise<Plan>;
+export async function encrypt(item: Task | Plan): Promise<Task | Plan> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         const spec = TaskEncryptSpec; // TODO: plan spec
@@ -177,9 +179,11 @@ export const encrypt = async (item: Task | Plan): Promise<Task | Plan> => {
         return {...item, data: encryptedData};
     }
     return item;
-};
+}
 
-export const decrypt = async (item: Task | Plan): Promise<Task | Plan> => {
+export async function decrypt(item: Task): Promise<Task>;
+export async function decrypt(item: Plan): Promise<Plan>;
+export async function decrypt(item: Task | Plan): Promise<Task | Plan> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         const spec = TaskEncryptSpec;
@@ -187,10 +191,10 @@ export const decrypt = async (item: Task | Plan): Promise<Task | Plan> => {
         return {...item, data: decryptedData};
     }
     return item;
-};
+}
 
-// TODO: tables separately - fetch all in table, reencrypt all in client, then send
-// TODO: special endpoints for this (replace with ids staying the same + verify)
-export const reencryptAllData = async () => {
-
-};
+export async function reencrypt(items: Task[]): Promise<Task[]>;
+export async function reencrypt(items: Plan[]): Promise<Plan[]>;
+export async function reencrypt(items: Task[] | Plan[]): Promise<Task[] | Plan[]> {
+    return Promise.all(items.map(item => encrypt(item))) as Promise<Task[] | Plan[]>;
+}
