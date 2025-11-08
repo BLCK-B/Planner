@@ -5,11 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="tags-to-string" author="BLCK">
+    <changeSet id="tags-to-string-json" author="BLCK">
         <sql>
             ALTER TABLE user_tasks
             ALTER COLUMN tags TYPE TEXT
-            USING array_to_string(tags, ',');
+            USING to_json(tags);
         </sql>
     </changeSet>
 

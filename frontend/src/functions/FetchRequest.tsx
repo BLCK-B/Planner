@@ -60,8 +60,7 @@ const FetchRequest: FetchRequestFunction = async (method, request, body) => {
     if (!responseText) return null;
     try {
         const receivedBody = JSON.parse(responseText);
-        return receivedBody;
-        // return await decryptBody(receivedBody);
+        return await decryptBody(receivedBody);
     } catch {
         return responseText;
     }

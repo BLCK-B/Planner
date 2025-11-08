@@ -157,11 +157,16 @@ export const decryptFields = async (
 
     for (const key in spec) {
         if (spec[key]) {
-            const combined = decodeFromBase64(value[key]);
-            const iv = combined.slice(0, AES_NONCE_LENGTH);
-            const ciphertext = combined.slice(AES_NONCE_LENGTH);
-            const decryptedBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv}, cryptoKey, ciphertext);
-            result[key] = JSON.parse(decoder.decode(decryptedBuffer));
+            try {
+                const combined = decodeFromBase64(value[key]);
+                const iv = combined.slice(0, AES_NONCE_LENGTH);
+                const ciphertext = combined.slice(AES_NONCE_LENGTH);
+                const decryptedBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv}, cryptoKey, ciphertext);
+                result[key] = JSON.parse(decoder.decode(decryptedBuffer));
+            } catch (error) {
+                // unencrypted data passes unchanged
+                result[key] = value[key];
+            }
         } else {
             result[key] = value[key];
         }
@@ -191,10 +196,4 @@ export async function decrypt(item: Task | Plan): Promise<Task | Plan> {
         return {...item, data: decryptedData};
     }
     return item;
-}
-
-export async function reencrypt(items: Task[]): Promise<Task[]>;
-export async function reencrypt(items: Plan[]): Promise<Plan[]>;
-export async function reencrypt(items: Task[] | Plan[]): Promise<Task[] | Plan[]> {
-    return Promise.all(items.map(item => encrypt(item))) as Promise<Task[] | Plan[]>;
 }

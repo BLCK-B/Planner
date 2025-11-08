@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public record TaskDTO(
         UUID itemID,
-        String userID,
         Data data
 ) {
     public record Data(
@@ -19,7 +18,7 @@ public record TaskDTO(
     ) {
     }
 
-    public Task toTask() {
+    public Task toTask(String userID) {
         return new Task(
                 itemID,
                 userID,

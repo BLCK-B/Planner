@@ -30,15 +30,21 @@ public class TaskController {
         return Mono.just(jwt.getSubject());
     }
 
+    // pagination in future
     @GetMapping(value = "/userTasks")
     public Flux<TaskDTO> getTasks(@AuthenticationPrincipal Jwt jwt) {
         return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
     }
 
+    @GetMapping(value = "/allUserTasks")
+    public Flux<TaskDTO> getAllTasks(@AuthenticationPrincipal Jwt jwt) {
+        return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
+    }
+
     @PutMapping(value = "/userTask")
     public Mono<TaskDTO> setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
-        TaskDTO dto = new TaskDTO(userItem.itemID(), jwt.getSubject(), userItem.data());
-        return userTaskRepository.save(dto.toTask())
+        TaskDTO dto = new TaskDTO(userItem.itemID(), userItem.data());
+        return userTaskRepository.save(dto.toTask(jwt.getSubject()))
                 .map(Task::toDTO);
     }
 
@@ -52,9 +58,10 @@ public class TaskController {
     @Transactional
     public Mono<ResponseEntity<String>> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
         List<TaskDTO> dtos = userItems.stream()
-                .map(userItem -> new TaskDTO(userItem.itemID(), jwt.getSubject(), userItem.data()))
+                .map(userItem -> new TaskDTO(userItem.itemID(), userItem.data()))
                 .toList();
-        return userTaskRepository.saveAll(dtos.stream().map(TaskDTO::toTask).collect(Collectors.toList()))
+        String userID = jwt.getSubject();
+        return userTaskRepository.saveAll(dtos.stream().map(dto -> dto.toTask(userID)).collect(Collectors.toList()))
                 .collectList()
                 .map(savedTasks -> ResponseEntity.ok("Successfully updated " + savedTasks.size() + " tasks"))
                 .defaultIfEmpty(ResponseEntity.status(500).body("Failed to update tasks"));

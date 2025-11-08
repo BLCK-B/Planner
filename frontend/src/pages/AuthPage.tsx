@@ -54,6 +54,13 @@ const AuthPage = () => {
         });
     };
 
+    // not ready for protocol migrations
+    const reencryptAllData = async () => {
+        const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
+        if (!allItemsReencrypted) return;
+        await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+    };
+
     const login = async (credentials: credentials) => {
         const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
         if (frontendAuthSalt.error) {
@@ -68,13 +75,15 @@ const AuthPage = () => {
             passwordAuthSalt: encodeToBase64(frontendAuthSalt)
         };
 
-        // consider another async and calling from outer scope
         const encryptionKeySalt = await sendAuthRequest("/auth/login", backendCredentials);
         if (encryptionKeySalt.error) {
             alert("Login failed: " + (encryptionKeySalt?.error || "Unknown error"));
             return;
         }
         await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
+
+        // here is the place to call reencryption
+        // await reencryptAllData();
 
         await router.navigate({to: mainRoute.fullPath});
     };

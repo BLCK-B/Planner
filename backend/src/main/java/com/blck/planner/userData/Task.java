@@ -22,6 +22,6 @@ public record Task(
 ) {
     public TaskDTO toDTO() {
         var data = new TaskDTO.Data(itemType, name, date, tags, completed, repeatEvent, repeatOriginDay, planID);
-        return new TaskDTO(itemID, userID, data);
+        return new TaskDTO(itemID, data);
     }
 }
