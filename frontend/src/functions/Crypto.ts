@@ -1,5 +1,5 @@
 import {type Task, TaskEncryptSpec} from "@/types/Task.ts";
-import type {Plan} from "@/types/Plan.ts";
+import {type Plan, PlanEncryptSpec} from "@/types/Plan.ts";
 
 // for converting between unicode text and UTF bytes
 const encoder = new TextEncoder();
@@ -174,12 +174,16 @@ export const decryptFields = async (
     return result;
 };
 
+const isTask = (item: Task | Plan): item is Task => {
+    return (item as Task).data.planID !== undefined;
+}
+
 export async function encrypt(item: Task): Promise<Task>;
 export async function encrypt(item: Plan): Promise<Plan>;
 export async function encrypt(item: Task | Plan): Promise<Task | Plan> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
-        const spec = TaskEncryptSpec; // TODO: plan spec
+        const spec = isTask(item) ? TaskEncryptSpec : PlanEncryptSpec;
         const encryptedData = await encryptFields(item.data, spec, cryptoKey);
         return {...item, data: encryptedData};
     }
@@ -191,7 +195,7 @@ export async function decrypt(item: Plan): Promise<Plan>;
 export async function decrypt(item: Task | Plan): Promise<Task | Plan> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
-        const spec = TaskEncryptSpec;
+        const spec = isTask(item) ? TaskEncryptSpec : PlanEncryptSpec;
         const decryptedData = await decryptFields(item.data, spec, cryptoKey);
         return {...item, data: decryptedData};
     }

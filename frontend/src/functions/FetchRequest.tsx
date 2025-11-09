@@ -8,7 +8,7 @@ const URL = "http://localhost:8081";
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 type Encryptable = Task | Plan;
 
-const encryptBody = async (body: any) => {
+export const encryptBody = async (body: any) => {
     if (Array.isArray(body) && body.length && ("data" in body[0])) {
         return await Promise.all(body.map((item) => encrypt(item)));
     } else if ("data" in body) {
@@ -17,7 +17,7 @@ const encryptBody = async (body: any) => {
     return body;
 };
 
-const decryptBody = async (body: any) => {
+export const decryptBody = async (body: any) => {
     if (Array.isArray(body) && body.length && ("data" in body[0])) {
         return await Promise.all(body.map((item) => decrypt(item)));
     } else if ("data" in body) {

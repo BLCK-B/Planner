@@ -8,6 +8,17 @@ export type Plan = {
     };
 };
 
+type EncryptSpec = {
+    [K in keyof Plan["data"]]: boolean;
+};
+
+export const PlanEncryptSpec: EncryptSpec = {
+    name: true,
+    description: true,
+    color: false,
+    completed: true
+};
+
 export const newPlan: Plan = {
     itemID: '',
     data: {

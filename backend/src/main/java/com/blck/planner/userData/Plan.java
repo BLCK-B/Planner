@@ -19,6 +19,6 @@ public record Plan(
 ) {
     public PlanDTO toDTO() {
         var data = new PlanDTO.Data(name, description, color, completed);
-        return new PlanDTO(itemID, userID, data);
+        return new PlanDTO(itemID, data);
     }
 }

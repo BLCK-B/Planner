@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public record PlanDTO(
         UUID itemID,
-        String userID,
         Data data
 ) {
     public record Data(
@@ -15,7 +14,7 @@ public record PlanDTO(
     ) {
     }
 
-    public Plan toPlan() {
+    public Plan toPlan(String userID) {
         return new Plan(
                 itemID,
                 userID,

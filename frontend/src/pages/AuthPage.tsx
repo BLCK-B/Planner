@@ -57,8 +57,10 @@ const AuthPage = () => {
     // not ready for protocol migrations
     const reencryptAllData = async () => {
         const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
-        if (!allItemsReencrypted) return;
-        await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+        const allPlansReencrypted = await FetchRequest("GET", "/users/userPlans");
+        // todo: completely atomic
+        if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserPlans", allPlansReencrypted);
     };
 
     const login = async (credentials: credentials) => {
@@ -83,7 +85,7 @@ const AuthPage = () => {
         await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
 
         // here is the place to call reencryption
-        // await reencryptAllData();
+        await reencryptAllData();
 
         await router.navigate({to: mainRoute.fullPath});
     };
