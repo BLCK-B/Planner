@@ -3,7 +3,7 @@ import {Editable, Show, Tag} from "@chakra-ui/react";
 type Props = {
     name: string;
     setNewName: (newName: string) => void;
-    deleteTag: (taskId: string) => void;
+    deleteTag?: (taskId: string) => void;
 };
 
 const EditableTag = ({name, setNewName, deleteTag}: Props) => {

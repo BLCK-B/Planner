@@ -6,9 +6,6 @@ import {
     Show,
     Field,
     Textarea,
-    ColorPicker,
-    parseColor,
-    HStack, ColorPickerChannelSlider,
 } from "@chakra-ui/react";
 import useSavePlan from "@/queries/UseSavePlan.tsx";
 import useDeletePlan from "@/queries/UseDeletePlan.tsx";
@@ -18,6 +15,7 @@ import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import MyButton from "@/components/base/MyButton.tsx";
 import {newPlan} from "@/types/Plan.ts";
+import ColorPick from "@/components/base/ColorPick.tsx";
 
 const CreatorMenu = () => {
 
@@ -89,22 +87,12 @@ const CreatorMenu = () => {
                                               bg="primary.lighter"/>
                                 </Field.Root>
                             </Flex>
-                            <ColorPicker.Root value={parseColor(newItem.data.color)} format="rgba" maxW="200px"
-                                              onValueChange={(e) => updateItem("color", e.value.toString("rgb"))}>
-                                <ColorPicker.HiddenInput/>
-                                <ColorPicker.Label color="primary.contrast">Color</ColorPicker.Label>
-                                <ColorPicker.Control>
-                                    <ColorPicker.Trigger/>
-                                </ColorPicker.Control>
-                                <ColorPicker.Positioner>
-                                    <ColorPicker.Content>
-                                        <ColorPicker.Area/>
-                                        <HStack>
-                                            <ColorPickerChannelSlider channel="hue"/>
-                                        </HStack>
-                                    </ColorPicker.Content>
-                                </ColorPicker.Positioner>
-                            </ColorPicker.Root>
+                            <ColorPick
+                                rgbaValue={newItem.data.color}
+                                onColorChange={(selected) => {
+                                    updateItem("color", selected)
+                                }}
+                            />
                         </Dialog.Body>
                         <Dialog.Footer>
                             <MyButton type="confirm" onClick={saveItem} disabled={disableSaveRules()}/>

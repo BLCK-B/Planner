@@ -85,7 +85,7 @@ const AuthPage = () => {
         await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
 
         // here is the place to call reencryption
-        await reencryptAllData();
+        // await reencryptAllData();
 
         await router.navigate({to: mainRoute.fullPath});
     };

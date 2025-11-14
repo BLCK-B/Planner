@@ -1,4 +1,4 @@
-import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Menu, Popover} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
@@ -13,6 +13,7 @@ import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
+import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
 
 const TaskCreator = () => {
 
@@ -43,6 +44,10 @@ const TaskCreator = () => {
     //     const currentTags = newItem.data.tags ?? [];
     //     updateItem("tags", [...currentTags, name]);
     // };
+
+    const addTagAction = () => {
+
+    };
 
     const handleAddTag = () => {
         setNewItem(prev => ({
@@ -153,19 +158,24 @@ const TaskCreator = () => {
                                                      setNewName={(newName: string) => setNewNameAt(index, newName)}
                                                      deleteTag={removeTag}/>
                                     ))}
-                                    {/* add tag button */}
+                                    {/* button for opening tag add menu */}
                                     <Show when={newItem.data.tags.length <= 2}>
-                                        <Tag.Root onClick={handleAddTag} variant="surface"
-                                                  bg="primary.base"
-                                                  color="primary.contrast">
-                                            <Tag.Label>+ tag</Tag.Label>
-                                        </Tag.Root>
+                                        <Popover.Root>
+                                            <Popover.Trigger asChild>
+                                                <Tag.Root onClick={addTagAction} variant="surface"
+                                                          bg="primary.base"
+                                                          color="primary.contrast">
+                                                    <Tag.Label>+ tag</Tag.Label>
+                                                </Tag.Root>
+                                            </Popover.Trigger>
+                                            <TagsSelect/>
+                                        </Popover.Root>
                                     </Show>
                                 </Flex>
                                 {/* plan assignment */}
-                                <DropSelection items={planOptions}
-                                               selected={newItem.data.planID}
-                                               onSelect={(planID) => updateItem("planID", planID)}/>
+                                {/*<DropSelection items={planOptions}*/}
+                                {/*               selected={newItem.data.planID}*/}
+                                {/*               onSelect={(planID) => updateItem("planID", planID)}/>*/}
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>

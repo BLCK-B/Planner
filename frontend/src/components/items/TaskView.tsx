@@ -7,7 +7,7 @@ import type {Task as TaskType} from "@/types/Task.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
-import TagView from "@/components/base/TagView.tsx";
+import TagView from "@/components/items/TagView.tsx";
 
 const TaskView = (task: TaskType) => {
 

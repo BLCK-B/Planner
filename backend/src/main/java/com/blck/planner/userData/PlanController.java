@@ -11,7 +11,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,7 +39,7 @@ public class PlanController {
     @DeleteMapping(value = "/userPlan/{planID}")
     public Mono<String> deletePlan(@AuthenticationPrincipal Jwt jwt, @PathVariable String planID) {
         return userPlanRepository.deleteByUserIDAndItemID(jwt.getSubject(), planID)
-                .thenReturn("User task removed successfully.");
+                .thenReturn("User plan removed successfully.");
     }
 
     @PutMapping(value = "/updateAllUserPlans")
@@ -52,7 +51,7 @@ public class PlanController {
         String userID = jwt.getSubject();
         return userPlanRepository.saveAll(dtos.stream().map(dto -> dto.toPlan(userID)).collect(Collectors.toList()))
                 .collectList()
-                .map(savedTasks -> ResponseEntity.ok("Successfully updated " + savedTasks.size() + " tasks"))
-                .defaultIfEmpty(ResponseEntity.status(500).body("Failed to update tasks"));
+                .map(savedPlans -> ResponseEntity.ok("Successfully updated " + savedPlans.size() + " plans"))
+                .defaultIfEmpty(ResponseEntity.status(500).body("Failed to update plans"));
     }
 }
