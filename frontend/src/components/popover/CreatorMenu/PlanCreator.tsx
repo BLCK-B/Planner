@@ -17,7 +17,7 @@ import MyButton from "@/components/base/MyButton.tsx";
 import {newPlan} from "@/types/Plan.ts";
 import ColorPick from "@/components/base/ColorPick.tsx";
 
-const CreatorMenu = () => {
+const PlanCreator = () => {
 
     const queryClient = useQueryClient();
 
@@ -105,4 +105,4 @@ const CreatorMenu = () => {
     );
 };
 
-export default CreatorMenu;
+export default PlanCreator;

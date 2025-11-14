@@ -11,7 +11,7 @@ import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
-import TagView from "@/components/items/TagView.tsx";
+import MyTag from "@/components/items/MyTag.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import CompleteSection from "@/components/base/CompleteSection.tsx";
@@ -79,7 +79,7 @@ const Task = (task: TaskType) => {
                 <Show when={task.data.tags.length}>
                     <Box mt="5px">
                         {task.data.tags!.map((tagName, index) => (
-                            <TagView key={index} name={tagName}/>
+                            <MyTag key={index} name={tagName}/>
                         ))}
                     </Box>
                 </Show>

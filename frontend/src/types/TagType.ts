@@ -19,6 +19,6 @@ export const newTag: TagType = {
     tagID: '',
     data: {
         tagName: '',
-        color: 'rgb(255, 255, 255)',
+        color: 'rgb(128, 128, 128)',
     },
 } as const;

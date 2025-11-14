@@ -1,35 +1,31 @@
-import {Popover, Grid, Button} from "@chakra-ui/react";
-import TagView from "@/components/items/TagView.tsx";
-import {tagsEditRoute} from "@/routes/__root.tsx";
-import {useRouter} from "@tanstack/react-router";
+import {Popover, Grid, Show} from "@chakra-ui/react";
+import MyTag from "@/components/items/MyTag.tsx";
+import {useQuery} from "@tanstack/react-query";
+import {type TagType} from "@/types/TagType.ts";
+import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 
-const TagsSelect = ({x = 3, y = 3}) => {
-    const predefinedTags = Array.from({length: x * y - 1}, (_, i) => `Tag ${i + 1}`);
+const TagsSelect = () => {
 
-    const router = useRouter();
-
-    const openEditPage = () => {
-        router.navigate({to: tagsEditRoute.fullPath});
-    };
+    const {data: tags} = useQuery<TagType[]>(loadTagsQuery());
 
     return (
         <Popover.Positioner>
             <Popover.Content width="380px" bg="primary.lighter">
                 <Popover.Body>
                     <Grid
-                        templateColumns={`repeat(${x}, 1fr)`}
+                        templateColumns={`repeat(3, 1fr)`}
                         columnGap={2}
                         rowGap={3}
                         userSelect="none"
                     >
-                        {predefinedTags.map((tag, i) => (
-                            <TagView key={i} name={tag}/>
+                        {tags && tags.map((tag, i) => (
+                            <MyTag key={i} name={tag.data.tagName}/>
                         ))}
+                        <Show when={tags && tags.length <= 4}>
+                            <MyTag name="new tag" isNewButton={true}/>
+                        </Show>
                     </Grid>
                 </Popover.Body>
-                <Button borderRadius="0 0 5px 5px" bg="primary.base" onClick={openEditPage}>
-                    Edit tags
-                </Button>
             </Popover.Content>
         </Popover.Positioner>
     );

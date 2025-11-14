@@ -10,6 +10,9 @@
             <column name="tag_id" type="UUID" defaultValueComputed="uuid_generate_v4()">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="user_id" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
             <column name="tag_name" type="TEXT">
                 <constraints nullable="false"/>
             </column>

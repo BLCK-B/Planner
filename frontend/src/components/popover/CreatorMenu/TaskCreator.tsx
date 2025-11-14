@@ -1,10 +1,9 @@
-import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Menu, Popover} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Popover} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
-import EditableTag from "@/components/base/EditableTag.tsx";
 import {newTask} from "@/types/Task.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
@@ -14,6 +13,7 @@ import {getDayNumber} from "@/functions/Dates.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
+import MyTag from "@/components/items/MyTag.tsx";
 
 const TaskCreator = () => {
 
@@ -39,31 +39,6 @@ const TaskCreator = () => {
         }));
     };
 
-    // TODO: not working, instead handleAddTag
-    // const addTag = (name: string) => {
-    //     const currentTags = newItem.data.tags ?? [];
-    //     updateItem("tags", [...currentTags, name]);
-    // };
-
-    const addTagAction = () => {
-
-    };
-
-    const handleAddTag = () => {
-        setNewItem(prev => ({
-            ...prev,
-            data: {
-                ...prev.data,
-                tags: [...(prev.data.tags ?? []), ""],
-            },
-        }));
-    };
-
-    const removeTag = (tagToRemove: string) => {
-        const currentTags = newItem.data.tags ?? [];
-        updateItem("tags", currentTags.filter(tag => tag !== tagToRemove));
-    };
-
     const saveItem = async () => {
         await saveTaskMutation.mutateAsync(newItem);
         setNewItem(newTask);
@@ -77,18 +52,6 @@ const TaskCreator = () => {
         await deleteTaskMutation.mutateAsync(newItem);
         setNewItem(newTask);
         setShowDialog(false);
-    };
-
-    const setNewNameAt = (index: number, newName: string) => {
-        const newTags = newItem.data.tags;
-        newTags[index] = newName;
-        setNewItem(prev => ({
-            ...prev,
-            data: {
-                ...prev.data,
-                tags: newTags,
-            },
-        }));
     };
 
     const disableSaveRules = () => {
@@ -151,21 +114,19 @@ const TaskCreator = () => {
                                     </Flex>
                                 </Show>
                                 {/* tags */}
-                                <Flex>
+                                <Flex gap={1}>
                                     {/* tag list */}
                                     {newItem.data.tags.map((tagName, index) => (
-                                        <EditableTag key={index} name={tagName}
-                                                     setNewName={(newName: string) => setNewNameAt(index, newName)}
-                                                     deleteTag={removeTag}/>
+                                        <MyTag key={index} name={tagName} isEditable={true}/>
                                     ))}
                                     {/* button for opening tag add menu */}
                                     <Show when={newItem.data.tags.length <= 2}>
                                         <Popover.Root>
                                             <Popover.Trigger asChild>
-                                                <Tag.Root onClick={addTagAction} variant="surface"
+                                                <Tag.Root variant="surface"
                                                           bg="primary.base"
                                                           color="primary.contrast">
-                                                    <Tag.Label>+ tag</Tag.Label>
+                                                    <Tag.Label>assign tag</Tag.Label>
                                                 </Tag.Root>
                                             </Popover.Trigger>
                                             <TagsSelect/>

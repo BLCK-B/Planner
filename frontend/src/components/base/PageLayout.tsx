@@ -1,6 +1,7 @@
 import {Box, GridItem, Grid} from "@chakra-ui/react";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import * as React from "react";
+import TagCreator from "@/components/popover/CreatorMenu/TagCreator.tsx";
 
 type Props = {
     header: React.ReactNode;
@@ -54,6 +55,8 @@ const PageLayout = ({header, content, popover}: Props) => {
 
                 {/* popover */}
                 {popover}
+                {/* todo: temporarily placed */}
+                <TagCreator/>
             </Grid>
         </Box>
     );
