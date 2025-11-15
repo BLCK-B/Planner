@@ -7,7 +7,7 @@ import {
     showExactDatesAtom,
     showPlanCreator
 } from "@/global/atoms.ts";
-import {newPlan} from "@/types/Plan.ts";
+import {getNewPlan} from "@/types/Plan.ts";
 
 const ActionButtonsPlansPage = () => {
 
@@ -18,7 +18,7 @@ const ActionButtonsPlansPage = () => {
     const setEditPlan = useSetAtom(existingPlanForEdit);
 
     const createNewPlan = () => {
-        setEditPlan(newPlan);
+        setEditPlan(getNewPlan());
         setShowAddDialog(true);
     };
 

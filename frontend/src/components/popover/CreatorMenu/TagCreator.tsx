@@ -58,7 +58,7 @@ const TagCreator = () => {
     };
 
     return (
-        <Dialog.Root size={"xs"} open={showDialog}>
+        <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>

@@ -27,7 +27,7 @@ export const TaskEncryptSpec: EncryptSpec = {
     planID: false,
 };
 
-export const newTask: Task = {
+const newTask: Task = {
     itemID: '',
     data: {
         itemType: 'Task',
@@ -40,3 +40,5 @@ export const newTask: Task = {
         planID: '',
     },
 } as const;
+
+export const getNewTask = (): Task => structuredClone(newTask);

@@ -255,14 +255,14 @@ class AuthControllerTests {
 			.getResponseCookies()
 			.getFirst(String.valueOf(JWT_COOKIE_NAME)))
 			.getValue();
-		webTestClient
-			.get()
-			.uri("/users/userAccountInfo")
-			.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody(String.class)
-			.value(response -> assertEquals(encodedAccount.getUsername(), response));
+        webTestClient
+                .get()
+                .uri("/users/userAccountInfo")
+                .cookie(String.valueOf(JWT_COOKIE_NAME), jwtToken)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .value(response -> assertEquals(encodedAccount.getUsername(), response));
 	}
 
 	@Test

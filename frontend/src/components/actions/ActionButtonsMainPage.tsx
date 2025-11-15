@@ -3,7 +3,7 @@ import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useSetAtom} from "jotai";
 import {existingItemForEdit, showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
-import {newTask} from "@/types/Task.ts";
+import {getNewTask} from "@/types/Task.ts";
 
 const ActionButtonsMainPage = () => {
 
@@ -14,7 +14,7 @@ const ActionButtonsMainPage = () => {
     const setEditItem = useSetAtom(existingItemForEdit);
 
     const createNewItem = () => {
-        setEditItem(newTask);
+        setEditItem(getNewTask());
         setShowAddDialog(true);
     };
 

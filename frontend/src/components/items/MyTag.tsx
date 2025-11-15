@@ -1,7 +1,7 @@
 import {Tag} from "@chakra-ui/react";
 import {useSetAtom} from "jotai";
-import {existingTagForEdit, showAddDialog, showPlanCreator, showTagCreator} from "@/global/atoms.ts";
-import {newTag} from "@/types/TagType.ts";
+import {existingTagForEdit, showTagCreator} from "@/global/atoms.ts";
+import {getNewTag} from "@/types/TagType.ts";
 
 type Props = {
     name: string;
@@ -16,9 +16,6 @@ const MyTag = ({name, bg = "primary.base", isEditable = true, isNewButton = fals
 
     const setEditTag = useSetAtom(existingTagForEdit);
 
-    const setShowTaskDialog = useSetAtom(showAddDialog);
-    const setShowPlanDialog = useSetAtom(showPlanCreator);
-
     const clicked = () => {
         if (isNewButton) {
             createNewTag();
@@ -28,18 +25,12 @@ const MyTag = ({name, bg = "primary.base", isEditable = true, isNewButton = fals
     };
 
     const createNewTag = () => {
-        console.log("create");
-        setEditTag(newTag);
-        setShowTaskDialog(false);
-        setShowPlanDialog(false);
+        setEditTag(getNewTag());
         setShowAddTagDialog(true);
     };
 
     const editExistingTag = () => {
-        console.log("edit");
-        setEditTag(newTag);
-        setShowTaskDialog(false);
-        setShowPlanDialog(false);
+        setEditTag(getNewTag());
         setShowAddTagDialog(true);
     };
 

@@ -1,7 +1,7 @@
 import {atom} from 'jotai';
-import {newTask, type Task} from "@/types/Task.ts";
-import {newPlan, type Plan} from "@/types/Plan.ts";
-import {newTag, type TagType} from "@/types/TagType.ts";
+import {getNewTask, type Task} from "@/types/Task.ts";
+import {getNewPlan, type Plan} from "@/types/Plan.ts";
+import {getNewTag, type TagType} from "@/types/TagType.ts";
 
 export const activePage = atom("Tasks");
 
@@ -11,14 +11,14 @@ export const showExactDatesAtom = atom(false);
 // todo: {...} immutable new item local copies with getNew methods
 export const showAddDialog = atom(false);
 
-export const existingItemForEdit = atom<Task>(newTask);
+export const existingItemForEdit = atom<Task>(getNewTask());
 
 
 export const showPlanCreator = atom(false);
 
-export const existingPlanForEdit = atom<Plan>(newPlan);
+export const existingPlanForEdit = atom<Plan>(getNewPlan());
 
 
 export const showTagCreator = atom(false);
 
-export const existingTagForEdit = atom<TagType>(newTag);
+export const existingTagForEdit = atom<TagType>(getNewTag());

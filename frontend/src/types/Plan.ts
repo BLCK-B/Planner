@@ -19,7 +19,7 @@ export const PlanEncryptSpec: EncryptSpec = {
     completed: true
 };
 
-export const newPlan: Plan = {
+const newPlan: Plan = {
     itemID: '',
     data: {
         name: '',
@@ -28,3 +28,5 @@ export const newPlan: Plan = {
         completed: '',
     },
 } as const;
+
+export const getNewPlan = (): Plan => structuredClone(newPlan);

@@ -4,14 +4,12 @@ import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
-import {newTask} from "@/types/Task.ts";
+import {getNewTask} from "@/types/Task.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
-import type {Plan as PlanType} from "@/types/Plan.ts";
-import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 
@@ -27,8 +25,6 @@ const TaskCreator = () => {
 
     const deleteTaskMutation = useDeleteTask();
 
-    const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
-
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
             ...prev,
@@ -41,7 +37,7 @@ const TaskCreator = () => {
 
     const saveItem = async () => {
         await saveTaskMutation.mutateAsync(newItem);
-        setNewItem(newTask);
+        setNewItem(getNewTask());
         setShowDialog(false);
 
         const queryKey = loadItemsQuery().queryKey;
@@ -50,7 +46,7 @@ const TaskCreator = () => {
 
     const deleteItem = async () => {
         await deleteTaskMutation.mutateAsync(newItem);
-        setNewItem(newTask);
+        setNewItem(getNewTask());
         setShowDialog(false);
     };
 
@@ -63,11 +59,6 @@ const TaskCreator = () => {
         {label: "Repeat every 2 weeks", value: "two-weeks"},
         {label: "Repeat every month", value: "month"},
     ];
-
-    const planOptions = plans?.map(plan => ({
-        label: plan.data.name,
-        value: plan.itemID,
-    })) ?? [];
 
     const setEventRepeat = (repeat: string) => {
         updateItem("repeatOriginDay", getDayNumber(newItem.data.date));
@@ -84,7 +75,7 @@ const TaskCreator = () => {
                             <Flex justifyContent="space-between" w="100%">
                                 <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
                                             valueChanged={(value) => updateItem("itemType", value)}/>
-                                <Show when={newItem !== newTask}>
+                                <Show when={newItem !== getNewTask()}>
                                     <MyButton type="delete" onClick={deleteItem}/>
                                 </Show>
                             </Flex>
@@ -129,14 +120,10 @@ const TaskCreator = () => {
                                                     <Tag.Label>assign tag</Tag.Label>
                                                 </Tag.Root>
                                             </Popover.Trigger>
-                                            <TagsSelect/>
+                                            <TagsSelect item={newItem}/>
                                         </Popover.Root>
                                     </Show>
                                 </Flex>
-                                {/* plan assignment */}
-                                {/*<DropSelection items={planOptions}*/}
-                                {/*               selected={newItem.data.planID}*/}
-                                {/*               onSelect={(planID) => updateItem("planID", planID)}/>*/}
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
