@@ -2,12 +2,12 @@ import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
 import {
     isDatePast,
     globalDateFormatter
-} from "@/scripts/Dates.tsx";
+} from "@/functions/Dates.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
-import TagView from "@/components/base/TagView.tsx";
+import MyTag from "@/components/items/MyTag.tsx";
 
 const TaskView = (task: TaskType) => {
 
@@ -41,7 +41,7 @@ const TaskView = (task: TaskType) => {
                 </Show>
             </Flex>
             {task.data.tags!.map((tagName, index) => (
-                <TagView key={index} name={tagName}/>
+                <MyTag key={index} name={tagName}/>
             ))}
         </Box>
     );

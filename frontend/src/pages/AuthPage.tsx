@@ -2,13 +2,26 @@ import {useParams, useRouter} from '@tanstack/react-router';
 import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
 import {type SubmitHandler, useForm} from "react-hook-form";
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import {authRoute, mainRoute} from "@/routes/__root.tsx";
 import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
+import {
+    createEncryptionKey,
+    decodeFromBase64,
+    deriveAuthHash,
+    encodeToBase64,
+    generateNewSalt
+} from "@/functions/Crypto.ts";
 
 type credentials = {
     username: string;
     password: string;
+};
+
+type backendCredentials = {
+    username: string;
+    frontendPasswordHash: string;
+    passwordAuthSalt: string;
 };
 
 const AuthPage = () => {
@@ -20,20 +33,70 @@ const AuthPage = () => {
         handleSubmit,
         formState: {errors},
     } = useForm<credentials>();
+// TODO: simple register / login tests
+    const registerNewAccount = async (credentials: credentials) => {
+        const newAuthSalt = generateNewSalt();
+        const newEncryptionKeySalt = generateNewSalt();
 
-    const onSubmit: SubmitHandler<credentials> = async (data) => {
-        if (formType === "log-in") {
-            const response = await sendPostRequest("/auth/login", data);
-            if (!response.error) {
-                await router.navigate({to: mainRoute.fullPath});
-            } else {
-                alert("Login failed: " + (response?.error || "Unknown error"));
-            }
-        } else if (formType === "register") await sendPostRequest("/auth/register", data);
+        const newFrontendAuthHash = await deriveAuthHash(newAuthSalt, credentials.password);
+
+        const backendCredentials = {
+            username: credentials.username,
+            frontendPasswordHash: newFrontendAuthHash,
+            passwordAuthSalt: encodeToBase64(newAuthSalt),
+            encryptionKeySalt: encodeToBase64(newEncryptionKeySalt),
+        };
+        await sendAuthRequest("/auth/register", backendCredentials);
+
+        await router.navigate({
+            to: authRoute.fullPath,
+            params: {formType: 'log-in'},
+        });
     };
 
-    const sendPostRequest = async (request: string, content: credentials) => {
-        const body = {username: content.username, password: content.password};
+    // not ready for protocol migrations
+    const reencryptAllData = async () => {
+        const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
+        const allPlansReencrypted = await FetchRequest("GET", "/users/userPlans");
+        // todo: completely atomic
+        if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserPlans", allPlansReencrypted);
+    };
+
+    const login = async (credentials: credentials) => {
+        const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
+        if (frontendAuthSalt.error) {
+            alert("Login failed: " + (frontendAuthSalt?.error || "Unknown error"));
+            return;
+        }
+        const authHash = await deriveAuthHash(decodeFromBase64(frontendAuthSalt), credentials.password);
+
+        const backendCredentials = {
+            username: credentials.username,
+            frontendPasswordHash: authHash,
+            passwordAuthSalt: encodeToBase64(frontendAuthSalt)
+        };
+
+        const encryptionKeySalt = await sendAuthRequest("/auth/login", backendCredentials);
+        if (encryptionKeySalt.error) {
+            alert("Login failed: " + (encryptionKeySalt?.error || "Unknown error"));
+            return;
+        }
+        await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
+
+        // here is the place to call reencryption
+        // await reencryptAllData();
+
+        await router.navigate({to: mainRoute.fullPath});
+    };
+
+    const onSubmit: SubmitHandler<credentials> = async (credentials: credentials) => {
+        if (formType === "log-in") await login(credentials);
+        else if (formType === "register") await registerNewAccount(credentials);
+    };
+
+    const sendAuthRequest = async (request: string, credentials: backendCredentials) => {
+        const body = {...credentials};
         try {
             return await FetchRequest("POST", request, body);
         } catch (error) {

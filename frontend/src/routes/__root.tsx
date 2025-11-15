@@ -34,6 +34,12 @@ export const plansRoute = createRoute({
     component: PlansPage,
 })
 
-export const routeTree = rootRoute.addChildren([landingRoute, authRoute, mainRoute, plansRoute])
+export const routeTree = rootRoute.addChildren(
+    [
+        landingRoute,
+        authRoute,
+        mainRoute,
+        plansRoute,
+    ])
 
 export const router = createRouter({routeTree});

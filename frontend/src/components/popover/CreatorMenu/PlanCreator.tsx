@@ -6,22 +6,18 @@ import {
     Show,
     Field,
     Textarea,
-    ColorPicker,
-    parseColor,
-    HStack, ColorPickerChannelSlider,
 } from "@chakra-ui/react";
 import useSavePlan from "@/queries/UseSavePlan.tsx";
 import useDeletePlan from "@/queries/UseDeletePlan.tsx";
 import {showPlanCreator, existingPlanForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
-import ButtonDelete from "@/components/base/ButtonDelete.tsx";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
-import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
-import ButtonCancel from "@/components/base/ButtonCancel.tsx";
+import MyButton from "@/components/base/MyButton.tsx";
 import {newPlan} from "@/types/Plan.ts";
+import ColorPick from "@/components/base/ColorPick.tsx";
 
-const CreatorMenu = () => {
+const PlanCreator = () => {
 
     const queryClient = useQueryClient();
 
@@ -72,7 +68,7 @@ const CreatorMenu = () => {
                             <Flex justifyContent="space-between" w="100%">
                                 Plan
                                 <Show when={newItem !== newPlan}>
-                                    <ButtonDelete onClick={deleteItem}/>
+                                    <MyButton type="delete" onClick={deleteItem}/>
                                 </Show>
                             </Flex>
                         </Dialog.Header>
@@ -91,26 +87,16 @@ const CreatorMenu = () => {
                                               bg="primary.lighter"/>
                                 </Field.Root>
                             </Flex>
-                            <ColorPicker.Root value={parseColor(newItem.data.color)} format="rgba" maxW="200px"
-                                              onValueChange={(e) => updateItem("color", e.value.toString("rgb"))}>
-                                <ColorPicker.HiddenInput/>
-                                <ColorPicker.Label color="primary.contrast">Color</ColorPicker.Label>
-                                <ColorPicker.Control>
-                                    <ColorPicker.Trigger/>
-                                </ColorPicker.Control>
-                                <ColorPicker.Positioner>
-                                    <ColorPicker.Content>
-                                        <ColorPicker.Area/>
-                                        <HStack>
-                                            <ColorPickerChannelSlider channel="hue"/>
-                                        </HStack>
-                                    </ColorPicker.Content>
-                                </ColorPicker.Positioner>
-                            </ColorPicker.Root>
+                            <ColorPick
+                                rgbaValue={newItem.data.color}
+                                onColorChange={(selected) => {
+                                    updateItem("color", selected)
+                                }}
+                            />
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
-                            <ButtonCancel onClick={() => setShowDialog(false)}/>
+                            <MyButton type="confirm" onClick={saveItem} disabled={disableSaveRules()}/>
+                            <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>
@@ -119,4 +105,4 @@ const CreatorMenu = () => {
     );
 };
 
-export default CreatorMenu;
+export default PlanCreator;

@@ -3,7 +3,6 @@ package com.blck.planner.userData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import java.util.List;
 import java.util.UUID;
 
 @Table("user_tasks")
@@ -15,7 +14,7 @@ public record Task(
         String itemType,
         String name,
         String date,
-        List<String> tags,
+        String tags,
         String completed,
         String repeatEvent,
         int repeatOriginDay,
@@ -23,6 +22,6 @@ public record Task(
 ) {
     public TaskDTO toDTO() {
         var data = new TaskDTO.Data(itemType, name, date, tags, completed, repeatEvent, repeatOriginDay, planID);
-        return new TaskDTO(itemID, userID, data);
+        return new TaskDTO(itemID, data);
     }
 }

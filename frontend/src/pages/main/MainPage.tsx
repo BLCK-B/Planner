@@ -1,58 +1,16 @@
-import {Box, GridItem, Grid} from "@chakra-ui/react";
 import MainList from "@/components/lists/MainList.tsx";
-import Menu from "@/components/sidemenu/Menu.tsx";
 import TaskCreator from "@/components/popover/CreatorMenu/TaskCreator.tsx";
 import HeaderMainPage from "@/components/header/HeaderMainPage.tsx";
+import PageLayout from "@/components/base/PageLayout.tsx";
 
 const MainPage = () => {
     return (
-        <Box w="100vw" h="100vh" bg="primary.darker" fontSize="17px" textStyle="body">
-            <Grid
-                templateColumns={{
-                    base: "1fr", // 1 column
-                    sm: "1fr", // 1 column
-                    md: "repeat(10, 1fr)", // 10 columns
-                }}
-                h="100%"
-                gap={1}
-            >
-                {/* header */}
-                <GridItem colSpan={10} rowSpan={1}>
-                    <HeaderMainPage/>
-                </GridItem>
-
-                {/* page menu */}
-                <GridItem
-                    colSpan={{base: 10, sm: 10, md: 1}}
-                    bg="primary.base"
-                    style={styles.gridSection}
-                    gridRow={{base: 3, sm: 3, md: 2}}
-                >
-                    <Menu/>
-                </GridItem>
-
-                {/* content */}
-                <GridItem
-                    rowSpan={{base: 1, sm: 1, md: 9}}
-                    colSpan={{base: 10, sm: 10, md: 9}}
-                    minHeight="0px" // minHeight is for scrolling
-                    bg="primary.base"
-                    style={styles.gridSection}
-                >
-                    <MainList/>
-                </GridItem>
-
-                {/* popover */}
-                <TaskCreator/>
-            </Grid>
-        </Box>
+        <PageLayout
+            header={<HeaderMainPage/>}
+            content={<MainList/>}
+            popover={<TaskCreator/>}
+        />
     );
 };
 
 export default MainPage;
-
-const styles = {
-    gridSection: {
-        borderRadius: "5px",
-    },
-};

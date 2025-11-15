@@ -11,7 +11,7 @@ spring:
   application:
     name: planner
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/personaldb?currentSchema=myschema
+    url: r2dbc:postgresql://localhost:5432/personaldb
     username: username
     password: password
   jpa:

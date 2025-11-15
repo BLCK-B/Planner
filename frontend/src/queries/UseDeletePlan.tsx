@@ -1,5 +1,5 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 

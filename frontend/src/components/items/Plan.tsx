@@ -1,5 +1,4 @@
 import {Box, Flex, Text, ProgressCircle, Spacer} from "@chakra-ui/react";
-import TaskView from "@/components/items/TaskView.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import {useSetAtom} from "jotai";
 import {existingPlanForEdit, showPlanCreator} from "@/global/atoms.ts";

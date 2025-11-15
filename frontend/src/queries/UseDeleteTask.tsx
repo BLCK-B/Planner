@@ -1,5 +1,5 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 

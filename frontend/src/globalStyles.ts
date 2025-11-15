@@ -11,24 +11,28 @@ const textStyles = defineTextStyles({
     },
 })
 
+const dark = {
+    contrast: "#FFFFFF",
+    darker: "#1a1a1a",
+    base: "#262626",
+    lighter: "#454545",
+    lighterer: "#585858"
+};
+
+const light = {
+    "contrast": "#000000",
+    "darker": "#d0d0d0",
+    "base": "#ebebeb",
+    "lighter": "#FFFFFF",
+    "lighterer": "#FFFFFF",
+}
+
 export const styles = defineConfig({
     theme: {
         textStyles,
         tokens: {
             colors: {
-                // primary: {
-                //     "contrast": "#000000",
-                //     "lighter": "#FFFFFF",
-                //     "base": "#ebebeb",
-                //     "darker": "#d0d0d0",
-                // },
-                primary: {
-                    "contrast": "#FFFFFF",
-                    "darker": "#1a1a1a",
-                    "base": "#262626",
-                    "lighter": "#454545",
-                    "lighterer": "#585858"
-                },
+                primary: dark,
                 theme: {
                     "Peach": "#F4C095",
                     "Flame": "#CF5C36",

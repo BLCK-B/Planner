@@ -4,14 +4,14 @@ import {
     getTodaysDate,
     getNextDate,
     globalDateFormatter
-} from "@/scripts/Dates.tsx";
+} from "@/functions/Dates.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
 import {MdEventRepeat} from "react-icons/md";
-import TagView from "@/components/base/TagView.tsx";
+import MyTag from "@/components/items/MyTag.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import CompleteSection from "@/components/base/CompleteSection.tsx";
@@ -76,11 +76,15 @@ const Task = (task: TaskType) => {
                     </Show>
                     <Text>{task.data.name}</Text>
                 </Flex>
-                {task.data.tags!.map((tagName, index) => (
-                    <TagView key={index} name={tagName}/>
-                ))}
+                <Show when={task.data.tags.length}>
+                    <Box mt="5px">
+                        {task.data.tags!.map((tagName, index) => (
+                            <MyTag key={index} name={tagName}/>
+                        ))}
+                    </Box>
+                </Show>
             </Box>
-            <CompleteSection onClick={toggleCompleted} isCompleted={task.data.completed}/>
+            <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}/>
         </Flex>
     );
 };

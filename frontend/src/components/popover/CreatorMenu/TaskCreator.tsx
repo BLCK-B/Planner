@@ -1,21 +1,19 @@
-import {Dialog, Portal, Flex, Input, Show, Box, Button, Field, Tag} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Popover} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
-import LoadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import SelectTabs from "@/components/base/SelectTabs.tsx";
-import EditableTag from "@/components/base/EditableTag.tsx";
 import {newTask} from "@/types/Task.ts";
-import ButtonConfirm from "@/components/base/ButtonConfirm.tsx";
-import ButtonCancel from "@/components/base/ButtonCancel.tsx";
-import ButtonDelete from "@/components/base/ButtonDelete.tsx";
+import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {getDayNumber} from "@/scripts/Dates.tsx";
+import {getDayNumber} from "@/functions/Dates.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
+import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
+import MyTag from "@/components/items/MyTag.tsx";
 
 const TaskCreator = () => {
 
@@ -41,27 +39,6 @@ const TaskCreator = () => {
         }));
     };
 
-    // TODO: not working, instead handleAddTag
-    // const addTag = (name: string) => {
-    //     const currentTags = newItem.data.tags ?? [];
-    //     updateItem("tags", [...currentTags, name]);
-    // };
-
-    const handleAddTag = () => {
-        setNewItem(prev => ({
-            ...prev,
-            data: {
-                ...prev.data,
-                tags: [...(prev.data.tags ?? []), ""],
-            },
-        }));
-    };
-
-    const removeTag = (tagToRemove: string) => {
-        const currentTags = newItem.data.tags ?? [];
-        updateItem("tags", currentTags.filter(tag => tag !== tagToRemove));
-    };
-
     const saveItem = async () => {
         await saveTaskMutation.mutateAsync(newItem);
         setNewItem(newTask);
@@ -75,18 +52,6 @@ const TaskCreator = () => {
         await deleteTaskMutation.mutateAsync(newItem);
         setNewItem(newTask);
         setShowDialog(false);
-    };
-
-    const setNewNameAt = (index: number, newName: string) => {
-        const newTags = newItem.data.tags;
-        newTags[index] = newName;
-        setNewItem(prev => ({
-            ...prev,
-            data: {
-                ...prev.data,
-                tags: newTags,
-            },
-        }));
     };
 
     const disableSaveRules = () => {
@@ -120,7 +85,7 @@ const TaskCreator = () => {
                                 <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
                                             valueChanged={(value) => updateItem("itemType", value)}/>
                                 <Show when={newItem !== newTask}>
-                                    <ButtonDelete onClick={deleteItem}/>
+                                    <MyButton type="delete" onClick={deleteItem}/>
                                 </Show>
                             </Flex>
                         </Dialog.Header>
@@ -149,34 +114,34 @@ const TaskCreator = () => {
                                     </Flex>
                                 </Show>
                                 {/* tags */}
-                                <Flex>
+                                <Flex gap={1}>
                                     {/* tag list */}
                                     {newItem.data.tags.map((tagName, index) => (
-                                        <EditableTag key={index} name={tagName}
-                                                     setNewName={(newName: string) => setNewNameAt(index, newName)}
-                                                     deleteTag={removeTag}/>
+                                        <MyTag key={index} name={tagName} isEditable={true}/>
                                     ))}
-                                    {/* add tag button */}
+                                    {/* button for opening tag add menu */}
                                     <Show when={newItem.data.tags.length <= 2}>
-                                        <Tag.Root onClick={handleAddTag} variant="surface"
-                                                  bg="primary.base"
-                                                  color="primary.contrast">
-                                            <Tag.Label>+ tag</Tag.Label>
-                                        </Tag.Root>
+                                        <Popover.Root>
+                                            <Popover.Trigger asChild>
+                                                <Tag.Root variant="surface"
+                                                          bg="primary.base"
+                                                          color="primary.contrast">
+                                                    <Tag.Label>assign tag</Tag.Label>
+                                                </Tag.Root>
+                                            </Popover.Trigger>
+                                            <TagsSelect/>
+                                        </Popover.Root>
                                     </Show>
                                 </Flex>
                                 {/* plan assignment */}
-                                <DropSelection items={planOptions}
-                                               selected={newItem.data.planID}
-                                               onSelect={(planID) => updateItem("planID", planID)}/>
+                                {/*<DropSelection items={planOptions}*/}
+                                {/*               selected={newItem.data.planID}*/}
+                                {/*               onSelect={(planID) => updateItem("planID", planID)}/>*/}
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Show when={newItem.data.completed}>
-                                <Button onClick={() => updateItem("completed", '')}>Uncomplete</Button>
-                            </Show>
-                            <ButtonConfirm onClick={saveItem} disabled={disableSaveRules()}/>
-                            <ButtonCancel onClick={() => setShowDialog(false)}/>
+                            <MyButton type="confirm" onClick={saveItem} disabled={disableSaveRules()}/>
+                            <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>

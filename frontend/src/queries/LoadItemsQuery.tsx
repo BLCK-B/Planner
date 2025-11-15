@@ -1,12 +1,13 @@
-import FetchRequest from "@/scripts/FetchRequest.tsx";
+import FetchRequest from "@/functions/FetchRequest.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 import type {BackendResponseItem} from "@/types/BackendResponseItem.ts";
+import {parseItemData} from "@/functions/Parsing.ts";
 
 const fetchItems = async () => {
     const items = await FetchRequest("GET", "/users/userTasks");
     const parsedItems: TaskType[] = items.map((item: BackendResponseItem) => ({
         itemID: item.itemID,
-        data: typeof item.data === "string" ? JSON.parse(item.data) : item.data,
+        data: parseItemData(item),
     }));
     return parsedItems;
 };

@@ -1,17 +1,17 @@
 package com.blck.planner.userData;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -19,8 +19,6 @@ import java.util.UUID;
 public class TaskController {
 
     private final UserTaskRepository userTaskRepository;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public TaskController(UserTaskRepository userTaskRepository) {
@@ -32,26 +30,40 @@ public class TaskController {
         return Mono.just(jwt.getSubject());
     }
 
+    // pagination in future
     @GetMapping(value = "/userTasks")
     public Flux<TaskDTO> getTasks(@AuthenticationPrincipal Jwt jwt) {
         return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
     }
 
+    @GetMapping(value = "/allUserTasks")
+    public Flux<TaskDTO> getAllTasks(@AuthenticationPrincipal Jwt jwt) {
+        return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
+    }
+
     @PutMapping(value = "/userTask")
-    public Mono<TaskDTO> setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody JsonNode userItem) {
-        String itemIdString = userItem.get("itemID").asText(null);
-        UUID itemID = null;
-        if (itemIdString != null && !itemIdString.isBlank()) {
-            itemID = UUID.fromString(itemIdString);
-        }
-        TaskDTO.Data data = objectMapper.convertValue(userItem.get("data"), TaskDTO.Data.class);
-        TaskDTO dto = new TaskDTO(itemID, jwt.getSubject(), data);
-        return userTaskRepository.save(dto.toTask()).map(Task::toDTO);
+    public Mono<TaskDTO> setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
+        TaskDTO dto = new TaskDTO(userItem.itemID(), userItem.data());
+        return userTaskRepository.save(dto.toTask(jwt.getSubject()))
+                .map(Task::toDTO);
     }
 
     @DeleteMapping(value = "/userTask/{taskID}")
     public Mono<String> deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
         return userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), taskID)
                 .thenReturn("User task removed successfully.");
+    }
+
+    @PutMapping(value = "/updateAllUserTasks")
+    @Transactional
+    public Mono<ResponseEntity<String>> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
+        List<TaskDTO> dtos = userItems.stream()
+                .map(userItem -> new TaskDTO(userItem.itemID(), userItem.data()))
+                .toList();
+        String userID = jwt.getSubject();
+        return userTaskRepository.saveAll(dtos.stream().map(dto -> dto.toTask(userID)).collect(Collectors.toList()))
+                .collectList()
+                .map(savedTasks -> ResponseEntity.ok("Successfully updated " + savedTasks.size() + " tasks"))
+                .defaultIfEmpty(ResponseEntity.status(500).body("Failed to update tasks"));
     }
 }
