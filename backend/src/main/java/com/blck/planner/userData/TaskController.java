@@ -7,11 +7,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -26,44 +24,48 @@ public class TaskController {
     }
 
     @GetMapping(value = "/userAccountInfo")
-    public Mono<String> getUserAccountInfo(@AuthenticationPrincipal Jwt jwt) {
-        return Mono.just(jwt.getSubject());
+    public String getUserAccountInfo(@AuthenticationPrincipal Jwt jwt) {
+        return jwt.getSubject();
     }
 
     // pagination in future
-    @GetMapping(value = "/userTasks")
-    public Flux<TaskDTO> getTasks(@AuthenticationPrincipal Jwt jwt) {
-        return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
+    @GetMapping("/userTasks")
+    public List<TaskDTO> getTasks(@AuthenticationPrincipal Jwt jwt) {
+        return userTaskRepository.findByUserID(jwt.getSubject()).stream()
+                .map(Task::toDTO)
+                .toList();
     }
 
-    @GetMapping(value = "/allUserTasks")
-    public Flux<TaskDTO> getAllTasks(@AuthenticationPrincipal Jwt jwt) {
-        return userTaskRepository.findByUserID(jwt.getSubject()).map(Task::toDTO);
+    @GetMapping("/allUserTasks")
+    public List<TaskDTO> getAllTasks(@AuthenticationPrincipal Jwt jwt) {
+        return userTaskRepository.findByUserID(jwt.getSubject()).stream()
+                .map(Task::toDTO)
+                .toList();
     }
 
     @PutMapping(value = "/userTask")
-    public Mono<TaskDTO> setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
+    public TaskDTO setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
         TaskDTO dto = new TaskDTO(userItem.itemID(), userItem.data());
-        return userTaskRepository.save(dto.toTask(jwt.getSubject()))
-                .map(Task::toDTO);
+        return userTaskRepository.save(dto.toTask(jwt.getSubject())).toDTO();
     }
 
-    @DeleteMapping(value = "/userTask/{taskID}")
-    public Mono<String> deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
-        return userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), taskID)
-                .thenReturn("User task removed successfully.");
+    @DeleteMapping("/userTask/{taskID}")
+    public String deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
+        userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), UUID.fromString(taskID));
+        return "User task removed successfully.";
     }
 
-    @PutMapping(value = "/updateAllUserTasks")
+    @PutMapping("/updateAllUserTasks")
     @Transactional
-    public Mono<ResponseEntity<String>> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
-        List<TaskDTO> dtos = userItems.stream()
-                .map(userItem -> new TaskDTO(userItem.itemID(), userItem.data()))
-                .toList();
+    public ResponseEntity<String> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
         String userID = jwt.getSubject();
-        return userTaskRepository.saveAll(dtos.stream().map(dto -> dto.toTask(userID)).collect(Collectors.toList()))
-                .collectList()
-                .map(savedTasks -> ResponseEntity.ok("Successfully updated " + savedTasks.size() + " tasks"))
-                .defaultIfEmpty(ResponseEntity.status(500).body("Failed to update tasks"));
+        try {
+            List<Task> savedTasks = userTaskRepository.saveAll(userItems.stream()
+                    .map(dto -> dto.toTask(userID))
+                    .toList());
+            return ResponseEntity.ok("Successfully updated " + savedTasks.size() + " tasks");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update tasks");
+        }
     }
 }

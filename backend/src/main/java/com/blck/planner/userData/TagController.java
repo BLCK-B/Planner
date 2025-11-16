@@ -7,11 +7,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -26,33 +24,37 @@ public class TagController {
     }
 
     @GetMapping(value = "/userTags")
-    public Flux<TagDTO> getTags(@AuthenticationPrincipal Jwt jwt) {
-        return userTagRepository.findByUserID(jwt.getSubject()).map(Tag::toDTO);
+    public List<TagDTO> getTags(@AuthenticationPrincipal Jwt jwt) {
+        return userTagRepository.findByUserID(jwt.getSubject()).stream()
+                .map(Tag::toDTO)
+                .toList();
     }
 
     @PutMapping(value = "/userTag")
-    public Mono<TagDTO> setTag(@AuthenticationPrincipal Jwt jwt, @RequestBody TagDTO userTag) {
+    public TagDTO setTag(@AuthenticationPrincipal Jwt jwt, @RequestBody TagDTO userTag) {
         TagDTO dto = new TagDTO(userTag.tagID(), userTag.data());
-        return userTagRepository.save(dto.toTag(jwt.getSubject())).map(Tag::toDTO);
+        return userTagRepository.save(dto.toTag(jwt.getSubject())).toDTO();
     }
 
     @DeleteMapping(value = "/userTag/{tagID}")
-    public Mono<String> deleteTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
-        return userTagRepository.deleteByUserIDAndTagID(jwt.getSubject(), tagID)
-                .thenReturn("User tag removed successfully.");
+    public String deleteTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
+        userTagRepository.deleteByUserIDAndTagID(jwt.getSubject(), UUID.fromString(tagID));
+        return("User tag removed successfully.");
     }
 
     @PutMapping(value = "/updateAllUserTags")
     @Transactional
-    public Mono<ResponseEntity<String>> setTags(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TagDTO> userTags) {
-        List<TagDTO> dtos = userTags.stream()
-                .map(userItem -> new TagDTO(userItem.tagID(), userItem.data()))
-                .toList();
+    public ResponseEntity<String> setTags(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TagDTO> userTags) {
         String userID = jwt.getSubject();
-        return userTagRepository.saveAll(dtos.stream().map(dto -> dto.toTag(userID)).collect(Collectors.toList()))
-                .collectList()
-                .map(savedTags -> ResponseEntity.ok("Successfully updated " + savedTags.size() + " tags"))
-                .defaultIfEmpty(ResponseEntity.status(500).body("Failed to update tags"));
+        try {
+            List<Tag> savedTags = userTagRepository.saveAll(userTags.stream()
+                    .map(dto -> dto.toTag(userID))
+                    .toList());
+            return ResponseEntity.ok("Successfully updated " + savedTags.size() + " tags");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update tags");
+        }
     }
 
 }

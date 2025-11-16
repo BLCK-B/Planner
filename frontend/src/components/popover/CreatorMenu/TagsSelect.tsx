@@ -1,4 +1,4 @@
-import {Popover, Grid, Show, Box} from "@chakra-ui/react";
+import {Popover, Grid, Box, Button} from "@chakra-ui/react";
 import MyTag from "@/components/items/MyTag.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {type TagType} from "@/types/TagType.ts";
@@ -32,10 +32,8 @@ const TagsSelect = ({item}: Props) => {
                                 <MyTag name={tag.data.tagName} bg={tag.data.color} isEditable={false}/>
                             </Box>
                         ))}
-                        <Show when={tags && tags.length <= 4}>
-                            <MyTag name="+ tag" isNewButton={true}/>
-                        </Show>
                     </Grid>
+                    <Button>Edit tags</Button>
                 </Popover.Body>
             </Popover.Content>
         </Popover.Positioner>

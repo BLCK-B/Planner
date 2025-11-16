@@ -3,22 +3,22 @@ package com.blck.planner.accounts;
 import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.security.CredentialsDTO;
 import com.blck.planner.security.Roles;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -30,7 +30,7 @@ import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
 
 @Service
 @Primary
-public class AccountService implements ReactiveUserDetailsService {
+public class AccountService implements UserDetailsService {
 
 	private final AccountRepository accountRepository;
 
@@ -47,63 +47,63 @@ public class AccountService implements ReactiveUserDetailsService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	public Mono<UserAccount> registerUser(CredentialsDTO credentials) {
+    public UserAccount registerUser(CredentialsDTO credentials) {
         String username = credentials.username();
-		return accountRepository.findByUsername(username)
-			.hasElement()
-			.flatMap(hasAccount -> {
-				if (hasAccount) {
-					return Mono.error(new AccountAlreadyExistsException("Account with username " + username + " already exists"));
-				}
-				Set<String> roles = new HashSet<>();
-				roles.add(String.valueOf(Roles.ROLE_USER));
-				UserAccount userAccount = new UserAccount(
-					null,
-					username,
-					passwordEncoder.encode(credentials.frontendPasswordHash()),
-                    credentials.passwordAuthSalt(),
-                    credentials.encryptionKeySalt(),
-					true,
-					roles
-				);
-				return accountRepository.save(userAccount);
-			});
-	}
+        accountRepository.findByUsername(username).ifPresent(account -> {
+            try {
+                throw new AccountAlreadyExistsException("Account with username " + username + " already exists");
+            } catch (AccountAlreadyExistsException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-	public Mono<String> loginUser(ServerWebExchange exchange,
-								  Authentication authentication,
-								  ReactiveAuthenticationManager reactiveAuthenticationManager) {
-		return reactiveAuthenticationManager.authenticate(authentication)
-			.flatMap(authResponse -> {
-				JwsHeader header = JwsHeader.with(() -> "HS256").build();
+        Set<String> roles = new HashSet<>();
+        roles.add(String.valueOf(Roles.ROLE_USER));
 
-				JwtClaimsSet claims = JwtClaimsSet.builder()
-					.subject(authResponse.getName())
-					.issuedAt(Instant.now())
-					.expiresAt(Instant.now().plus(1, ChronoUnit.HOURS))
-					.claim("roles", authResponse.getAuthorities().stream()
-							.map(GrantedAuthority::getAuthority).toList())
-					.build();
+        UserAccount userAccount = new UserAccount(
+                null,
+                username,
+                passwordEncoder.encode(credentials.frontendPasswordHash()),
+                credentials.passwordAuthSalt(),
+                credentials.encryptionKeySalt(),
+                true,
+                roles
+        );
 
-				String token = jwtEncoder.encode(JwtEncoderParameters.from(header, claims))
-					.getTokenValue();
+        return accountRepository.save(userAccount);
+    }
 
-				ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), token)
-					.httpOnly(true) // prevents JS access - against XSS
-					.secure(true) // HTTPS only
-					.sameSite("Strict") // only send cookie when request originates from our site - prevents cross-site requests
-					.path("/")
-					.maxAge(Duration.ofHours(1))
-					.build();
-				exchange.getResponse().addCookie(cookie);
+    public String loginUser(HttpServletResponse response, Authentication authentication, AuthenticationManager authenticationManager) {
+        Authentication authResponse = authenticationManager.authenticate(authentication);
 
-				return Mono.just(token);
-			});
-	}
+        JwsHeader header = JwsHeader.with(() -> "HS256").build();
 
-	@Override
-	public Mono<UserDetails> findByUsername(String username) {
-		return accountRepository.findByUsername(username)
-			.map(userAccount -> userAccount);
-	}
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .subject(authResponse.getName())
+                .issuedAt(Instant.now())
+                .expiresAt(Instant.now().plus(1, ChronoUnit.HOURS))
+                .claim("roles", authResponse.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).toList())
+                .build();
+
+        String token = jwtEncoder.encode(JwtEncoderParameters.from(header, claims))
+                .getTokenValue();
+
+        ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), token)
+                .httpOnly(true) // prevents JS access - against XSS
+                .secure(true) // HTTPS only
+                .sameSite("Strict") // only send cookie when request originates from our site - prevents cross-site requests
+                .path("/")
+                .maxAge(Duration.ofHours(1))
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        return token;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return accountRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
 }

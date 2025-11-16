@@ -1,13 +1,14 @@
 package com.blck.planner.userData;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserPlanRepository extends ReactiveCrudRepository<Plan, String> {
-    Flux<Plan> findByUserID(String userId);
+import java.util.List;
+import java.util.UUID;
 
-    Mono<Plan> findByUserIDAndItemID(String userId, String itemId);
+public interface UserPlanRepository extends JpaRepository<Plan, UUID> {
+    List<Plan> findByUserID(String userId);
 
-    Mono<Plan> deleteByUserIDAndItemID(String userId, String itemId);
+    Plan findByUserIDAndItemID(String userId, UUID itemId);
+
+    Plan deleteByUserIDAndItemID(String userId, UUID itemId);
 }

@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="drop-tasks-tags" author="BLCK">
+    <changeSet id="drop-tags-column" author="BLCK">
         <sql>
             ALTER TABLE user_tasks
             DROP COLUMN tags;

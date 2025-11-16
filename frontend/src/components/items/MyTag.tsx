@@ -7,26 +7,18 @@ type Props = {
     name: string;
     bg?: string;
     isEditable?: boolean;
-    isNewButton?: boolean;
 };
 
-const MyTag = ({name, bg = "primary.base", isEditable = true, isNewButton = false}: Props) => {
+const MyTag = ({name, bg = "primary.base", isEditable = true,}: Props) => {
 
     const setShowAddTagDialog = useSetAtom(showTagCreator);
 
     const setEditTag = useSetAtom(existingTagForEdit);
 
     const clicked = () => {
-        if (isNewButton) {
-            createNewTag();
-        } else if (isEditable) {
+        if (isEditable) {
             editExistingTag();
         }
-    };
-
-    const createNewTag = () => {
-        setEditTag(getNewTag());
-        setShowAddTagDialog(true);
     };
 
     const editExistingTag = () => {

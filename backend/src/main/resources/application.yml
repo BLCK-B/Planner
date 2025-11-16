@@ -7,16 +7,17 @@ logging:
 
 spring:
   main:
-    web-application-type: reactive
+    web-application-type: servlet
   application:
     name: planner
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/personaldb
+  datasource:
+    url: jdbc:postgresql://localhost:5432/personaldb
     username: username
     password: password
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

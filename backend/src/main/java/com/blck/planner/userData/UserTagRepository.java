@@ -1,11 +1,12 @@
 package com.blck.planner.userData;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserTagRepository extends ReactiveCrudRepository<Tag, String> {
-    Flux<Tag> findByUserID(String userId);
+import java.util.List;
+import java.util.UUID;
 
-    Mono<Tag> deleteByUserIDAndTagID(String userId, String itemId);
+public interface UserTagRepository extends JpaRepository<Tag, UUID> {
+    List<Tag> findByUserID(String userId);
+
+    Tag deleteByUserIDAndTagID(String userId, UUID itemId);
 }

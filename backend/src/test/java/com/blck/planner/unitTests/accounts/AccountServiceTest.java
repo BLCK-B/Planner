@@ -13,19 +13,20 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -44,7 +45,7 @@ class AccountServiceTest {
 	PasswordEncoder passwordEncoder;
 
 	@Mock
-	ReactiveAuthenticationManager reactiveAuthenticationManager;
+    AuthenticationManager authenticationManager;
 
 	@InjectMocks
 	AccountService accountService;
@@ -61,31 +62,26 @@ class AccountServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		lenient().when(accountRepository.findByUsername(anyString())).thenReturn(Mono.empty());
+		lenient().when(accountRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 		lenient().when(passwordEncoder.encode(anyString())).thenReturn("encoded");
-		lenient().when(accountRepository.save(any(UserAccount.class))).thenAnswer(i -> Mono.just(i.getArgument(0)));
+		lenient().when(accountRepository.save(any(UserAccount.class))).thenAnswer(i -> i.getArgument(0));
 		lenient().when(jwtEncoder.encode(any())).thenReturn(mockJwt);
-		lenient().when(reactiveAuthenticationManager.authenticate(any())).thenAnswer(i -> Mono.just(Mockito.mock(Authentication.class)));
+		lenient().when(authenticationManager.authenticate(any())).thenAnswer(i -> Mockito.mock(Authentication.class));
 	}
 
-	@Test
-	void registerExceptionWhenUserAlreadyExists() {
-		when(accountRepository.findByUsername(anyString())).thenReturn(Mono.just(existingUserAccount));
+    @Test
+    void registerExceptionWhenUserAlreadyExists() {
+        when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(existingUserAccount));
 
-		Mono<UserAccount> result = accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt"));
+        assertThrows(AccountAlreadyExistsException.class, () ->
+                accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt")));
+    }
 
-		StepVerifier.create(result)
-			.expectError(AccountAlreadyExistsException.class)
-			.verify();
-	}
+    @Test
+    void registerAccountHasCorrectData() {
+        UserAccount user = accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt"));
 
-	@Test
-	void registerAccountHasCorrectData() {
-		Mono<UserAccount> result = accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt"));
-
-		StepVerifier.create(result)
-			.expectNextMatches(user -> user.equals(existingUserAccount))
-			.verifyComplete();
-	}
+        assertEquals(existingUserAccount, user);
+    }
 
 }
