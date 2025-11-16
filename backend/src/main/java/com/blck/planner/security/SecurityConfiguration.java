@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,14 +39,14 @@ import java.util.Collection;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
+    public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(exchanges -> exchanges
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(cookieAuthenticationWebFilter(jwtDecoder), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(cookieAuthenticationWebFilter(jwtDecoder, cookieAuthenticationConverter), UsernamePasswordAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 );
@@ -70,25 +71,19 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public OncePerRequestFilter cookieAuthenticationWebFilter(JwtDecoder jwtDecoder) {
+    public OncePerRequestFilter cookieAuthenticationWebFilter(JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter) {
         return new OncePerRequestFilter() {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-                Cookie[] cookies = request.getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if ("JWT".equals(cookie.getName())) {
-                            String token = cookie.getValue();
-                            try {
-                                Jwt jwt = jwtDecoder.decode(token); // Nimbus decoder used here
-                                JwtAuthenticationToken authentication =
-                                        new JwtAuthenticationToken(jwt, jwtGrantedAuthoritiesConverter().convert(jwt));
-                                SecurityContextHolder.getContext().setAuthentication(authentication);
-                            } catch (JwtException e) {
-                                SecurityContextHolder.clearContext();
-                            }
-                            break;
-                        }
+                Authentication auth = cookieAuthenticationConverter.convert(request);
+                if (auth instanceof BearerTokenAuthenticationToken tokenAuth) {
+                    try {
+                        Jwt jwt = jwtDecoder.decode(tokenAuth.getToken());
+                        JwtAuthenticationToken authentication =
+                                new JwtAuthenticationToken(jwt, jwtGrantedAuthoritiesConverter().convert(jwt));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } catch (JwtException e) {
+                        SecurityContextHolder.clearContext();
                     }
                 }
                 filterChain.doFilter(request, response);

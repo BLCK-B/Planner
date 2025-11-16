@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -120,6 +121,7 @@ class AuthControllerTests {
                 .andExpect(status().isOk());
 	}
 
+
 	@Test
 	void loginUserWrongCredentialsReturnsUnauthorized() throws Exception {
 		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
@@ -208,7 +210,6 @@ class AuthControllerTests {
 
         Cookie jwtCookie = loginResult.getResponse().getCookie(String.valueOf(SecurityNames.JWT_COOKIE_NAME));
         assertNotNull(jwtCookie);
-
         mockMvc.perform(get("/users/userAccountInfo")
                         .cookie(jwtCookie))
                 .andExpect(status().isOk())

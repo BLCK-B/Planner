@@ -14,7 +14,7 @@ public class CookieAuthenticationConverter {
         if (cookies == null) return null;
 
         for (Cookie cookie : cookies) {
-            if (SecurityNames.JWT_COOKIE_NAME.equals(cookie.getName())) {
+            if (String.valueOf(SecurityNames.JWT_COOKIE_NAME).equals(cookie.getName())) {
                 String token = cookie.getValue();
                 if (token != null && !token.isEmpty()) {
                     return new BearerTokenAuthenticationToken(token);

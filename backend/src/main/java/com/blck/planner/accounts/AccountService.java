@@ -47,15 +47,11 @@ public class AccountService implements UserDetailsService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-    public UserAccount registerUser(CredentialsDTO credentials) {
+    public UserAccount registerUser(CredentialsDTO credentials) throws AccountAlreadyExistsException {
         String username = credentials.username();
-        accountRepository.findByUsername(username).ifPresent(account -> {
-            try {
-                throw new AccountAlreadyExistsException("Account with username " + username + " already exists");
-            } catch (AccountAlreadyExistsException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        if (accountRepository.findByUsername(username).isPresent()) {
+            throw new AccountAlreadyExistsException("Account with username " + username + " already exists");
+        }
 
         Set<String> roles = new HashSet<>();
         roles.add(String.valueOf(Roles.ROLE_USER));
@@ -73,7 +69,7 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(userAccount);
     }
 
-    public String loginUser(HttpServletResponse response, Authentication authentication, AuthenticationManager authenticationManager) {
+    public void loginUser(HttpServletResponse response, Authentication authentication, AuthenticationManager authenticationManager) {
         Authentication authResponse = authenticationManager.authenticate(authentication);
 
         JwsHeader header = JwsHeader.with(() -> "HS256").build();
@@ -97,8 +93,6 @@ public class AccountService implements UserDetailsService {
                 .maxAge(Duration.ofHours(1))
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
-
-        return token;
     }
 
     @Override

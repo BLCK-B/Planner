@@ -1,6 +1,7 @@
 package com.blck.planner.security;
 
 import com.blck.planner.accounts.AccountService;
+import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.accounts.UserAccount;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,8 +33,8 @@ public class AuthController {
         try {
             UserAccount user = accountService.registerUser(credentials);
             return ResponseEntity.ok(user);
-//        } catch (AccountAlreadyExistsException ex) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (AccountAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (Exception ex) {
             return ResponseEntity.badRequest().build();
         }
@@ -52,6 +53,7 @@ public class AuthController {
     /**
      * @return encryption key salt on success
      */
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody CredentialsDTO credentials, HttpServletRequest request, HttpServletResponse response) {
         Authentication authRequest = new UsernamePasswordAuthenticationToken(
                 credentials.username(),
@@ -60,7 +62,7 @@ public class AuthController {
         try {
             accountService.loginUser(response, authRequest, authenticationManager);
             UserAccount user = (UserAccount) accountService.loadUserByUsername(credentials.username());
-            if (user == null) {
+            if (user != null) {
                 return ResponseEntity.ok(user.getEncryptionKeySalt());
             }
             return ResponseEntity.notFound().build();

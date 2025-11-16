@@ -25,8 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -78,10 +77,16 @@ class AccountServiceTest {
     }
 
     @Test
-    void registerAccountHasCorrectData() {
+    void registerAccountHasCorrectData() throws AccountAlreadyExistsException {
         UserAccount user = accountService.registerUser(new CredentialsDTO("username", "password", "frontendSalt", "encryptionSalt"));
 
-        assertEquals(existingUserAccount, user);
+        assertAll(
+                () -> assertEquals(existingUserAccount.getUsername(), user.getUsername()),
+                () -> assertEquals(existingUserAccount.getPassword(), user.getPassword()),
+                () -> assertEquals(existingUserAccount.getRoles(), user.getRoles()),
+                () -> assertEquals(existingUserAccount.getEncryptionKeySalt(), user.getEncryptionKeySalt()),
+                () -> assertEquals(existingUserAccount.getPasswordAuthSalt(), user.getPasswordAuthSalt())
+        );
     }
 
 }

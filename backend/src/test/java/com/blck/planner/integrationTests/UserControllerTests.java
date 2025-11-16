@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.List;
@@ -44,17 +46,18 @@ public class UserControllerTests {
     }
 
     @Test
-    @WithMockUser(username = "username")
     void authenticatedUserWithoutUserRoleIsForbidden() throws Exception {
         mockMvc.perform(get("/users/userTasks")
+                        .with(jwt().jwt(jwt -> jwt.subject("username")))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "username")
     void authenticatedUserHasAccess() throws Exception {
         mockMvc.perform(get("/users/userTasks")
+                        .with(jwt().jwt(jwt -> jwt.subject("username"))
+                                .authorities(() -> "ROLE_USER"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
