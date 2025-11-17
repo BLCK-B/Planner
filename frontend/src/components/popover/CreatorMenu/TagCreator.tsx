@@ -66,7 +66,7 @@ const TagCreator = () => {
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <Show when={newTag.data.tagName}>
-                                    <MyTag name={newTag.data.tagName} bg={newTag.data.color}/>
+                                    <MyTag tag={newTag}/>
                                 </Show>
                                 <Show when={!newTag.data.tagName}>
                                     New tag

@@ -1,14 +1,13 @@
 package com.blck.planner.integrationTests;
 
-import com.blck.planner.userData.Task;
-import com.blck.planner.userData.UserTaskRepository;
+import com.blck.planner.userData.Task.Task;
+import com.blck.planner.userData.Task.UserTaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -16,6 +15,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ public class UserControllerTests {
     @BeforeEach
     public void setup() {
         when(userTaskRepository.findByUserID(any()))
-                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", "", null, "", 0, "")));
+                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", "", null, "", 0, Set.of(), "")));
     }
 
     @Test

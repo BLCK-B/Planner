@@ -78,8 +78,8 @@ const Task = (task: TaskType) => {
                 </Flex>
                 <Show when={task.data.tags.length}>
                     <Box mt="5px">
-                        {task.data.tags!.map((tagName, index) => (
-                            <MyTag key={index} name={tagName}/>
+                        {task.data.tags!.map((tag, index) => (
+                            <MyTag key={index} tag={tag}/>
                         ))}
                     </Box>
                 </Show>

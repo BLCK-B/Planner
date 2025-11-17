@@ -1,8 +1,10 @@
-package com.blck.planner.userData;
+package com.blck.planner.userData.Tag;
 
+import com.blck.planner.userData.Task.Task;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +26,9 @@ public class Tag {
     @Column(name = "color")
     private String color;
 
+    @ManyToMany(mappedBy = "tags")
+    private Set<Task> tasks;
+
     public Tag() {
     }
 
@@ -41,10 +46,6 @@ public class Tag {
 
     public UUID getTagID() {
         return tagID;
-    }
-
-    public void setTagID(UUID tagID) {
-        this.tagID = tagID;
     }
 
     public String getUserID() {
@@ -69,5 +70,13 @@ public class Tag {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 }

@@ -1,5 +1,7 @@
 import {type Task, TaskEncryptSpec} from "@/types/Task.ts";
 import {type Plan, PlanEncryptSpec} from "@/types/Plan.ts";
+import {TagEncryptSpec, type TagType} from "@/types/TagType.ts";
+import {Tag} from "@chakra-ui/react";
 
 // for converting between unicode text and UTF bytes
 const encoder = new TextEncoder();
@@ -174,16 +176,28 @@ export const decryptFields = async (
     return result;
 };
 
-const isTask = (item: Task | Plan): item is Task => {
+const isTask = (item: Task | Plan | TagType): item is Task => {
     return (item as Task).data.planID !== undefined;
+}
+
+const isTag = (item: Task | Plan | TagType): item is TagType => {
+    return (item as TagType).data.tagName !== undefined;
 }
 
 export async function encrypt(item: Task): Promise<Task>;
 export async function encrypt(item: Plan): Promise<Plan>;
-export async function encrypt(item: Task | Plan): Promise<Task | Plan> {
+export async function encrypt(item: TagType): Promise<TagType>;
+export async function encrypt(item: Task | Plan | TagType): Promise<Task | Plan | TagType> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
-        const spec = isTask(item) ? TaskEncryptSpec : PlanEncryptSpec;
+        let spec;
+        if (isTask(item)) {
+            spec = TaskEncryptSpec;
+        } else if (isTag(item)) {
+            spec = TagEncryptSpec;
+        } else {
+            spec = PlanEncryptSpec;
+        }
         const encryptedData = await encryptFields(item.data, spec, cryptoKey);
         return {...item, data: encryptedData};
     }
@@ -192,10 +206,18 @@ export async function encrypt(item: Task | Plan): Promise<Task | Plan> {
 
 export async function decrypt(item: Task): Promise<Task>;
 export async function decrypt(item: Plan): Promise<Plan>;
-export async function decrypt(item: Task | Plan): Promise<Task | Plan> {
+export async function decrypt(item: TagType): Promise<TagType>;
+export async function decrypt(item: Task | Plan | TagType): Promise<Task | Plan | TagType> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
-        const spec = isTask(item) ? TaskEncryptSpec : PlanEncryptSpec;
+        let spec;
+        if (isTask(item)) {
+            spec = TaskEncryptSpec;
+        } else if (isTag(item)) {
+            spec = TagEncryptSpec;
+        } else {
+            spec = PlanEncryptSpec;
+        }
         const decryptedData = await decryptFields(item.data, spec, cryptoKey);
         return {...item, data: decryptedData};
     }

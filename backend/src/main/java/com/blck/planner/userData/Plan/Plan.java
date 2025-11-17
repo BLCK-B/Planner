@@ -1,4 +1,4 @@
-package com.blck.planner.userData;
+package com.blck.planner.userData.Plan;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -49,10 +49,6 @@ public class Plan {
 
     public UUID getItemID() {
         return itemID;
-    }
-
-    public void setItemID(UUID itemID) {
-        this.itemID = itemID;
     }
 
     public String getUserID() {

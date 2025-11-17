@@ -1,10 +1,12 @@
+import type {TagType} from "@/types/TagType.ts";
+
 export type Task = {
     itemID: string;
     data: {
         itemType: 'Task' | 'Goal';
         name: string;
         date: string; // target completion date
-        tags: string[];
+        tags: TagType[];
         completed: string; // date of completion - empty if not completed
         repeatEvent: '' | 'week' | 'two-weeks' | 'month'; // create copy when completed
         repeatOriginDay: number; // for month repeat option to prevent day shifting
@@ -20,7 +22,7 @@ export const TaskEncryptSpec: EncryptSpec = {
     itemType: false,
     name: true,
     date: true,
-    tags: true,
+    tags: false,
     completed: true,
     repeatEvent: false,
     repeatOriginDay: false,

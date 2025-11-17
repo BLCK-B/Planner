@@ -1,6 +1,6 @@
 export const parseItemData = (item: any) => {
     let data = {...item.data};
-    if (data.tags) {
+    if (data.tags && data.tags.length > 0) {
         data.tags = JSON.parse(data.tags);
     }
     return data;

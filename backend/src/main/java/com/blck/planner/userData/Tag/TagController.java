@@ -1,4 +1,4 @@
-package com.blck.planner.userData;
+package com.blck.planner.userData.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +32,7 @@ public class TagController {
 
     @PutMapping(value = "/userTag")
     public TagDTO setTag(@AuthenticationPrincipal Jwt jwt, @RequestBody TagDTO userTag) {
-        TagDTO dto = new TagDTO(userTag.tagID(), userTag.data());
-        return userTagRepository.save(dto.toTag(jwt.getSubject())).toDTO();
+        return userTagRepository.save(userTag.toTag(jwt.getSubject())).toDTO();
     }
 
     @DeleteMapping(value = "/userTag/{tagID}")

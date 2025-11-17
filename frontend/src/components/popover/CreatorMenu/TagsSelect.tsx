@@ -4,6 +4,7 @@ import {useQuery} from "@tanstack/react-query";
 import {type TagType} from "@/types/TagType.ts";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import type {Task} from "@/types/Task.ts";
+import {router, tagsEditRoute} from "@/routes/__root.tsx";
 
 type Props = {
     item: Task
@@ -15,6 +16,10 @@ const TagsSelect = ({item}: Props) => {
 
     const assignTag = (tag: TagType) => {
         item.data.tags = [...item.data.tags, tag.data.tagName];
+    };
+
+    const goToEditPage = () => {
+        router.navigate({to: tagsEditRoute.fullPath});
     };
 
     return (
@@ -29,12 +34,12 @@ const TagsSelect = ({item}: Props) => {
                     >
                         {tags && tags.map((tag, i) => (
                             <Box key={i} onClick={() => assignTag(tag)}>
-                                <MyTag name={tag.data.tagName} bg={tag.data.color} isEditable={false}/>
+                                <MyTag tag={tag} isEditable={false}/>
                             </Box>
                         ))}
                     </Grid>
-                    <Button>Edit tags</Button>
                 </Popover.Body>
+                <Button borderRadius="0 0 5px 5px" bg="primary.lighterer" onClick={goToEditPage}>Edit tags</Button>
             </Popover.Content>
         </Popover.Positioner>
     );

@@ -7,6 +7,7 @@ import {Box, Show, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsPlansPage from "@/components/actions/ActionButtonsPlansPage.tsx";
+import ActionButtonsTagsEditPage from "@/components/actions/ActionButtonsTagsEditPage.tsx";
 
 const Menu = () => {
 
@@ -48,12 +49,12 @@ const Menu = () => {
             </Box>
             <Show when={isLargeScreen}>
                 <Box mt="10px" bg="primary.base" borderRadius="5px" p="5px">
-                    <Show when={selectedTab === "Tasks"}>
-                        <ActionButtonsMainPage/>
-                    </Show>
-                    <Show when={selectedTab === "Plans"}>
-                        <ActionButtonsPlansPage/>
-                    </Show>
+                    {
+                        router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
+                            selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
+                                selectedTab === 'Plans' ? <ActionButtonsPlansPage/> :
+                                    null
+                    }
                 </Box>
             </Show>
         </Box>

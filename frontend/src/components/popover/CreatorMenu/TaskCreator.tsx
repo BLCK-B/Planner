@@ -107,8 +107,8 @@ const TaskCreator = () => {
                                 {/* tags */}
                                 <Flex gap={1}>
                                     {/* tag list */}
-                                    {newItem.data.tags.map((tagName, index) => (
-                                        <MyTag key={index} name={tagName} isEditable={true}/>
+                                    {newItem.data.tags.map((tag, index) => (
+                                        <MyTag key={index} tag={tag} isEditable={true}/>
                                     ))}
                                     {/* button for opening tag add menu */}
                                     <Show when={newItem.data.tags.length <= 2}>

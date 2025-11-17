@@ -40,8 +40,8 @@ const TaskView = (task: TaskType) => {
                     <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
                 </Show>
             </Flex>
-            {task.data.tags!.map((tagName, index) => (
-                <MyTag key={index} name={tagName}/>
+            {task.data.tags!.map((tag, index) => (
+                <MyTag key={index} tag={tag}/>
             ))}
         </Box>
     );

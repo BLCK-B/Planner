@@ -1,36 +1,31 @@
 import {Tag} from "@chakra-ui/react";
 import {useSetAtom} from "jotai";
 import {existingTagForEdit, showTagCreator} from "@/global/atoms.ts";
-import {getNewTag} from "@/types/TagType.ts";
+import type {TagType} from "@/types/TagType.ts";
 
 type Props = {
-    name: string;
-    bg?: string;
+    tag: TagType;
     isEditable?: boolean;
 };
 
-const MyTag = ({name, bg = "primary.base", isEditable = true,}: Props) => {
+const MyTag = ({tag, isEditable = true,}: Props) => {
 
     const setShowAddTagDialog = useSetAtom(showTagCreator);
 
     const setEditTag = useSetAtom(existingTagForEdit);
-
+    
     const clicked = () => {
         if (isEditable) {
-            editExistingTag();
+            setEditTag(tag);
+            setShowAddTagDialog(true);
         }
     };
 
-    const editExistingTag = () => {
-        setEditTag(getNewTag());
-        setShowAddTagDialog(true);
-    };
-
     return (
-        <Tag.Root variant="surface" style={styles.tag} bg={bg} color="primary.contrast"
+        <Tag.Root variant="surface" style={styles.tag} bg={tag.data.color} color="primary.contrast"
                   onClick={clicked}>
             <Tag.Label>
-                {name}
+                {tag.data.tagName}
             </Tag.Label>
         </Tag.Root>
     );

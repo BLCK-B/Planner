@@ -1,4 +1,4 @@
-package com.blck.planner.userData;
+package com.blck.planner.userData.Plan;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

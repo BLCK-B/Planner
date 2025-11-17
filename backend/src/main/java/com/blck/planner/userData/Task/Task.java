@@ -1,13 +1,12 @@
-package com.blck.planner.userData;
+package com.blck.planner.userData.Task;
 
+import com.blck.planner.userData.Tag.Tag;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_tasks")
@@ -40,13 +39,21 @@ public class Task {
     @Column(name = "repeat_origin_day")
     private int repeatOriginDay;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_task_tag",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
+
     @Column(name = "plan_id")
     private String planID;
 
     public Task() {}
 
     public Task(UUID itemID, String userID, String itemType, String name, String date,
-                String completed, String repeatEvent, int repeatOriginDay, String planID) {
+                String completed, String repeatEvent, int repeatOriginDay, Set<Tag> tags, String planID) {
         this.itemID = itemID;
         this.userID = userID;
         this.itemType = itemType;
@@ -55,20 +62,20 @@ public class Task {
         this.completed = completed;
         this.repeatEvent = repeatEvent;
         this.repeatOriginDay = repeatOriginDay;
+        this.tags = tags;
         this.planID = planID;
     }
 
     public TaskDTO toDTO() {
-        var data = new TaskDTO.Data(itemType, name, date, completed, repeatEvent, repeatOriginDay, planID);
+        var tagDtos = tags.stream()
+                .map(Tag::toDTO)
+                .collect(Collectors.toSet());
+        var data = new TaskDTO.Data(itemType, name, date, completed, repeatEvent, repeatOriginDay, tagDtos, planID);
         return new TaskDTO(itemID, data);
     }
 
     public UUID getItemID() {
         return itemID;
-    }
-
-    public void setItemID(UUID itemID) {
-        this.itemID = itemID;
     }
 
     public String getUserID() {
@@ -133,5 +140,13 @@ public class Task {
 
     public void setPlanID(String planID) {
         this.planID = planID;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
