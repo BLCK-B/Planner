@@ -8,7 +8,7 @@ export const parseItemData = (item: any) => {
 
 export const stringifyItemData = (item: any) => {
     let data = {...item.data};
-    if (data.tags) {
+    if (data.tags && data.tags.length > 0) {
         data.tags = JSON.stringify(data.tags);
     }
     return data;

@@ -25,8 +25,7 @@ const backendResponseTag = `{
 }`
 const parsedResponseTag = JSON.parse(backendResponseTag);
 
-
-test('data parsing task', () => {
+test('task data parsing', () => {
     const parsedTaskData = parseItemData(parsedResponseTask);
 
     expect(parsedTaskData.name).toEqual("Item name");
@@ -34,14 +33,14 @@ test('data parsing task', () => {
     expect(parsedTaskData.tags).toEqual(["tagOne", "tagTwo"]);
 });
 
-test('data parsing tag', () => {
+test('tag data parsing', () => {
     const parsedTaskData = parseItemData(parsedResponseTag);
 
     expect(parsedTaskData.tagName).toEqual("Tag name");
     expect(parsedTaskData.color).toEqual("rgb(255, 255, 255)");
 });
 
-test('data formatting task', () => {
+test('task data formatting', () => {
     const updatedTaskData = {
         data: {
             itemType: "Task",
@@ -64,5 +63,17 @@ test('data formatting task', () => {
         repeatEvent: "",
         repeatOriginDay: 0,
         planID: "",
+    });
+});
+
+test('task data formatting - empty array', () => {
+    const updatedTaskData = {
+        data: {
+            tags: [],
+        }
+    };
+
+    expect(stringifyItemData(updatedTaskData)).toEqual({
+        tags: [],
     });
 });

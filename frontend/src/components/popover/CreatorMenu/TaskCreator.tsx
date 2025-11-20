@@ -12,6 +12,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
 import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
+import type {TagType} from "@/types/TagType.ts";
 
 const TaskCreator = () => {
 
@@ -52,6 +53,18 @@ const TaskCreator = () => {
 
     const disableSaveRules = () => {
         return !newItem.data.name || (newItem.data.itemType === "Task" && !newItem.data.date);
+    };
+
+    const assignTag = (tag: TagType) => {
+        const existingTags = newItem.data.tags ?? [];
+        const isAssigned = existingTags.some(t => t.tagID === tag.tagID);
+        let updatedTags;
+        if (isAssigned) {
+            updatedTags = existingTags.filter(t => t.tagID !== tag.tagID);
+        } else {
+            updatedTags = [...existingTags, tag];
+        }
+        updateItem("tags", updatedTags);
     };
 
     const repeatOptions = [
@@ -117,10 +130,10 @@ const TaskCreator = () => {
                                                 <Tag.Root variant="surface"
                                                           bg="primary.base"
                                                           color="primary.contrast">
-                                                    <Tag.Label>assign tag</Tag.Label>
+                                                    <Tag.Label>assign tags</Tag.Label>
                                                 </Tag.Root>
                                             </Popover.Trigger>
-                                            <TagsSelect item={newItem}/>
+                                            <TagsSelect updateTags={(tag) => assignTag(tag)}/>
                                         </Popover.Root>
                                     </Show>
                                 </Flex>

@@ -43,7 +43,7 @@ public class TaskController {
                 .toList();
     }
 
-    @PutMapping(value = "/userTask")
+    @PutMapping("/userTask")
     public TaskDTO setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
         TaskDTO dto = new TaskDTO(userItem.itemID(), userItem.data());
         return userTaskRepository.save(dto.toTask(jwt.getSubject())).toDTO();
