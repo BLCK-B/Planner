@@ -11,6 +11,27 @@ const task = {
     }
 };
 
+const nestedTask = {
+    itemID: "123",
+    data: {
+        date: "2020-05-01",
+        tags: {
+            tag1: {
+                tagID: "12",
+                data: {
+                    tagName: "tag1",
+                },
+            },
+            tag2: {
+                tagID: "34",
+                data: {
+                    tagName: "tag2",
+                },
+            },
+        },
+    },
+};
+
 vi.mock("@/functions/Crypto", () => ({
     encrypt: vi.fn((x) => Promise.resolve({...x, encrypted: true})),
     decrypt: vi.fn((x) => Promise.resolve({...x, decrypted: true})),
@@ -32,7 +53,7 @@ describe("FetchRequest", () => {
         const result = await encryptBody(body);
 
         expect(encrypt).not.toHaveBeenCalled();
-        expect(result).toBe(body);
+        expect(result).toStrictEqual(body);
     });
 
     test("doesnt decrypt not-decryptable body", async () => {
@@ -41,15 +62,25 @@ describe("FetchRequest", () => {
         const result = await decryptBody(body);
 
         expect(decrypt).not.toHaveBeenCalled();
-        expect(result).toBe(body);
+        expect(result).toStrictEqual(body);
     });
 
     test("encrypts encryptable body", async () => {
         const result = await encryptBody(task);
 
         expect(encrypt).toHaveBeenCalledWith(task);
-        expect(result).toEqual({...task, encrypted: true});
+        expect(result).toStrictEqual({...task, encrypted: true});
     });
+
+    test("encrypts encryptable body and nested objects", async () => {
+        const result = await encryptBody(nestedTask);
+
+        expect(encrypt).toHaveBeenCalledTimes(3);
+        expect(result.data.tags).toEqual({
+            tag1: {tagID: '12', data: {tagName: 'tag1'}, encrypted: true},
+            tag2: {tagID: '34', data: {tagName: 'tag2'}, encrypted: true}
+        });
+    })
 
     test("decrypts decryptable body", async () => {
         const result = await decryptBody(task);
@@ -58,6 +89,16 @@ describe("FetchRequest", () => {
         expect(result).toEqual({...task, decrypted: true});
     });
 
+    test("decrypts decryptable body and nested objects", async () => {
+        const result = await decryptBody(nestedTask);
+
+        expect(decrypt).toHaveBeenCalledTimes(3);
+        expect(result.data.tags).toEqual({
+            tag1: {tagID: '12', data: {tagName: 'tag1'}, decrypted: true},
+            tag2: {tagID: '34', data: {tagName: 'tag2'}, decrypted: true}
+        });
+    })
+    
     test("throws FetchError on error response", async () => {
         (fetch as any).mockReset();
         (fetch as any).mockResolvedValueOnce({
@@ -69,7 +110,7 @@ describe("FetchRequest", () => {
         await expect(FetchRequest("GET", "/fail")).rejects.toThrow("Server Error");
     });
 
-    test("returns reponseText if JSON parsing fails", async () => {
+    test("returns responseText if JSON parsing fails", async () => {
         (fetch as any).mockReset();
         (fetch as any).mockResolvedValueOnce({
             ok: true,

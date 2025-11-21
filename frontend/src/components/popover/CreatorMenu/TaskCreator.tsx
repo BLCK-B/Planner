@@ -118,25 +118,23 @@ const TaskCreator = () => {
                                     </Flex>
                                 </Show>
                                 {/* tags */}
-                                <Flex gap={1}>
+                                <Flex gap={1} h="1rem">
                                     {/* tag list */}
                                     {newItem.data.tags.map((tag, index) => (
                                         <MyTag key={index} tag={tag} isEditable={true}/>
                                     ))}
                                     {/* button for opening tag add menu */}
-                                    <Show when={newItem.data.tags.length <= 2}>
-                                        <Popover.Root>
-                                            <Popover.Trigger asChild>
-                                                <Tag.Root variant="surface"
-                                                          bg="primary.base"
-                                                          color="primary.contrast">
-                                                    <Tag.Label>assign tags</Tag.Label>
-                                                </Tag.Root>
-                                            </Popover.Trigger>
-                                            <TagsSelect updateTags={(tag) => assignTag(tag)}/>
-                                        </Popover.Root>
-                                    </Show>
                                 </Flex>
+                                <Popover.Root positioning={{placement: "bottom-start"}}>
+                                    <Popover.Trigger asChild>
+                                        <Tag.Root variant="surface"
+                                                  bg="primary.base"
+                                                  color="primary.contrast">
+                                            <Tag.Label>assign tags</Tag.Label>
+                                        </Tag.Root>
+                                    </Popover.Trigger>
+                                    <TagsSelect updateTags={(tag) => assignTag(tag)}/>
+                                </Popover.Root>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>

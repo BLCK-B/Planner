@@ -8,12 +8,12 @@ type Props = {
     isEditable?: boolean;
 };
 
-const MyTag = ({tag, isEditable = true,}: Props) => {
+const MyTag = ({tag, isEditable = false,}: Props) => {
 
     const setShowAddTagDialog = useSetAtom(showTagCreator);
 
     const setEditTag = useSetAtom(existingTagForEdit);
-    
+
     const clicked = () => {
         if (isEditable) {
             setEditTag(tag);

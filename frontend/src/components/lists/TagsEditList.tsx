@@ -13,10 +13,10 @@ const TagsEditList = () => {
     }
     return (
         <Box w={{base: "90%", sm: "90%", md: "50%"}} mx="auto" position="relative" top="150px">
-            <Flex direction="column">
+            <Flex direction="column" gap={3}>
                 {tagList.map((tag) => (
                     <Box key={tag.tagID}>
-                        <MyTag tag={tag}/>
+                        <MyTag tag={tag} isEditable={true}/>
                     </Box>
                 ))}
             </Flex>
