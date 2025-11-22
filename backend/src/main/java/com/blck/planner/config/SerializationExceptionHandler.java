@@ -1,6 +1,8 @@
 package com.blck.planner.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.persistence.PersistenceException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -31,6 +33,16 @@ public class SerializationExceptionHandler {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "serialisation_error");
         errorResponse.put("message", "JSON processing error: " + e.getOriginalMessage());
+        return errorResponse;
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class, PersistenceException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public Map<String, Object> handleDatabaseException(Exception e) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "database_constraint_violation");
+        errorResponse.put("message", "Database error: " + e.getMessage());
         return errorResponse;
     }
 }

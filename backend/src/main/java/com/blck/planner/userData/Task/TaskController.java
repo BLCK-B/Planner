@@ -49,14 +49,15 @@ public class TaskController {
         return userTaskRepository.save(dto.toTask(jwt.getSubject())).toDTO();
     }
 
+    @Transactional
     @DeleteMapping("/userTask/{taskID}")
     public String deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
         userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), UUID.fromString(taskID));
         return "User task removed successfully.";
     }
 
-    @PutMapping("/updateAllUserTasks")
     @Transactional
+    @PutMapping("/updateAllUserTasks")
     public ResponseEntity<String> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
         String userID = jwt.getSubject();
         try {

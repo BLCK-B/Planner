@@ -62,7 +62,12 @@ const PlanCreator = () => {
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
                 <Dialog.Backdrop/>
-                <Dialog.Positioner>
+                <Dialog.Positioner
+                    style={{
+                        alignItems: "center",
+                        padding: "0.5rem",
+                    }}
+                >
                     <Dialog.Content bg="primary.base" color="primary.contrast">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">

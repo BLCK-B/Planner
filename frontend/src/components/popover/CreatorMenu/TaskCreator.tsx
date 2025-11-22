@@ -82,8 +82,13 @@ const TaskCreator = () => {
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
                 <Dialog.Backdrop/>
-                <Dialog.Positioner>
-                    <Dialog.Content bg="primary.base" color="primary.contrast">
+                <Dialog.Positioner
+                    style={{
+                        alignItems: "center",
+                        padding: "0.5rem"
+                    }}
+                >
+                    <Dialog.Content bg="primary.base" color="primary.contrast" height="24rem">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
@@ -121,7 +126,7 @@ const TaskCreator = () => {
                                 <Flex gap={1} h="1rem">
                                     {/* tag list */}
                                     {newItem.data.tags.map((tag, index) => (
-                                        <MyTag key={index} tag={tag} isEditable={true}/>
+                                        <MyTag key={index} tag={tag}/>
                                     ))}
                                     {/* button for opening tag add menu */}
                                 </Flex>

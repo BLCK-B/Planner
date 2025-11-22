@@ -1,3 +1,3 @@
 export type FetchError = Error & {
-    status: number
+    status: number,
 }

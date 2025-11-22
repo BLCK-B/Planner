@@ -10,7 +10,6 @@ const ColorPick = ({rgbaValue, onColorChange}: Props) => {
         <ColorPicker.Root value={parseColor(rgbaValue)} format="rgba" maxW="200px"
                           onValueChange={(e) => onColorChange(e.value.toString("rgb"))}>
             <ColorPicker.HiddenInput/>
-            <ColorPicker.Label color="primary.contrast">Color</ColorPicker.Label>
             <ColorPicker.Control>
                 <ColorPicker.Trigger/>
             </ColorPicker.Control>

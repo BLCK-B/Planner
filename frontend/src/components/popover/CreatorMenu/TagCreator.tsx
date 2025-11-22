@@ -4,10 +4,10 @@ import {
     Flex,
     Input,
     Show,
-    Field,
+    Field, Box,
 } from "@chakra-ui/react";
 import useSaveTag from "@/queries/UseSaveTag.tsx";
-// import useDeleteTag from "@/queries/UseDeleteTag.tsx";
+import useDeleteTag from "@/queries/UseDeleteTag.tsx";
 import {showTagCreator, existingTagForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
@@ -15,6 +15,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import MyButton from "@/components/base/MyButton.tsx";
 import ColorPick from "@/components/base/ColorPick.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
+import {getNewTag} from "@/types/TagType.ts";
 
 const TagCreator = () => {
 
@@ -26,7 +27,7 @@ const TagCreator = () => {
 
     const saveTagMutation = useSaveTag();
 
-    // const deleteTagMutation = useDeleteTag();
+    const deleteTagMutation = useDeleteTag();
 
     const updateTag = (key: keyof typeof newTag.data, value: any) => {
         setNewTag(prev => ({
@@ -48,7 +49,7 @@ const TagCreator = () => {
     };
 
     const deleteTag = async () => {
-        // await deleteTagMutation.mutateAsync(newTag);
+        await deleteTagMutation.mutateAsync(newTag);
         setNewTag(newTag);
         setShowDialog(false);
     };
@@ -61,7 +62,12 @@ const TagCreator = () => {
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
                 <Dialog.Backdrop/>
-                <Dialog.Positioner>
+                <Dialog.Positioner
+                    style={{
+                        alignItems: "center",
+                        padding: "0.5rem",
+                    }}
+                >
                     <Dialog.Content bg="primary.base" color="primary.contrast">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
@@ -71,19 +77,25 @@ const TagCreator = () => {
                                 <Show when={!newTag.data.tagName}>
                                     New tag
                                 </Show>
+                                {/*TODO: detect new vs not new, or via param, for all creators*/}
                                 <Show when={newTag !== newTag}>
+                                    <MyButton type="delete" onClick={deleteTag}/>
+                                </Show>
+                                <Show when={newTag !== getNewTag()}>
                                     <MyButton type="delete" onClick={deleteTag}/>
                                 </Show>
                             </Flex>
                         </Dialog.Header>
                         <Dialog.Body>
                             <Flex gap="6">
-                                <Field.Root invalid={!newTag.data.tagName}>
-                                    <Input p="2px" variant="subtle" value={newTag.data.tagName}
-                                           placeholder="Tag name"
-                                           onChange={(e) => updateTag("tagName", e.target.value)}
-                                           bg="primary.lighter" w="10rem"/>
-                                </Field.Root>
+                                <Box>
+                                    <Field.Root invalid={!newTag.data.tagName}>
+                                        <Input p="2px" variant="subtle" value={newTag.data.tagName}
+                                               placeholder="Tag name"
+                                               onChange={(e) => updateTag("tagName", e.target.value)}
+                                               bg="primary.lighter" w="10rem"/>
+                                    </Field.Root>
+                                </Box>
                                 <ColorPick
                                     rgbaValue={newTag.data.color}
                                     onColorChange={(selected) => {

@@ -1,5 +1,9 @@
 package com.blck.planner.userData.Tag;
 
+import com.blck.planner.userData.Task.Task;
+import com.blck.planner.userData.Task.UserTaskRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +22,15 @@ public class TagController {
 
     private final UserTagRepository userTagRepository;
 
+    private final UserTaskRepository userTaskRepository;
+
+    @PersistenceContext
+    private EntityManager em;
+
     @Autowired
-    public TagController(UserTagRepository userTagRepository) {
+    public TagController(UserTagRepository userTagRepository, UserTaskRepository userTaskRepository) {
         this.userTagRepository = userTagRepository;
+        this.userTaskRepository = userTaskRepository;
     }
 
     @GetMapping(value = "/userTags")
@@ -35,14 +45,19 @@ public class TagController {
         return userTagRepository.save(userTag.toTag(jwt.getSubject())).toDTO();
     }
 
+    @Transactional
     @DeleteMapping(value = "/userTag/{tagID}")
     public String deleteTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
+        em.createNativeQuery("DELETE FROM user_task_tag WHERE tag_id = ?1")
+                .setParameter(1, UUID.fromString(tagID))
+                .executeUpdate();
+
         userTagRepository.deleteByUserIDAndTagID(jwt.getSubject(), UUID.fromString(tagID));
-        return("User tag removed successfully.");
+        return ("User tag removed successfully.");
     }
 
-    @PutMapping(value = "/updateAllUserTags")
     @Transactional
+    @PutMapping(value = "/updateAllUserTags")
     public ResponseEntity<String> setTags(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TagDTO> userTags) {
         String userID = jwt.getSubject();
         try {
@@ -50,8 +65,7 @@ public class TagController {
                     .map(dto -> dto.toTag(userID))
                     .toList());
             return ResponseEntity.ok("Successfully updated " + savedTags.size() + " tags");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to update tags");
         }
     }

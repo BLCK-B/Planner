@@ -9,6 +9,10 @@ export const showExactDatesAtom = atom(false);
 
 // todo: one global show creator based on smth like url param
 // todo: {...} immutable new item local copies with getNew methods
+
+export const errorModalContent = atom<string>('');
+
+
 export const showAddDialog = atom(false);
 
 export const existingItemForEdit = atom<Task>(getNewTask());

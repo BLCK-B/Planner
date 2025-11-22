@@ -3,6 +3,8 @@ import type {Task} from "@/types/Task.ts";
 import type {Plan} from "@/types/Plan.ts";
 import {encrypt, decrypt} from "@/functions/Crypto.ts";
 import type {TagType} from "@/types/TagType.ts";
+import {getDefaultStore} from 'jotai';
+import {errorModalContent} from "@/global/atoms.ts";
 
 const URL = "http://localhost:8081";
 
@@ -50,6 +52,7 @@ type FetchRequestFunction = {
 };
 
 const FetchRequest: FetchRequestFunction = async (method, request, body) => {
+
     const headers = {
         "Content-Type": "application/json"
     };
@@ -70,6 +73,11 @@ const FetchRequest: FetchRequestFunction = async (method, request, body) => {
     if (!response.ok) {
         const error = new Error(`${response.statusText}`) as FetchError;
         error.status = response.status;
+        if (error.status !== 401) {
+            const store = getDefaultStore();
+            const data = await response.json();
+            store.set(errorModalContent, data.message);
+        }
         throw error;
     }
 
