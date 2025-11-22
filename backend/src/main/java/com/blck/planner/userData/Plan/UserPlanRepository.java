@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface UserPlanRepository extends JpaRepository<Plan, UUID> {
     List<Plan> findByUserID(String userId);
 
-    Plan findByUserIDAndItemID(String userId, UUID itemId);
+    Plan findByUserIDAndPlanID(String userId, UUID planId);
 
-    Plan deleteByUserIDAndItemID(String userId, UUID itemId);
+    Plan deleteByUserIDAndPlanID(String userId, UUID planId);
 }

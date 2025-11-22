@@ -2,6 +2,8 @@ import {Box, Flex, Text, ProgressCircle, Spacer} from "@chakra-ui/react";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 import {useSetAtom} from "jotai";
 import {existingPlanForEdit, showPlanCreator} from "@/global/atoms.ts";
+import type {Task as TaskType} from "@/types/Task.ts";
+import TaskView from "@/components/items/TaskView.tsx";
 
 const Plan = (plan: PlanType) => {
 
@@ -13,6 +15,20 @@ const Plan = (plan: PlanType) => {
         setEditPlan(plan);
         setShowDialog(true);
     };
+
+    const dummyTask: TaskType = {
+        itemID: "rjijhe",
+        data: {
+            planID: "rnroehre",
+            name: "a task dummy",
+            tags: [],
+            date: `${new Date()}`,
+            completed: '',
+            itemType: "Task",
+            repeatEvent: '',
+            repeatOriginDay: 0
+        }
+    }
 
     return (
         <Box
@@ -40,7 +56,7 @@ const Plan = (plan: PlanType) => {
             </Flex>
             <Text>{plan.data.description}</Text>
             <Flex direction="column" height="100%">
-                {/*<TaskView {...dummyTask}/>*/}
+                <TaskView {...dummyTask}/>
             </Flex>
         </Box>
     );

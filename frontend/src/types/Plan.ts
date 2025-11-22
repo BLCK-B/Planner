@@ -1,5 +1,5 @@
 export type Plan = {
-    itemID: string;
+    planID: string;
     data: {
         name: string;
         description: string;
@@ -20,7 +20,7 @@ export const PlanEncryptSpec: EncryptSpec = {
 };
 
 const newPlan: Plan = {
-    itemID: '',
+    planID: '',
     data: {
         name: '',
         description: '',

@@ -25,7 +25,7 @@ const PlansGrid = () => {
             }}
             gap="6" p="25px" style={{overflowY: "scroll", scrollbarWidth: "none"}} height="100%">
             {data.map((plan) => (
-                <Plan key={plan.itemID} {...plan} />
+                <Plan key={plan.planID} {...plan} />
             ))}
         </Grid>
     );

@@ -32,13 +32,13 @@ public class PlanController {
 
     @PutMapping(value = "/userPlan")
     public PlanDTO setPlan(@AuthenticationPrincipal Jwt jwt, @RequestBody PlanDTO userItem) {
-        PlanDTO dto = new PlanDTO(userItem.itemID(), userItem.data());
+        PlanDTO dto = new PlanDTO(userItem.planID(), userItem.data());
         return userPlanRepository.save(dto.toPlan(jwt.getSubject())).toDTO();
     }
 
     @DeleteMapping(value = "/userPlan/{planID}")
     public String deletePlan(@AuthenticationPrincipal Jwt jwt, @PathVariable String planID) {
-        userPlanRepository.deleteByUserIDAndItemID(jwt.getSubject(), UUID.fromString(planID));
+        userPlanRepository.deleteByUserIDAndPlanID(jwt.getSubject(), UUID.fromString(planID));
         return("User plan removed successfully.");
     }
 

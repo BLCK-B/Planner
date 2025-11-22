@@ -1,9 +1,12 @@
 package com.blck.planner.userData.Plan;
 
+import com.blck.planner.userData.Task.Task;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_plans")
@@ -11,9 +14,9 @@ public class Plan {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @Column(name = "item_id")
-    @JsonProperty("itemID")
-    private UUID itemID;
+    @Column(name = "plan_id")
+    @JsonProperty("planID")
+    private UUID planID;
 
     @Column(name = "user_id")
     private String userID;
@@ -30,25 +33,37 @@ public class Plan {
     @Column(name = "completed")
     private String completed;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_plan_task",
+            joinColumns = @JoinColumn(name = "plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    private Set<Task> tasks;
+
     public Plan() {}
 
-    public Plan(UUID itemID, String userID, String name, String description,
-                String color, String completed) {
-        this.itemID = itemID;
+    public Plan(UUID planID, String userID, String name, String description,
+                String color, String completed, Set<Task> tasks) {
+        this.planID = planID;
         this.userID = userID;
         this.name = name;
         this.description = description;
         this.color = color;
         this.completed = completed;
+        this.tasks = tasks;
     }
 
     public PlanDTO toDTO() {
-        var data = new PlanDTO.Data(name, description, color, completed);
-        return new PlanDTO(itemID, data);
+        var taskDtos = tasks.stream()
+                .map(Task::toDTO)
+                .collect(Collectors.toSet());
+        var data = new PlanDTO.Data(name, description, color, completed, taskDtos);
+        return new PlanDTO(planID, data);
     }
 
-    public UUID getItemID() {
-        return itemID;
+    public UUID getPlanID() {
+        return planID;
     }
 
     public String getUserID() {

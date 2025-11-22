@@ -4,7 +4,7 @@ import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import type {Plan as PlanType} from "@/types/Plan.ts";
 
 const deleteRequest = async (plan: PlanType): Promise<PlanType[]> => {
-    return await FetchRequest("DELETE", `/users/userPlan/${plan.itemID}`);
+    return await FetchRequest("DELETE", `/users/userPlan/${plan.planID}`);
 };
 
 const useDeletePlan = () => {

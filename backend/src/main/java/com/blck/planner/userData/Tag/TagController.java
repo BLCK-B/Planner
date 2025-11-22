@@ -1,7 +1,5 @@
 package com.blck.planner.userData.Tag;
 
-import com.blck.planner.userData.Task.Task;
-import com.blck.planner.userData.Task.UserTaskRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +20,12 @@ public class TagController {
 
     private final UserTagRepository userTagRepository;
 
-    private final UserTaskRepository userTaskRepository;
-
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    public TagController(UserTagRepository userTagRepository, UserTaskRepository userTaskRepository) {
+    public TagController(UserTagRepository userTagRepository) {
         this.userTagRepository = userTagRepository;
-        this.userTaskRepository = userTaskRepository;
     }
 
     @GetMapping(value = "/userTags")

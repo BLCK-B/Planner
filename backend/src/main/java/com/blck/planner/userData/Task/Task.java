@@ -1,5 +1,6 @@
 package com.blck.planner.userData.Task;
 
+import com.blck.planner.userData.Plan.Plan;
 import com.blck.planner.userData.Tag.Tag;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -46,6 +47,9 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
+
+    @ManyToMany(mappedBy = "tasks")
+    private Set<Plan> plans;
 
     @Column(name = "plan_id")
     private String planID;
