@@ -16,6 +16,20 @@ const Plan = (plan: PlanType) => {
         setShowDialog(true);
     };
 
+    const dummyTask: TaskType = {
+        itemID: "rjijhe",
+        data: {
+            planID: "rnroehre",
+            name: "a task dummy",
+            tags: [],
+            date: `${new Date()}`,
+            completed: '',
+            itemType: "Task",
+            repeatEvent: '',
+            repeatOriginDay: 0
+        }
+    }
+
     return (
         <Box
             h="20rem"
@@ -42,7 +56,7 @@ const Plan = (plan: PlanType) => {
             </Flex>
             <Text>{plan.data.description}</Text>
             <Flex direction="column" height="100%">
-                <TaskView {...}/>
+                <TaskView {...dummyTask}/>
             </Flex>
         </Box>
     );

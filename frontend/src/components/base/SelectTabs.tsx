@@ -14,7 +14,12 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
                    onValueChange={(e) => valueChanged(e.value)}>
             <Tabs.List p="1" w="100%" flexDirection={responsive ? {base: "row", sm: "row", md: "column"} : undefined}>
                 {tabs.map((tab, index) => (
-                    <Tabs.Trigger key={index} value={tab} mb="2">
+                    <Tabs.Trigger key={index} value={tab} mb="2"
+                                  _selected={{
+                                      bg: "theme.Spruit1",
+                                      color: "black",
+                                  }}
+                    >
                         {tab}
                     </Tabs.Trigger>
                 ))}
@@ -22,5 +27,6 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
         </Tabs.Root>
     );
 };
+
 
 export default SelectTabs;

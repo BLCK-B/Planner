@@ -22,14 +22,15 @@ const ActionButtonsPlansPage = () => {
         setShowAddDialog(true);
     };
 
-    const activeColor = (active: boolean) => {
-        return active ? "black" : "grey";
+    const activeIconColor = (active: boolean) => {
+        return active ? "theme.Spruit2" : "primary.lighter";
     };
 
     return (
-        <Flex justify="center" w="80%" ml="20px" justifyContent="flex-start" gap="1em">
-            <IconButton onClick={() => setShowExactDates(!showExactDates)} bg="none">
-                <IoCalendarNumber color={activeColor(showExactDates)} aria-label="Complete"/>
+        <Flex justify="center" justifyContent="space-evenly" p="5px">
+            <IconButton onClick={() => setShowExactDates(!showExactDates)} size="xs"
+                        bg={activeIconColor(showExactDates)}>
+                <IoCalendarNumber color="black" aria-label="Complete"/>
             </IconButton>
             <MyButton type="add" onClick={createNewPlan}/>
         </Flex>

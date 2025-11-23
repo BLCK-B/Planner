@@ -102,7 +102,7 @@ const TaskCreator = () => {
                         padding: "0.5rem"
                     }}
                 >
-                    <Dialog.Content bg="primary.base" color="primary.contrast" height="24rem">
+                    <Dialog.Content bg="primary.base" color="primary.contrast" height="25rem">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
@@ -148,8 +148,9 @@ const TaskCreator = () => {
                                             ))}
                                             {/* button for opening tag add menu */}
                                             <Show when={newItem.data.tags.length === 0}>
-                                                <Tag.Root variant="surface" bg="primary.base" color="primary.contrast"
-                                                          h="25px">
+                                                <Tag.Root variant="surface" bg="theme.Spruit1"
+                                                          color="primary.contrast"
+                                                          h="25px" boxShadow="none">
                                                     <Tag.Label>assign tags</Tag.Label>
                                                 </Tag.Root>
                                             </Show>

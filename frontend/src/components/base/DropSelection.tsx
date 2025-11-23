@@ -30,7 +30,7 @@ const DropSelection = ({items, selected, onSelect, placeholderText}: Props) => {
         >
             <Select.HiddenSelect/>
             <Select.Control>
-                <Select.Trigger>
+                <Select.Trigger bg="primary.lighter" border="none" h="45px">
                     <Select.ValueText placeholder={placeholderText}/>
                 </Select.Trigger>
                 <Select.IndicatorGroup>
@@ -39,9 +39,11 @@ const DropSelection = ({items, selected, onSelect, placeholderText}: Props) => {
             </Select.Control>
 
             <Select.Positioner>
-                <Select.Content bg="primary.darker">
+                <Select.Content bg="primary.lighter" border="1px solid grey">
                     {selectOptions.items.map((item) => (
-                        <Select.Item item={item} key={item.value}>
+                        <Select.Item item={item} key={item.value}
+                                     bg="primary.lighter"
+                                     _hover={{bg: "theme.Spruit1", color: "black"}}>
                             {item.label}
                             <Select.ItemIndicator/>
                         </Select.Item>

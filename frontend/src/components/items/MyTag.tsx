@@ -23,7 +23,7 @@ const MyTag = ({tag, isEditable = false,}: Props) => {
 
     return (
         <Tag.Root variant="surface" style={styles.tag} bg={tag.data.color} color="primary.contrast"
-                  onClick={clicked}>
+                  onClick={clicked} boxShadow="none">
             <Tag.Label>
                 {tag.data.tagName}
             </Tag.Label>

@@ -126,23 +126,23 @@ const AuthPage = () => {
                                 </Show>
                                 <Show when={formType === "log-in"}>
                                     <Card.Title>Log in</Card.Title>
-                                    <Card.Description>Welcome back.</Card.Description>
+                                    <Card.Description color="primary.contrast">Welcome back.</Card.Description>
                                 </Show>
                             </Card.Header>
                             <Card.Body gap="2" color="primary.contrast">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
-                                        {/*<OAuthProviders/>*/}
 
                                         <Field.Root invalid={!!errors.username}>
                                             <Field.Label>E-mail</Field.Label>
                                             <Input
+                                                color="primary.contrast" _placeholder={{color: "primary.base"}}
                                                 placeholder="me@example.com" {...register("username", {required: "Username is required"})} />
                                             <Field.ErrorText>{String(errors.username?.message)}</Field.ErrorText>
                                         </Field.Root>
 
                                         <Field.Root invalid={!!errors.password}>
-                                            <Field.Label>Password</Field.Label>
+                                            <Field.Label color="primary.contrast">Password</Field.Label>
                                             <PasswordInput {...register("password", {required: "Password is required"})} />
                                             <Field.ErrorText>{String(errors.password?.message)}</Field.ErrorText>
                                         </Field.Root>

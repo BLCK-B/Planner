@@ -1,9 +1,12 @@
 import {useQuery} from "@tanstack/react-query"
 import {Box, Button, Card, Center, Flex} from "@chakra-ui/react";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
-import type {TagType} from "@/types/TagType.ts";
+import {getNewTag, type TagType} from "@/types/TagType.ts";
 import MyTag from "@/components/items/MyTag.tsx";
 import {mainRoute, router} from "@/routes/__root.tsx";
+import MyButton from "@/components/base/MyButton.tsx";
+import {useSetAtom} from "jotai";
+import {existingTagForEdit, showTagCreator} from "@/global/atoms.ts";
 
 const TagsEditList = () => {
 
@@ -11,6 +14,15 @@ const TagsEditList = () => {
 
     const goBack = () => {
         router.navigate({to: mainRoute.fullPath});
+    };
+
+    const setShowAddDialog = useSetAtom(showTagCreator);
+
+    const setEditTag = useSetAtom(existingTagForEdit);
+
+    const createNewTag = () => {
+        setEditTag(getNewTag());
+        setShowAddDialog(true);
     };
 
     if (!tagList) {
@@ -35,7 +47,8 @@ const TagsEditList = () => {
                 </Card.Body>
                 <Center>
                     <Card.Footer>
-                        <Button onClick={goBack}>Return</Button>
+                        <MyButton type="add" onClick={createNewTag}/>
+                        <Button size="xs" onClick={goBack}>Return</Button>
                     </Card.Footer>
                 </Center>
             </Card.Root>
