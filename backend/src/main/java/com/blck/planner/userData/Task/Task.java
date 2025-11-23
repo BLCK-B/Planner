@@ -48,16 +48,14 @@ public class Task {
     )
     private Set<Tag> tags;
 
-    @ManyToMany(mappedBy = "tasks")
-    private Set<Plan> plans;
-
-    @Column(name = "plan_id")
-    private String planID;
+    @ManyToOne
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
 
     public Task() {}
 
     public Task(UUID itemID, String userID, String itemType, String name, String date,
-                String completed, String repeatEvent, int repeatOriginDay, Set<Tag> tags, String planID) {
+                String completed, String repeatEvent, int repeatOriginDay, Set<Tag> tags, Plan plan) {
         this.itemID = itemID;
         this.userID = userID;
         this.itemType = itemType;
@@ -67,14 +65,15 @@ public class Task {
         this.repeatEvent = repeatEvent;
         this.repeatOriginDay = repeatOriginDay;
         this.tags = tags;
-        this.planID = planID;
+        this.plan = plan;
     }
 
     public TaskDTO toDTO() {
         var tagDtos = tags.stream()
                 .map(Tag::toDTO)
                 .collect(Collectors.toSet());
-        var data = new TaskDTO.Data(itemType, name, date, completed, repeatEvent, repeatOriginDay, tagDtos, planID);
+        var planDto = (plan != null) ? plan.toDTO() : null;
+        var data = new TaskDTO.Data(itemType, name, date, completed, repeatEvent, repeatOriginDay, tagDtos, planDto);
         return new TaskDTO(itemID, data);
     }
 
@@ -138,19 +137,19 @@ public class Task {
         this.repeatOriginDay = repeatOriginDay;
     }
 
-    public String getPlanID() {
-        return planID;
-    }
-
-    public void setPlanID(String planID) {
-        this.planID = planID;
-    }
-
     public Set<Tag> getTags() {
         return tags;
     }
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 }

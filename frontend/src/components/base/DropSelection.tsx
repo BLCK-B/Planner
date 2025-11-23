@@ -9,9 +9,10 @@ type Props = {
     items: SelectItem[];
     selected: string;
     onSelect: (selected: string) => void;
+    placeholderText: string;
 }
 
-const DropSelection = ({items, selected, onSelect}: Props) => {
+const DropSelection = ({items, selected, onSelect, placeholderText}: Props) => {
 
     const selectOptions = createListCollection({items});
 
@@ -30,7 +31,7 @@ const DropSelection = ({items, selected, onSelect}: Props) => {
             <Select.HiddenSelect/>
             <Select.Control>
                 <Select.Trigger>
-                    <Select.ValueText placeholder="No repeat"/>
+                    <Select.ValueText placeholder={placeholderText}/>
                 </Select.Trigger>
                 <Select.IndicatorGroup>
                     <Select.ClearTrigger/>

@@ -8,11 +8,13 @@ import {getNewTask} from "@/types/Task.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import {useQueryClient} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
 import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 import type {TagType} from "@/types/TagType.ts";
+import type {PlanType} from "@/types/PlanType.ts";
+import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 
 const TaskCreator = () => {
 
@@ -25,6 +27,8 @@ const TaskCreator = () => {
     const saveTaskMutation = useSaveTask();
 
     const deleteTaskMutation = useDeleteTask();
+
+    const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
@@ -78,6 +82,16 @@ const TaskCreator = () => {
         updateItem("repeatEvent", repeat);
     };
 
+    const planOptions = plans?.map(plan => ({
+        label: plan.data.name,
+        value: plan.planID,
+    })) ?? [];
+
+    const setAssignedPlanTask = async (planID: string) => {
+        if (!plans) return;
+        updateItem("plan", plans.find(plan => plan.planID === planID));
+    };
+
     return (
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
@@ -118,28 +132,39 @@ const TaskCreator = () => {
                                         <Box w="215px">
                                             <DropSelection items={repeatOptions}
                                                            selected={newItem.data.repeatEvent}
-                                                           onSelect={(repeat) => setEventRepeat(repeat)}/>
+                                                           onSelect={(repeat) => setEventRepeat(repeat)}
+                                                           placeholderText="No repeat"
+                                            />
                                         </Box>
                                     </Flex>
                                 </Show>
                                 {/* tags */}
-                                <Flex gap={1} h="1rem">
-                                    {/* tag list */}
-                                    {newItem.data.tags.map((tag, index) => (
-                                        <MyTag key={index} tag={tag}/>
-                                    ))}
-                                    {/* button for opening tag add menu */}
-                                </Flex>
                                 <Popover.Root positioning={{placement: "bottom-start"}}>
                                     <Popover.Trigger asChild>
-                                        <Tag.Root variant="surface"
-                                                  bg="primary.base"
-                                                  color="primary.contrast">
-                                            <Tag.Label>assign tags</Tag.Label>
-                                        </Tag.Root>
+                                        <Flex gap={1} h="1rem">
+                                            {/* tag list */}
+                                            {newItem.data.tags.map((tag, index) => (
+                                                <MyTag key={index} tag={tag}/>
+                                            ))}
+                                            {/* button for opening tag add menu */}
+                                            <Show when={newItem.data.tags.length === 0}>
+                                                <Tag.Root variant="surface" bg="primary.base" color="primary.contrast"
+                                                          h="25px">
+                                                    <Tag.Label>assign tags</Tag.Label>
+                                                </Tag.Root>
+                                            </Show>
+                                        </Flex>
                                     </Popover.Trigger>
                                     <TagsSelect updateTags={(tag) => assignTag(tag)}/>
                                 </Popover.Root>
+                                {/*  plans select  */}
+                                <Box w="70%">
+                                    <DropSelection items={planOptions}
+                                                   selected={newItem.data.plan?.planID ?? ''}
+                                                   onSelect={(planID) => setAssignedPlanTask(planID)}
+                                                   placeholderText="Assign to plan"
+                                    />
+                                </Box>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>

@@ -1,5 +1,6 @@
 package com.blck.planner.userData.Task;
 
+import com.blck.planner.userData.Plan.PlanDTO;
 import com.blck.planner.userData.Tag.Tag;
 import com.blck.planner.userData.Tag.TagDTO;
 
@@ -19,7 +20,7 @@ public record TaskDTO(
             String repeatEvent,
             int repeatOriginDay,
             Set<TagDTO> tags,
-            String planID
+            PlanDTO plan
     ) {
     }
 
@@ -37,7 +38,7 @@ public record TaskDTO(
                 data.repeatEvent,
                 data.repeatOriginDay,
                 tags,
-                data.planID
+                data.plan.toPlan(userID)
         );
     }
 }

@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_plans")
@@ -33,32 +32,22 @@ public class Plan {
     @Column(name = "completed")
     private String completed;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_plan_task",
-            joinColumns = @JoinColumn(name = "plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
-    )
+    @OneToMany(mappedBy = "plan")
     private Set<Task> tasks;
 
     public Plan() {}
 
-    public Plan(UUID planID, String userID, String name, String description,
-                String color, String completed, Set<Task> tasks) {
+    public Plan(UUID planID, String userID, String name, String description, String color, String completed) {
         this.planID = planID;
         this.userID = userID;
         this.name = name;
         this.description = description;
         this.color = color;
         this.completed = completed;
-        this.tasks = tasks;
     }
 
     public PlanDTO toDTO() {
-        var taskDtos = tasks.stream()
-                .map(Task::toDTO)
-                .collect(Collectors.toSet());
-        var data = new PlanDTO.Data(name, description, color, completed, taskDtos);
+        var data = new PlanDTO.Data(name, description, color, completed);
         return new PlanDTO(planID, data);
     }
 

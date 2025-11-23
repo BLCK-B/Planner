@@ -14,7 +14,7 @@ import {useAtom} from "jotai";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import MyButton from "@/components/base/MyButton.tsx";
-import {getNewPlan} from "@/types/Plan.ts";
+import {getNewPlan} from "@/types/PlanType.ts";
 import ColorPick from "@/components/base/ColorPick.tsx";
 
 const PlanCreator = () => {

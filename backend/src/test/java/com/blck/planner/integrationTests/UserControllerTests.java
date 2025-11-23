@@ -1,5 +1,6 @@
 package com.blck.planner.integrationTests;
 
+import com.blck.planner.userData.Plan.Plan;
 import com.blck.planner.userData.Task.Task;
 import com.blck.planner.userData.Task.UserTaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ public class UserControllerTests {
     @BeforeEach
     public void setup() {
         when(userTaskRepository.findByUserID(any()))
-                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", "", null, "", 0, Set.of(), "")));
+                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", "", null, "", 0, Set.of(), null)));
     }
 
     @Test

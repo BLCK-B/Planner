@@ -1,5 +1,5 @@
 import FetchRequest from "@/functions/FetchRequest.tsx";
-import type {Plan as PlanType} from "@/types/Plan.ts";
+import type {PlanType} from "@/types/PlanType.ts";
 
 const fetchPlans = async (): Promise<PlanType[]> => {
     return await FetchRequest("GET", "/users/userPlans");

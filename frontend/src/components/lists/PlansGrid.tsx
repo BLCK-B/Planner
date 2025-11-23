@@ -1,7 +1,7 @@
 import {Grid} from "@chakra-ui/react";
 import Plan from '@/components/items/Plan.tsx'
 import {useQuery} from "@tanstack/react-query";
-import type {Plan as PlanType} from "@/types/Plan";
+import type {PlanType} from "@/types/PlanType.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 
 const PlansGrid = () => {

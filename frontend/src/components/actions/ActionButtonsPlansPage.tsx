@@ -7,7 +7,7 @@ import {
     showExactDatesAtom,
     showPlanCreator
 } from "@/global/atoms.ts";
-import {getNewPlan} from "@/types/Plan.ts";
+import {getNewPlan} from "@/types/PlanType.ts";
 
 const ActionButtonsPlansPage = () => {
 

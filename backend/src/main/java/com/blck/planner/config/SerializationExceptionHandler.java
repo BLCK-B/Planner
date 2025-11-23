@@ -5,6 +5,8 @@ import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,6 +45,19 @@ public class SerializationExceptionHandler {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "database_constraint_violation");
         errorResponse.put("message", "Database error: " + e.getMessage());
+        return errorResponse;
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Map<String, Object> handleAnyOtherException(Exception e) throws Exception {
+        if (e instanceof AccessDeniedException || e instanceof AuthenticationException) {
+            throw e;
+        }
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "internal_error");
+        errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "Unexpected error");
         return errorResponse;
     }
 }

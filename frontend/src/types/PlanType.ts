@@ -1,4 +1,4 @@
-export type Plan = {
+export type PlanType = {
     planID: string;
     data: {
         name: string;
@@ -9,7 +9,7 @@ export type Plan = {
 };
 
 type EncryptSpec = {
-    [K in keyof Plan["data"]]: boolean;
+    [K in keyof PlanType["data"]]: boolean;
 };
 
 export const PlanEncryptSpec: EncryptSpec = {
@@ -19,7 +19,7 @@ export const PlanEncryptSpec: EncryptSpec = {
     completed: true
 };
 
-const newPlan: Plan = {
+const newPlan: PlanType = {
     planID: '',
     data: {
         name: '',
@@ -29,4 +29,4 @@ const newPlan: Plan = {
     },
 } as const;
 
-export const getNewPlan = (): Plan => structuredClone(newPlan);
+export const getNewPlan = (): PlanType => structuredClone(newPlan);

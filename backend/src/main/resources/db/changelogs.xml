@@ -12,5 +12,6 @@
     <include file="changelogs/2025-11-14-tags-standalone-table.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/2025-11-15-drop-tags-column.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/2025-11-22-rename-plans-id-column.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/2025-11-23-drop-planid-column.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

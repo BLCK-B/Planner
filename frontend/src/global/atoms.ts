@@ -1,6 +1,6 @@
 import {atom} from 'jotai';
 import {getNewTask, type Task} from "@/types/Task.ts";
-import {getNewPlan, type Plan} from "@/types/Plan.ts";
+import {getNewPlan, type PlanType} from "@/types/PlanType.ts";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 
 export const activePage = atom("Tasks");
@@ -20,7 +20,7 @@ export const existingItemForEdit = atom<Task>(getNewTask());
 
 export const showPlanCreator = atom(false);
 
-export const existingPlanForEdit = atom<Plan>(getNewPlan());
+export const existingPlanForEdit = atom<PlanType>(getNewPlan());
 
 
 export const showTagCreator = atom(false);

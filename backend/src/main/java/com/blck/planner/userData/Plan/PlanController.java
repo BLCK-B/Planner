@@ -1,5 +1,6 @@
 package com.blck.planner.userData.Plan;
 
+import com.blck.planner.userData.Task.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,8 +33,7 @@ public class PlanController {
 
     @PutMapping(value = "/userPlan")
     public PlanDTO setPlan(@AuthenticationPrincipal Jwt jwt, @RequestBody PlanDTO userItem) {
-        PlanDTO dto = new PlanDTO(userItem.planID(), userItem.data());
-        return userPlanRepository.save(dto.toPlan(jwt.getSubject())).toDTO();
+        return userPlanRepository.save(userItem.toPlan(jwt.getSubject())).toDTO();
     }
 
     @DeleteMapping(value = "/userPlan/{planID}")
