@@ -1,3 +1,5 @@
+import type {Task as TaskType} from "@/types/Task.ts";
+
 export type PlanType = {
     planID: string;
     data: {
@@ -30,3 +32,11 @@ const newPlan: PlanType = {
 } as const;
 
 export const getNewPlan = (): PlanType => structuredClone(newPlan);
+
+type TaskWithoutPlan = Omit<TaskType, "data"> & {
+    data: Omit<TaskType["data"], "plan">;
+};
+
+export type PlanWithTasks = PlanType & {
+    tasks: TaskWithoutPlan[];
+};

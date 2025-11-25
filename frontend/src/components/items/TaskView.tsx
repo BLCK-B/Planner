@@ -14,7 +14,7 @@ const TaskView = (task: TaskType) => {
     const showExactDates = useAtomValue(showExactDatesAtom);
 
     return (
-        <Flex bg="primary.lighterer"
+        <Flex bg="primary.lighter"
               color="primary.contrast"
               mb="3.5"
               borderRadius="md"

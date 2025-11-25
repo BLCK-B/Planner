@@ -56,6 +56,13 @@ public class TaskController {
         return "User task removed successfully.";
     }
 
+    @GetMapping("/userTasksAssignedToPlans")
+    public List<TaskDTO> userTasksAssignedToPlans(@AuthenticationPrincipal Jwt jwt) {
+        return userTaskRepository.findByUserIDAndPlanIsNotNull(jwt.getSubject()).stream()
+                .map(Task::toDTO)
+                .toList();
+    }
+
     @Transactional
     @PutMapping("/updateAllUserTasks")
     public ResponseEntity<String> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
