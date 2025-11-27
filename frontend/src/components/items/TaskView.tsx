@@ -1,4 +1,4 @@
-import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
+import {Box, Text, Flex, Show} from "@chakra-ui/react";
 import {
     isDatePast,
     globalDateFormatter

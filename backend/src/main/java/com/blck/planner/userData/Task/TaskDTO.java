@@ -38,7 +38,7 @@ public record TaskDTO(
                 data.repeatEvent,
                 data.repeatOriginDay,
                 tags,
-                data.plan.toPlan(userID)
+                data.plan != null ? data.plan.toPlan(userID) : null
         );
     }
 }

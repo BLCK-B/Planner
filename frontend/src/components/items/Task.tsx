@@ -54,6 +54,11 @@ const Task = (task: TaskType) => {
         await queryClient.invalidateQueries({queryKey});
     };
 
+    // temporary solution
+    const borderLeft = () => {
+        return task.data.plan?.data.color ? task.data.plan.data.color : 'transparent';
+    };
+
     return (
         <Flex bg="primary.lighter"
               color="primary.contrast"
@@ -63,6 +68,7 @@ const Task = (task: TaskType) => {
               position="relative"
               justifyContent="space-between"
               onClick={handleClick}
+              borderRight={`2px solid ${borderLeft()}`}
               {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.Reddish"})}>
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
