@@ -34,12 +34,14 @@ test('readableTimeToDate', () => {
 
     expect(readableTimeToDate("2025-05-21")).toBe("tomorrow");
     expect(readableTimeToDate("2025-05-22")).toBe("in 2 days");
-    expect(readableTimeToDate("2025-08-17")).toBe("in 89 days");
+    expect(readableTimeToDate("2025-06-15")).toBe("in 26 days");
+    expect(readableTimeToDate("2025-07-22")).toBe("in 2mo");
     expect(readableTimeToDate("2025-08-18")).toBe("in 3mo");
     expect(readableTimeToDate("2025-12-15")).toBe("in 6mo");
     expect(readableTimeToDate("2025-12-16")).toBe("in 7mo");
     expect(readableTimeToDate("2026-05-20")).toBe("in 1y");
     expect(readableTimeToDate("2026-06-20")).toBe("in 1y 1m");
+    expect(readableTimeToDate("2027-05-15")).toBe("in 2y");
     expect(readableTimeToDate("2028-06-20")).toBe("in 3y");
 });
 

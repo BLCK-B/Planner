@@ -7,10 +7,14 @@ import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/functions/Sortin
 import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
+import {useAtomValue} from "jotai";
+import {filterContentAtom} from "@/global/atoms.ts";
 
 const MainList = () => {
 
     const {data: itemList} = useQuery<TaskType[]>(loadItemsQuery());
+
+    const [filterContent] = useAtomValue(filterContentAtom);
 
     const adjacent = useBreakpointValue({base: false, md: true}) as boolean;
 
@@ -20,22 +24,32 @@ const MainList = () => {
 
     const tasks = itemList.filter((task) => task.data.itemType === "Task");
 
+    const applyContentFilter = (item: TaskType) => {
+        if (!filterContent || filterContent.length === 0) return true;
+        return item.data.tags.some(tag => filterContent.includes(tag.tagID));
+    }
+
     const goals = itemList
         .filter((goal) => goal.data.itemType === "Goal")
         .filter((goal) => !goal.data.completed)
+        .filter((goal) => applyContentFilter(goal))
         .sort(sortGoals);
 
     const futureTasks = tasks
         .filter((task) => !task.data.completed)
         .filter((task) => !isDatePast(task.data.date))
+        .filter((task) => applyContentFilter(task))
         .sort(sortFutureTasks);
 
     const overdueTasks = tasks
         .filter((task) => !task.data.completed)
         .filter((task) => isDatePast(task.data.date))
+        .filter((task) => applyContentFilter(task))
         .sort(sortFutureTasks);
 
-    const completedTasks = itemList.filter((item) => item.data.completed).sort(sortCompletedTasks);
+    const completedItems = itemList
+        .filter((item) => item.data.completed).sort(sortCompletedTasks)
+        .filter((item) => applyContentFilter(item));
 
     const groupByMonth = (tasks: TaskType[], byCompleted: boolean) => {
         return tasks.reduce<Record<string, TaskType[]>>((groupedTasks, task) => {
@@ -113,7 +127,7 @@ const MainList = () => {
 
     return (
         <Flex direction="column" height="100%" style={styles.deadlineList}>
-            <Box style={{overflowY: "scroll", scrollbarWidth: "none"}}>
+            <Box overflowY="scroll" scrollbarWidth="none">
                 <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="150px">
                     {renderGroupedTasks(futureTasks)}
 
@@ -121,7 +135,7 @@ const MainList = () => {
 
                     {renderGoals(goals)}
 
-                    {renderGroupedTasks(completedTasks, true)}
+                    {renderGroupedTasks(completedItems, true)}
                 </Box>
             </Box>
         </Flex>
