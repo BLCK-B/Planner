@@ -128,7 +128,8 @@ const MainList = () => {
     return (
         <Flex direction="column" height="100%" style={styles.deadlineList}>
             <Box overflowY="scroll" scrollbarWidth="none">
-                <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="150px">
+                <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="100px"
+                     paddingBottom="100px">
                     {renderGroupedTasks(futureTasks)}
 
                     {renderGroupedTasks(overdueTasks)}

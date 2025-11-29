@@ -156,7 +156,7 @@ const TaskCreator = () => {
                                             </Show>
                                         </Flex>
                                     </Popover.Trigger>
-                                    <TagsSelect updateTags={(tag) => assignTag(tag)}/>
+                                    <TagsSelect assignedTags={newItem.data.tags} updateTags={(tag) => assignTag(tag)}/>
                                 </Popover.Root>
                                 {/*  plans select  */}
                                 <Box w="70%">

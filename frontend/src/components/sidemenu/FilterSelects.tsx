@@ -28,6 +28,11 @@ const FilterSelects = () => {
         setFilterContent(updatedTags);
     };
 
+    const isInactive = (tag: TagType) => {
+        const content = filterContent ?? [];
+        return !content.some(tagId => tagId === tag.tagID);
+    }
+
     return (
         <Popover.Positioner>
             <Popover.Content width="350px" bg="primary.darker">
@@ -45,7 +50,7 @@ const FilterSelects = () => {
                             >
                                 {tags.map((tag, i) => (
                                     <Box key={i} onClick={() => applyTagFilter(tag)}>
-                                        <MyTag tag={tag} isEditable={false}/>
+                                        <MyTag tag={tag} isEditable={false} isInactive={isInactive(tag)}/>
                                     </Box>
                                 ))}
                             </Grid>

@@ -6,10 +6,11 @@ import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {router, tagsEditRoute} from "@/routes/__root.tsx";
 
 type Props = {
+    assignedTags: TagType[];
     updateTags: (tags: TagType) => void;
 };
 
-const TagsSelect = ({updateTags}: Props) => {
+const TagsSelect = ({updateTags, assignedTags}: Props) => {
 
     const {data: tags} = useQuery<TagType[]>(loadTagsQuery());
 
@@ -25,6 +26,11 @@ const TagsSelect = ({updateTags}: Props) => {
         return <div>Loading...</div>;
     }
 
+    const isInactive = (tag: TagType) => {
+        const assigned = assignedTags ?? [];
+        return !assigned.some(t => t.tagID === tag.tagID);
+    }
+
     return (
         <Popover.Positioner>
             <Popover.Content width="380px" bg="primary.lighter">
@@ -37,7 +43,7 @@ const TagsSelect = ({updateTags}: Props) => {
                     >
                         {tags.map((tag, i) => (
                             <Box key={i} onClick={() => assignTag(tag)}>
-                                <MyTag tag={tag} isEditable={false}/>
+                                <MyTag tag={tag} isEditable={false} isInactive={isInactive(tag)}/>
                             </Box>
                         ))}
                     </Grid>

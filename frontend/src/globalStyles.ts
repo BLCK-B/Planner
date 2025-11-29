@@ -6,6 +6,7 @@ const textStyles = defineTextStyles({
         value: {
             fontFamily: "Roboto, sans-serif",
             fontWeight: "500",
+            userSelect: "none",
             // fontSize: "20px",
         },
     },
@@ -32,17 +33,17 @@ export const styles = defineConfig({
         textStyles,
         tokens: {
             colors: {
-                primary: light,
+                primary: dark,
                 theme: {
-                    "Peach": "#F4C095",
                     "Flame": "#CF5C36",
                     "Red": "#EE2E31",
                     "Success": "#505c48",
                     "Spruit1": "#839c38",
                     "Spruit2": "#a1c339",
+                    "Spruit3": "#6a9c38",
+                    "Spruit3Hover": "#7eba41",
                     "Reddish": "#f87171",
-                    "ReddishLight": "#f9dbdb",
-                    "Main": "#619324",
+                    "ReddishHover": "#ff4e4e",
                 },
             },
         },

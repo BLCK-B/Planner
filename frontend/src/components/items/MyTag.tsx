@@ -6,9 +6,10 @@ import type {TagType} from "@/types/TagType.ts";
 type Props = {
     tag: TagType;
     isEditable?: boolean;
+    isInactive?: boolean;
 };
 
-const MyTag = ({tag, isEditable = false,}: Props) => {
+const MyTag = ({tag, isEditable = false, isInactive = false}: Props) => {
 
     const setShowAddTagDialog = useSetAtom(showTagCreator);
 
@@ -21,8 +22,15 @@ const MyTag = ({tag, isEditable = false,}: Props) => {
         }
     };
 
+    const inactiveStyle = () => {
+        if (isInactive) {
+            return styles.inactive;
+        }
+    };
+
     return (
-        <Tag.Root variant="surface" style={styles.tag} bg={tag.data.color} color="primary.contrast"
+        <Tag.Root variant="surface" style={{...styles.tag, ...inactiveStyle()}} bg={tag.data.color}
+                  color="primary.contrast"
                   onClick={clicked} boxShadow="none">
             <Tag.Label>
                 {tag.data.tagName}
@@ -37,4 +45,7 @@ const styles = {
     tag: {
         height: "25px",
     },
+    inactive: {
+        opacity: "0.5",
+    }
 };

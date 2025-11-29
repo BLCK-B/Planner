@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query"
-import {Box, Button, Card, Center, Flex} from "@chakra-ui/react";
+import {Box, Card, Center, Flex} from "@chakra-ui/react";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 import MyTag from "@/components/items/MyTag.tsx";
@@ -47,8 +47,10 @@ const TagsEditList = () => {
                 </Card.Body>
                 <Center>
                     <Card.Footer>
-                        <MyButton type="add" onClick={createNewTag}/>
-                        <Button size="xs" onClick={goBack}>Return</Button>
+                        <Flex gap={5}>
+                            <MyButton type="add" onClick={createNewTag}/>
+                            <MyButton type="exit" onClick={goBack}></MyButton>
+                        </Flex>
                     </Card.Footer>
                 </Center>
             </Card.Root>
