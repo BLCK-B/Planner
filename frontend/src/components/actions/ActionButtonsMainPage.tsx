@@ -1,4 +1,4 @@
-import {IconButton, Popover, SimpleGrid} from "@chakra-ui/react";
+import {IconButton, Popover, SimpleGrid, useBreakpointValue} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
@@ -17,6 +17,8 @@ const ActionButtonsMainPage = () => {
 
     const setEditItem = useSetAtom(existingItemForEdit);
 
+    const isLargeScreen = useBreakpointValue({base: false, md: true}) as boolean;
+
     const createNewItem = () => {
         setEditItem(getNewTask());
         setShowAddDialog(true);
@@ -32,10 +34,11 @@ const ActionButtonsMainPage = () => {
 
     return (
         <SimpleGrid
-            columns={2}
+            columns={isLargeScreen ? 2 : 3}
             justifyItems="center"
             p="5px"
             rowGap={3}
+            columnGap={isLargeScreen ? 0 : 1.5}
             marginLeft="0.5rem"
             marginRight="0.5rem"
         >

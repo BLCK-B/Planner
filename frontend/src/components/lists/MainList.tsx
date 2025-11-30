@@ -3,7 +3,7 @@ import {Box, Flex, Show} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
-import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/functions/Sorting.tsx'
+import {groupByMonth, sortCompletedTasks, sortFutureTasks, sortGoals} from '@/functions/Sorting.tsx'
 import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
@@ -18,16 +18,16 @@ const MainList = () => {
 
     const adjacent = useBreakpointValue({base: false, md: true}) as boolean;
 
+    const applyContentFilter = (item: TaskType) => {
+        if (!filterContent || filterContent.length === 0) return true;
+        return item.data.tags.some(tag => filterContent.includes(tag.tagID));
+    }
+
     if (!itemList) {
         return <div>Loading...</div>;
     }
 
     const tasks = itemList.filter((task) => task.data.itemType === "Task");
-
-    const applyContentFilter = (item: TaskType) => {
-        if (!filterContent || filterContent.length === 0) return true;
-        return item.data.tags.some(tag => filterContent.includes(tag.tagID));
-    }
 
     const goals = itemList
         .filter((goal) => goal.data.itemType === "Goal")
@@ -50,17 +50,6 @@ const MainList = () => {
     const completedItems = itemList
         .filter((item) => item.data.completed).sort(sortCompletedTasks)
         .filter((item) => applyContentFilter(item));
-
-    const groupByMonth = (tasks: TaskType[], byCompleted: boolean) => {
-        return tasks.reduce<Record<string, TaskType[]>>((groupedTasks, task) => {
-            const monthKey = byCompleted ? task.data.completed.slice(0, 7) : task.data.date.slice(0, 7);
-            if (!groupedTasks[monthKey]) {
-                groupedTasks[monthKey] = [];
-            }
-            groupedTasks[monthKey].push(task);
-            return groupedTasks;
-        }, {});
-    };
 
     const renderGroupedTasks = (tasks: TaskType[], byCompletedDate = false) => {
         const groups = groupByMonth(tasks, byCompletedDate);
@@ -109,12 +98,11 @@ const MainList = () => {
     };
 
     const renderGoals = (goals: TaskType[]) => {
-        if (goals.length === 0)
-            return;
+        if (goals.length === 0) return;
         return (
             <Box position="relative" mt="30px">
                 <Box bg="primary.darker" position="relative" p="10px" borderRadius="5px">
-                    <GroupMarker text={"Goals"} adjacent={false}/>
+                    <GroupMarker text={"Someday"} adjacent={false}/>
                     {goals.map((goal) => (
                         <Box key={goal.itemID} position="relative" mb="2">
                             <Task {...goal} />
@@ -126,7 +114,7 @@ const MainList = () => {
     };
 
     return (
-        <Flex direction="column" height="100%" style={styles.deadlineList}>
+        <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
                 <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="100px"
                      paddingBottom="100px">
@@ -144,10 +132,3 @@ const MainList = () => {
 };
 
 export default MainList;
-
-const styles = {
-    deadlineList: {
-        justifyContent: "flex-end",
-        margin: "0 auto",
-    },
-};

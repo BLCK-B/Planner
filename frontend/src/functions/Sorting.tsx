@@ -17,3 +17,14 @@ export const sortCompletedTasks = (a: TaskType, b: TaskType): number => {
 
     return bDate - aDate;
 };
+
+export const groupByMonth = (tasks: TaskType[], byCompleted: boolean) => {
+    return tasks.reduce<Record<string, TaskType[]>>((groupedTasks, task) => {
+        const monthKey = byCompleted ? task.data.completed.slice(0, 7) : task.data.date.slice(0, 7);
+        if (!groupedTasks[monthKey]) {
+            groupedTasks[monthKey] = [];
+        }
+        groupedTasks[monthKey].push(task);
+        return groupedTasks;
+    }, {});
+};

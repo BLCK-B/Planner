@@ -1,6 +1,7 @@
 import {Tabs} from "@chakra-ui/react";
 import {MdOutlineChecklist} from "react-icons/md";
 import {LuGoal} from "react-icons/lu";
+import {FaSwimmer} from "react-icons/fa";
 
 type Props = {
     tabs: string[];
@@ -18,6 +19,8 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
                 return <MdOutlineChecklist/>;
             case "Plans":
                 return <LuGoal/>;
+            case "Routines":
+                return <FaSwimmer/>;
             default:
                 return;
         }

@@ -105,7 +105,7 @@ const TaskCreator = () => {
                     <Dialog.Content bg="primary.base" color="primary.contrast" height="25rem">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
-                                <SelectTabs tabs={["Task", "Goal"]} selected={newItem.data.itemType}
+                                <SelectTabs tabs={["Task", "Someday"]} selected={newItem.data.itemType}
                                             valueChanged={(value) => updateItem("itemType", value)}/>
                                 <Show when={newItem !== getNewTask()}>
                                     <MyButton type="delete" onClick={deleteItem}/>
@@ -150,7 +150,7 @@ const TaskCreator = () => {
                                             <Show when={newItem.data.tags.length === 0}>
                                                 <Tag.Root variant="surface" bg="theme.Spruit1"
                                                           color="primary.contrast"
-                                                          h="25px" boxShadow="none">
+                                                          h="25px" boxShadow="none" cursor="pointer">
                                                     <Tag.Label>assign tags</Tag.Label>
                                                 </Tag.Root>
                                             </Show>

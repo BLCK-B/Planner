@@ -13,7 +13,7 @@ const Menu = () => {
 
     const router = useRouter();
 
-    const tabs = ["Tasks", "Plans", "Tab 3"];
+    const tabs = ["Tasks", "Plans", "Routines"];
 
     const [selectedTab, setSelectedTab] = useAtom(activePage);
 
