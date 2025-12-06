@@ -1,6 +1,6 @@
 package com.blck.planner.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -28,10 +28,10 @@ public class SerializationExceptionHandler {
         return errorResponse;
     }
 
-    @ExceptionHandler(JsonProcessingException.class)
+    @ExceptionHandler(JacksonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Map<String, Object> jsonProcessingException(JsonProcessingException e) {
+    public Map<String, Object> jsonProcessingException(JacksonException e) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "serialisation_error");
         errorResponse.put("message", "JSON processing error: " + e.getOriginalMessage());

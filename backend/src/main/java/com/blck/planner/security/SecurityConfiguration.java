@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -60,7 +61,7 @@ public class SecurityConfiguration {
         return converter;
     }
 
-    private Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter() {
+    private Converter<@NonNull Jwt, @NonNull Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter() {
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
         converter.setAuthoritiesClaimName("roles");
         converter.setAuthorityPrefix("");
@@ -73,7 +74,11 @@ public class SecurityConfiguration {
     public OncePerRequestFilter cookieAuthenticationWebFilter(JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter) {
         return new OncePerRequestFilter() {
             @Override
-            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+            protected void doFilterInternal(
+                    @NonNull HttpServletRequest request,
+                    @NonNull HttpServletResponse response,
+                    @NonNull FilterChain filterChain)
+                    throws ServletException, IOException {
                 Authentication auth = cookieAuthenticationConverter.convert(request);
                 if (auth instanceof BearerTokenAuthenticationToken tokenAuth) {
                     try {
@@ -116,8 +121,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider::authenticate;
     }

@@ -4,12 +4,12 @@ import com.blck.planner.accounts.AccountRepository;
 import com.blck.planner.accounts.UserAccount;
 import com.blck.planner.security.CredentialsDTO;
 import com.blck.planner.security.SecurityNames;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,7 +22,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -190,11 +189,11 @@ class AuthControllerTests {
         String decodedPayload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
         JsonNode payload = objectMapper.readTree(decodedPayload);
 
-        assertEquals("username", payload.get("sub").asText());
+        assertEquals("username", payload.get("sub").asString());
         assertTrue(payload.hasNonNull("iat"));
         assertTrue(payload.hasNonNull("exp"));
         List<String> roles = new ArrayList<>();
-        payload.get("roles").forEach(node -> roles.add(node.asText()));
+        payload.get("roles").forEach(node -> roles.add(node.asString()));
         assertTrue(roles.contains("ROLE_USER"));
 	}
 

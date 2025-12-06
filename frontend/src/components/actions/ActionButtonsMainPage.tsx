@@ -39,8 +39,8 @@ const ActionButtonsMainPage = () => {
             p="5px"
             rowGap={3}
             columnGap={isLargeScreen ? 0 : 1.5}
-            marginLeft="0.5rem"
-            marginRight="0.5rem"
+            marginLeft="1rem"
+            marginRight="1rem"
         >
             <IconButton
                 onClick={() => setShowExactDates(!showExactDates)}

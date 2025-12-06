@@ -1,17 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.liquibase:liquibase-core:4.33.0'
-    }
-}
-
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.2'
+    id 'org.springframework.boot' version '4.0.0'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'org.liquibase.gradle' version '3.0.2'
 }
 
 group = 'com.blck'
@@ -19,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -29,39 +19,21 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-liquibase'
 
     runtimeOnly 'org.postgresql:postgresql:42.7.8'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test:'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-liquibase-test'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    liquibaseRuntime 'org.liquibase:liquibase-core:4.33.0'
-    liquibaseRuntime 'info.picocli:picocli:4.7.7'
-    liquibaseRuntime 'org.postgresql:postgresql:42.7.8'
 }
-apply plugin: "org.liquibase.gradle"
 
 tasks.named('test') {
     useJUnitPlatform()
     jvmArgs("-XX:+EnableDynamicAgentLoading")
-}
-
-liquibase {
-    activities {
-        main {
-            arguments = [
-                    changelogFile: 'src/main/resources/db/changelogs.xml',
-                    url          : 'jdbc:postgresql://localhost:5432/personaldb',
-                    username     : 'username',
-                    password     : 'password',
-                    driver       : 'org.postgresql.Driver'
-            ]
-        }
-    }
-    runList = 'main'
 }

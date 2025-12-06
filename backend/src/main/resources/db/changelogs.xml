@@ -5,13 +5,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="changelogs/2025-09-28-init.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-10-31-add-fe-salt-col.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-11-01-add-encryption-salt-col.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-11-02-convert-tags-to-string.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-11-14-tags-standalone-table.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-11-15-drop-tags-column.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-11-22-rename-plans-id-column.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/2025-11-23-drop-planid-column.xml" relativeToChangelogFile="true"/>
+    <include file="/db/changelogs/2025-09-28-init.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-10-31-add-fe-salt-col.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-11-01-add-encryption-salt-col.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-11-02-convert-tags-to-string.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-11-14-tags-standalone-table.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-11-15-drop-tags-column.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-11-22-rename-plans-id-column.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-11-23-drop-planid-column.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
