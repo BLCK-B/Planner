@@ -10,8 +10,6 @@ export const showExactDatesAtom = atom(false);
 
 export const filterContentAtom = atom<string[]>([]);
 
-export const isDarkMode = atom(false);
-
 // system
 export const errorModalContent = atom<string>('');
 

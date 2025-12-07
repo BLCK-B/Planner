@@ -30,7 +30,7 @@ const MyTag = ({tag, isEditable = false, isInactive = false}: Props) => {
 
     return (
         <Tag.Root variant="surface" style={{...styles.tag, ...inactiveStyle()}} bg={tag.data.color}
-                  color="primary.contrast"
+                  color="white"
                   onClick={clicked} boxShadow="none" cursor="pointer"
         >
             <Tag.Label>

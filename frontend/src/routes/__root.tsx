@@ -4,6 +4,7 @@ import MainPage from '@/pages/main/MainPage.tsx'
 import AuthPage from '@/pages/AuthPage.tsx'
 import PlansPage from '@/pages/main/PlansPage.tsx'
 import TagsEditPage from "@/pages/main/TagsEditPage.tsx";
+import SettingsPage from "@/pages/settings/SettingsPage.tsx";
 
 export const rootRoute = createRootRoute({
     component: () => (
@@ -41,13 +42,20 @@ export const tagsEditRoute = createRoute({
     component: TagsEditPage,
 })
 
+export const settingsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: 'settings',
+    component: SettingsPage,
+})
+
 export const routeTree = rootRoute.addChildren(
     [
         landingRoute,
         authRoute,
         mainRoute,
         plansRoute,
-        tagsEditRoute
+        tagsEditRoute,
+        settingsRoute,
     ])
 
 export const router = createRouter({routeTree});
