@@ -48,8 +48,10 @@ const TagsSelect = ({updateTags, assignedTags}: Props) => {
                         ))}
                     </Grid>
                 </Popover.Body>
-                <Button borderRadius="0 0 5px 5px" bg="theme.Spruit1" color="black" h="2.2rem" onClick={goToEditPage}>Edit
-                    tags</Button>
+                <Button borderRadius="0 0 5px 5px" bg="theme.Spruit1"
+                        color="black" h="1.8rem" onClick={goToEditPage}>
+                    Edit tags
+                </Button>
             </Popover.Content>
         </Popover.Positioner>
     );

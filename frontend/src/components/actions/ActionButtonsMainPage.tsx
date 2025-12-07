@@ -1,4 +1,4 @@
-import {IconButton, Popover, SimpleGrid, useBreakpointValue} from "@chakra-ui/react";
+import {IconButton, Popover} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
@@ -6,6 +6,7 @@ import {existingItemForEdit, filterContentAtom, showAddDialog, showExactDatesAto
 import {getNewTask} from "@/types/Task.ts";
 import {MdFilterAlt} from "react-icons/md";
 import FilterSelects from "@/components/sidemenu/FilterSelects.tsx";
+import BaseActionButtons from "@/components/actions/BaseActionButtons.tsx";
 
 const ActionButtonsMainPage = () => {
 
@@ -16,8 +17,6 @@ const ActionButtonsMainPage = () => {
     const setShowAddDialog = useSetAtom(showAddDialog);
 
     const setEditItem = useSetAtom(existingItemForEdit);
-
-    const isLargeScreen = useBreakpointValue({base: false, md: true}) as boolean;
 
     const createNewItem = () => {
         setEditItem(getNewTask());
@@ -32,16 +31,9 @@ const ActionButtonsMainPage = () => {
         return filterContent ? "theme.Spruit2" : "primary.lighter";
     };
 
-    return (
-        <SimpleGrid
-            columns={isLargeScreen ? 2 : 3}
-            justifyItems="center"
-            p="5px"
-            rowGap={3}
-            columnGap={isLargeScreen ? 0 : 1.5}
-            marginLeft="1rem"
-            marginRight="1rem"
-        >
+    const actionButtons = (
+        <>
+            <MyButton type="add" onClick={createNewItem}/>
             <IconButton
                 onClick={() => setShowExactDates(!showExactDates)}
                 size="xs"
@@ -49,7 +41,6 @@ const ActionButtonsMainPage = () => {
             >
                 <IoCalendarNumber color="black" aria-label="Complete"/>
             </IconButton>
-            <MyButton type="add" onClick={createNewItem}/>
             <Popover.Root positioning={{placement: "right-start"}}>
                 <Popover.Trigger asChild>
                     <IconButton size="xs" bg={activeFilterColor()}>
@@ -58,7 +49,11 @@ const ActionButtonsMainPage = () => {
                 </Popover.Trigger>
                 <FilterSelects/>
             </Popover.Root>
-        </SimpleGrid>
+        </>
+    );
+
+    return (
+        <BaseActionButtons buttons={actionButtons}/>
     );
 };
 

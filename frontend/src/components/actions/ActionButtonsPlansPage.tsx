@@ -1,4 +1,4 @@
-import {Flex, IconButton} from "@chakra-ui/react";
+import {IconButton} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useSetAtom} from "jotai";
@@ -8,6 +8,7 @@ import {
     showPlanCreator
 } from "@/global/atoms.ts";
 import {getNewPlan} from "@/types/PlanType.ts";
+import BaseActionButtons from "@/components/actions/BaseActionButtons.tsx";
 
 const ActionButtonsPlansPage = () => {
 
@@ -26,14 +27,18 @@ const ActionButtonsPlansPage = () => {
         return active ? "theme.Spruit2" : "primary.lighter";
     };
 
-    return (
-        <Flex justify="center" justifyContent="space-evenly" p="5px">
+    const actionButtons = (
+        <>
+            <MyButton type="add" onClick={createNewPlan}/>
             <IconButton onClick={() => setShowExactDates(!showExactDates)} size="xs"
                         bg={activeIconColor(showExactDates)}>
                 <IoCalendarNumber color="black" aria-label="Complete"/>
             </IconButton>
-            <MyButton type="add" onClick={createNewPlan}/>
-        </Flex>
+        </>
+    );
+
+    return (
+        <BaseActionButtons buttons={actionButtons}/>
     );
 };
 

@@ -3,15 +3,16 @@ import {getNewTask, type Task} from "@/types/Task.ts";
 import {getNewPlan, type PlanType} from "@/types/PlanType.ts";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 
+// user controlled
 export const activePage = atom("Tasks");
 
 export const showExactDatesAtom = atom(false);
 
 export const filterContentAtom = atom<string[]>([]);
 
-// todo: one global show creator based on smth like url param
-// todo: {...} immutable new item local copies with getNew methods
+export const isDarkMode = atom(false);
 
+// system
 export const errorModalContent = atom<string>('');
 
 
