@@ -10,9 +10,10 @@ type Props = {
     selected: string;
     onSelect: (selected: string) => void;
     placeholderText: string;
+    isInactive?: boolean;
 }
 
-const DropSelection = ({items, selected, onSelect, placeholderText}: Props) => {
+const DropSelection = ({items, selected, onSelect, placeholderText, isInactive = false}: Props) => {
 
     const selectOptions = createListCollection({items});
 
@@ -29,7 +30,7 @@ const DropSelection = ({items, selected, onSelect, placeholderText}: Props) => {
             onValueChange={handleValueChange}
         >
             <Select.HiddenSelect/>
-            <Select.Control>
+            <Select.Control opacity={isInactive ? 0.5 : 1}>
                 <Select.Trigger bg="primary.lighter" border="none" h="45px">
                     <Select.ValueText placeholder={placeholderText}/>
                 </Select.Trigger>

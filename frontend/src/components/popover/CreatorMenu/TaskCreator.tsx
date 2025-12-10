@@ -55,8 +55,20 @@ const TaskCreator = () => {
         setShowDialog(false);
     };
 
-    const disableSaveRules = () => {
-        return !newItem.data.name || (newItem.data.itemType === "Task" && !newItem.data.date);
+    const inactiveDateStyle = () => {
+        return !newItem.data.date && !newItem.data.repeatEvent;
+    };
+
+    const invalidNameRule = () => {
+        return !newItem.data.name;
+    }
+
+    const invalidDateRule = () => {
+        return !newItem.data.date && !!newItem.data.repeatEvent;
+    }
+
+    const disableSave = () => {
+        return invalidNameRule() || invalidDateRule();
     };
 
     const assignTag = (tag: TagType) => {
@@ -114,50 +126,53 @@ const TaskCreator = () => {
                         </Dialog.Header>
                         <Dialog.Body>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                <Field.Root invalid={!newItem.data.name}>
+                                <Field.Root invalid={invalidNameRule()}>
                                     <Input p="2px" variant="subtle" value={newItem.data.name}
                                            placeholder="Task name"
                                            onChange={(e) => updateItem("name", e.target.value)}
                                            bg="primary.lighter"/>
                                 </Field.Root>
-                                <Show when={newItem.data.itemType === "Task"}>
-                                    <Flex style={styles.dateFlex}>
-                                        <Box w="160px">
-                                            <Field.Root invalid={!newItem.data.date}>
-                                                <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
-                                                       value={newItem.data.date}
-                                                       onChange={(e) => updateItem("date", e.target.value)}/>
-                                            </Field.Root>
-                                        </Box>
-                                        <Box w="215px">
-                                            <DropSelection items={repeatOptions}
-                                                           selected={newItem.data.repeatEvent}
-                                                           onSelect={(repeat) => setEventRepeat(repeat)}
-                                                           placeholderText="No repeat"
-                                            />
-                                        </Box>
-                                    </Flex>
-                                </Show>
+                                <Flex style={styles.dateFlex}>
+                                    <Box w="160px">
+                                        <Field.Root invalid={invalidDateRule()}>
+                                            <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
+                                                   opacity={inactiveDateStyle() ? 0.5 : 1}
+                                                   value={newItem.data.date}
+                                                   onChange={(e) => updateItem("date", e.target.value)}/>
+                                        </Field.Root>
+                                    </Box>
+                                    <Box w="215px">
+                                        <DropSelection items={repeatOptions}
+                                                       selected={newItem.data.repeatEvent}
+                                                       onSelect={(repeat) => setEventRepeat(repeat)}
+                                                       placeholderText="No repeat"
+                                                       isInactive={inactiveDateStyle()}
+                                        />
+                                    </Box>
+                                </Flex>
                                 {/* tags */}
-                                <Popover.Root positioning={{placement: "bottom-start"}}>
-                                    <Popover.Trigger asChild>
-                                        <Flex gap={1} h="1rem">
-                                            {/* tag list */}
-                                            {newItem.data.tags.map((tag, index) => (
-                                                <MyTag key={index} tag={tag}/>
-                                            ))}
-                                            {/* button for opening tag add menu */}
-                                            <Show when={newItem.data.tags.length === 0}>
-                                                <Tag.Root variant="surface" bg="theme.Spruit1"
-                                                          color="primary.contrast"
-                                                          h="25px" boxShadow="none" cursor="pointer">
-                                                    <Tag.Label>assign tags</Tag.Label>
-                                                </Tag.Root>
-                                            </Show>
-                                        </Flex>
-                                    </Popover.Trigger>
-                                    <TagsSelect assignedTags={newItem.data.tags} updateTags={(tag) => assignTag(tag)}/>
-                                </Popover.Root>
+                                <Box>
+                                    <Popover.Root positioning={{placement: "bottom-start"}}>
+                                        <Popover.Trigger asChild>
+                                            <Flex gap={1} h="1rem">
+                                                {/* tag list */}
+                                                {newItem.data.tags.map((tag, index) => (
+                                                    <MyTag key={index} tag={tag}/>
+                                                ))}
+                                                {/* button for opening tag add menu */}
+                                                <Show when={newItem.data.tags.length === 0}>
+                                                    <Tag.Root variant="surface" bg="theme.Spruit1"
+                                                              color="primary.contrast"
+                                                              h="25px" boxShadow="none" cursor="pointer">
+                                                        <Tag.Label>assign tags</Tag.Label>
+                                                    </Tag.Root>
+                                                </Show>
+                                            </Flex>
+                                        </Popover.Trigger>
+                                        <TagsSelect assignedTags={newItem.data.tags}
+                                                    updateTags={(tag) => assignTag(tag)}/>
+                                    </Popover.Root>
+                                </Box>
                                 {/*  plans select  */}
                                 <Box w="70%">
                                     <DropSelection items={planOptions}
@@ -169,7 +184,7 @@ const TaskCreator = () => {
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <MyButton type="confirm" onClick={saveItem} disabled={disableSaveRules()}/>
+                            <MyButton type="confirm" onClick={saveItem} disabled={disableSave()}/>
                             <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
                     </Dialog.Content>
@@ -183,7 +198,6 @@ export default TaskCreator;
 
 const styles = {
     dateFlex: {
-        position: "relative" as "relative",
         width: "90%",
         gap: "2rem",
     }
