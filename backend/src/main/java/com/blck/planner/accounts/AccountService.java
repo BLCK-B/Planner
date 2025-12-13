@@ -90,7 +90,7 @@ public class AccountService implements UserDetailsService {
                 .secure(true) // HTTPS only
                 .sameSite("Strict") // only send cookie when request originates from our site - prevents cross-site requests
                 .path("/")
-                .maxAge(Duration.ofHours(1))
+                .maxAge(Duration.ofDays(90))
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }

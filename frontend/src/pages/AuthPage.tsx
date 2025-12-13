@@ -10,19 +10,9 @@ import {
     decodeFromBase64,
     deriveAuthHash,
     encodeToBase64,
-    generateNewSalt
+    generateNewSalt,
 } from "@/functions/Crypto.ts";
-
-type credentials = {
-    username: string;
-    password: string;
-};
-
-type backendCredentials = {
-    username: string;
-    frontendPasswordHash: string;
-    passwordAuthSalt: string;
-};
+import type {BackendCredentials, Credentials} from "@/types/Credentials.ts";
 
 const AuthPage = () => {
     const {formType} = useParams({from: authRoute.id});
@@ -32,9 +22,9 @@ const AuthPage = () => {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<credentials>();
-// TODO: simple register / login tests
-    const registerNewAccount = async (credentials: credentials) => {
+    } = useForm<Credentials>();
+
+    const registerNewAccount = async (credentials: Credentials) => {
         const newAuthSalt = generateNewSalt();
         const newEncryptionKeySalt = generateNewSalt();
 
@@ -58,19 +48,18 @@ const AuthPage = () => {
     const reencryptAllData = async () => {
         const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
         const allPlansReencrypted = await FetchRequest("GET", "/users/userPlans");
-        // todo: completely atomic
+
         if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
         if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserPlans", allPlansReencrypted);
     };
 
-    const login = async (credentials: credentials) => {
+    const login = async (credentials: Credentials) => {
         const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
         if (frontendAuthSalt.error) {
             alert("Login failed: " + (frontendAuthSalt?.error || "Unknown error"));
             return;
         }
         const authHash = await deriveAuthHash(decodeFromBase64(frontendAuthSalt), credentials.password);
-
         const backendCredentials = {
             username: credentials.username,
             frontendPasswordHash: authHash,
@@ -90,12 +79,12 @@ const AuthPage = () => {
         await router.navigate({to: mainRoute.fullPath});
     };
 
-    const onSubmit: SubmitHandler<credentials> = async (credentials: credentials) => {
+    const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
         if (formType === "log-in") await login(credentials);
         else if (formType === "register") await registerNewAccount(credentials);
     };
 
-    const sendAuthRequest = async (request: string, credentials: backendCredentials) => {
+    const sendAuthRequest = async (request: string, credentials: BackendCredentials) => {
         const body = {...credentials};
         try {
             return await FetchRequest("POST", request, body);

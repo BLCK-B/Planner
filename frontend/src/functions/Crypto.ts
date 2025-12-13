@@ -69,7 +69,7 @@ export const deriveAuthHash = async (
     );
 
     return btoa(String.fromCharCode(...new Uint8Array(derivedBits)));
-}
+};
 
 /** ----- encryption ----- */
 

@@ -1,6 +1,9 @@
 import {Box, Card, Flex, RadioGroup, VStack} from "@chakra-ui/react";
 import ErrorModal from "@/components/popover/ErrorModal.tsx";
 import HeaderSettingsPage from "@/components/header/HeaderSettingsPage.tsx";
+import {ColorModeButton} from "@/components/ui/color-mode.tsx";
+import MyButton from "@/components/base/MyButton.tsx";
+import {mainRoute, router} from "@/routes/__root.tsx";
 
 const SettingsPage = () => {
 
@@ -9,6 +12,10 @@ const SettingsPage = () => {
         {label: "Dark mode", value: "2"},
         {label: "Light mode", value: "3"},
     ]
+
+    const goBack = () => {
+        router.navigate({to: mainRoute.fullPath});
+    };
 
     return (
         <Box w="100vw" h="100vh" bg="primary.darker" fontSize="17px" textStyle="body">
@@ -28,6 +35,10 @@ const SettingsPage = () => {
                                 ))}
                             </VStack>
                         </RadioGroup.Root>
+                        <Box>
+                            <ColorModeButton>Test ahahaha</ColorModeButton>
+                        </Box>
+                        <MyButton type="exit" onClick={goBack}></MyButton>
                     </Card.Body>
                 </Card.Root>
             </Flex>
