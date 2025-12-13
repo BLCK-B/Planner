@@ -9,7 +9,7 @@ type Props = {
     taskPlanColor?: string;
 }
 
-const CompleteSection = ({onClick, isCompleted, disabled = false, taskPlanColor = 'primary.base'}: Props) => {
+const CompleteSection = ({onClick, isCompleted, disabled = false, taskPlanColor = 'primary'}: Props) => {
     return (
         <Flex bg={isCompleted ? "theme.Spruit2" : "primary.lighterer"}
               _hover={{bg: "theme.Spruit1", _active: {bg: "theme.Spruit2",},}} w="2.5rem"

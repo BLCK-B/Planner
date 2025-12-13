@@ -40,7 +40,7 @@ const DropSelection = ({items, selected, onSelect, placeholderText, isInactive =
             </Select.Control>
 
             <Select.Positioner>
-                <Select.Content bg="primary.lighter" border="1px solid grey">
+                <Select.Content bg="primary.lighter" border="1px solid grey" boxShadow="none">
                     {selectOptions.items.map((item) => (
                         <Select.Item item={item} key={item.value}
                                      bg="primary.lighter"

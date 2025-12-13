@@ -98,7 +98,7 @@ const AuthPage = () => {
     };
 
     return (
-        <Box w="100vw" h="100vh" bg="primary.base" textStyle="body" backgroundImage="url('/skybg.jpg')"
+        <Box w="100vw" h="100vh" bg="primary" textStyle="body" backgroundImage="url('/skybg.jpg')"
              bgSize="cover"
              bgRepeat="no-repeat">
             <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">

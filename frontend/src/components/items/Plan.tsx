@@ -63,7 +63,7 @@ const Plan = (plan: PlanWithTasks) => {
             bg={`rgba${plan.data.color.slice(3, -1)}, 0.1)`}
             color="primary.contrast"
             borderRadius="md"
-            boxShadow="sm"
+            boxShadow="xs"
             mb="6"
             position="relative"
             cursor="button"

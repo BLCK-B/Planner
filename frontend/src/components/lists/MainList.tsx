@@ -83,7 +83,7 @@ const MainList = () => {
                 </Box>
             ) : (
                 <Box key={ym} position="relative" mt="30px">
-                    <Box key={ym} bg="primary.base" position="relative">
+                    <Box key={ym} bg="primary" position="relative">
                         <Show when={byCompletedDate}>
                             {groupMarker}
                         </Show>

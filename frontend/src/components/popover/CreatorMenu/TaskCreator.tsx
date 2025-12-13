@@ -114,7 +114,7 @@ const TaskCreator = () => {
                         padding: "0.5rem"
                     }}
                 >
-                    <Dialog.Content bg="primary.base" color="primary.contrast" height="25rem">
+                    <Dialog.Content bg="primary" color="primary.contrast" height="25rem" boxShadow="none">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <SelectTabs tabs={["Task", "Someday"]} selected={newItem.data.itemType}

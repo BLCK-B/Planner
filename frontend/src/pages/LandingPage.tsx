@@ -10,13 +10,13 @@ const LandingPage = () => {
                     <HeaderLandingPage/>
                 </GridItem>
 
-                <GridItem colSpan={1} bg="primary.base"></GridItem>
+                <GridItem colSpan={1} bg="primary"></GridItem>
 
-                <GridItem colSpan={5} bg="primary.base">
+                <GridItem colSpan={5} bg="primary">
                     <Text color="black">Sign up now!</Text>
                 </GridItem>
 
-                <GridItem colSpan={1} bg="primary.base"></GridItem>
+                <GridItem colSpan={1} bg="primary"></GridItem>
             </Grid>
         </Box>
     );

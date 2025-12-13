@@ -35,7 +35,7 @@ const FilterSelects = () => {
 
     return (
         <Popover.Positioner>
-            <Popover.Content width="350px" bg="primary.darker">
+            <Popover.Content width="350px" bg="primary.darker" boxShadow="none">
                 <Popover.Body p="0.35rem">
                     <Card.Root variant="elevated" bg="primary.lighter">
                         <Card.Header color="primary.contrast">

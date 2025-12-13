@@ -21,11 +21,11 @@ const dark = {
 };
 
 const light = {
-    "contrast": "#000000",
-    "darker": "#d0d0d0",
-    "base": "#ebebeb",
-    "lighter": "#FFFFFF",
-    "lighterer": "#FFFFFF",
+    contrast: "#000000",
+    darker: "#d0d0d0",
+    base: "#ebebeb",
+    lighter: "#FFFFFF",
+    lighterer: "#FFFFFF",
 }
 
 export const styles = defineConfig({

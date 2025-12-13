@@ -36,7 +36,7 @@ const Menu = () => {
 
     return (
         <Box>
-            <Box bg="primary.base" borderRadius="5px" p="5px">
+            <Box bg="primary" borderRadius="5px" p="5px">
                 <Show when={isLargeScreen}>
                     <Box m="0.5rem">
                         <PlannerLogo/>
@@ -48,7 +48,7 @@ const Menu = () => {
 
             </Box>
             <Show when={isLargeScreen}>
-                <Box mt="10px" bg="primary.base" borderRadius="5px">
+                <Box mt="10px" bg="primary" borderRadius="5px">
                     {
                         router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
                             selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
