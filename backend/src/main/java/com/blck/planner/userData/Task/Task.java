@@ -22,9 +22,6 @@ public class Task {
     @Column(name = "user_id")
     private String userID;
 
-    @Column(name = "item_type")
-    private String itemType;
-
     @Column(name = "name")
     private String name;
 
@@ -54,11 +51,10 @@ public class Task {
 
     public Task() {}
 
-    public Task(UUID itemID, String userID, String itemType, String name, String date,
-                String completed, String repeatEvent, int repeatOriginDay, Set<Tag> tags, Plan plan) {
+    public Task(UUID itemID, String userID, String name, String date, String completed,
+                String repeatEvent, int repeatOriginDay, Set<Tag> tags, Plan plan) {
         this.itemID = itemID;
         this.userID = userID;
-        this.itemType = itemType;
         this.name = name;
         this.date = date;
         this.completed = completed;
@@ -73,7 +69,7 @@ public class Task {
                 .map(Tag::toDTO)
                 .collect(Collectors.toSet());
         var planDto = (plan != null) ? plan.toDTO() : null;
-        var data = new TaskDTO.Data(itemType, name, date, completed, repeatEvent, repeatOriginDay, tagDtos, planDto);
+        var data = new TaskDTO.Data(name, date, completed, repeatEvent, repeatOriginDay, tagDtos, planDto);
         return new TaskDTO(itemID, data);
     }
 
@@ -87,14 +83,6 @@ public class Task {
 
     public void setUserID(String userID) {
         this.userID = userID;
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(String itemType) {
-        this.itemType = itemType;
     }
 
     public String getName() {

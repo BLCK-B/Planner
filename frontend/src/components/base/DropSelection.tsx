@@ -9,11 +9,11 @@ type Props = {
     items: SelectItem[];
     selected: string;
     onSelect: (selected: string) => void;
-    placeholderText: string;
     isInactive?: boolean;
+    isClearable?: boolean;
 }
 
-const DropSelection = ({items, selected, onSelect, placeholderText, isInactive = false}: Props) => {
+const DropSelection = ({items, selected, onSelect, isInactive = false, isClearable = false}: Props) => {
 
     const selectOptions = createListCollection({items});
 
@@ -24,7 +24,7 @@ const DropSelection = ({items, selected, onSelect, placeholderText, isInactive =
     return (
         <Select.Root
             collection={selectOptions}
-            defaultValue={[selected]}
+            value={[selected]}
             size="sm"
             positioning={{placement: "top", flip: false}}
             onValueChange={handleValueChange}
@@ -32,10 +32,10 @@ const DropSelection = ({items, selected, onSelect, placeholderText, isInactive =
             <Select.HiddenSelect/>
             <Select.Control opacity={isInactive ? 0.5 : 1}>
                 <Select.Trigger bg="primary.lighter" border="none" h="45px">
-                    <Select.ValueText placeholder={placeholderText}/>
+                    <Select.ValueText/>
                 </Select.Trigger>
                 <Select.IndicatorGroup>
-                    <Select.ClearTrigger/>
+                    {isClearable && <Select.ClearTrigger/>}
                 </Select.IndicatorGroup>
             </Select.Control>
 

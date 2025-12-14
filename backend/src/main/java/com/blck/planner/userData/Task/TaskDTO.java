@@ -13,7 +13,6 @@ public record TaskDTO(
         Data data
 ) {
     public record Data(
-            String itemType,
             String name,
             String date,
             String completed,
@@ -31,7 +30,6 @@ public record TaskDTO(
         return new Task(
                 itemID,
                 userID,
-                data.itemType,
                 data.name,
                 data.date,
                 data.completed,

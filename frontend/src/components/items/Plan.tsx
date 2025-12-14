@@ -4,7 +4,7 @@ import {useSetAtom} from "jotai";
 import {existingPlanForEdit, showPlanCreator} from "@/global/atoms.ts";
 import TaskView from "@/components/items/TaskView.tsx";
 import CompletionProgress from "@/components/base/CompletionProgress.tsx";
-import {sortFutureTasks, sortGoals} from "@/functions/Sorting.tsx";
+import {sortFutureTasks, sortSomeday} from "@/functions/Sorting.tsx";
 import {isDatePast} from "@/functions/Dates.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
 
@@ -21,12 +21,12 @@ const Plan = (plan: PlanWithTasks) => {
 
     const itemList = plan.tasks;
 
-    const tasks = itemList.filter((task) => task.data.itemType === "Task");
+    const tasks = itemList.filter((task) => task.data.date);
 
-    const goals = itemList
-        .filter((goal) => goal.data.itemType === "Goal")
-        .filter((goal) => !goal.data.completed)
-        .sort(sortGoals);
+    const someday = itemList
+        .filter((item) => !item.data.date)
+        .filter((item) => !item.data.completed)
+        .sort(sortSomeday);
 
     const futureTasks = tasks
         .filter((task) => !task.data.completed)
@@ -84,7 +84,7 @@ const Plan = (plan: PlanWithTasks) => {
 
                 {renderItems(overdueTasks)}
 
-                {renderItems(goals)}
+                {renderItems(someday)}
             </Flex>
         </Box>
     );

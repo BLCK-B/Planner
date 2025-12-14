@@ -42,7 +42,7 @@ const Task = (task: TaskType) => {
         }
         await saveTaskMutation.mutateAsync(newTask);
 
-        if (newTask.data.repeatEvent && newTask.data.itemType === 'Task' && newTask.data.completed) {
+        if (newTask.data.repeatEvent && newTask.data.date && newTask.data.completed) {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
@@ -63,10 +63,10 @@ const Task = (task: TaskType) => {
               position="relative"
               justifyContent="space-between"
               onClick={handleClick}
-              {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.Reddish"})}>
+              {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
-                    <Show when={task.data.itemType === "Task" && !task.data.completed}>
+                    <Show when={task.data.date && !task.data.completed}>
                         <Flex w="120px" align="center" gap="5px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                             <Show when={task.data.repeatEvent}>

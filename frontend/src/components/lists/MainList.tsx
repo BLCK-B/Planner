@@ -3,7 +3,7 @@ import {Box, Flex, Show} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import type {Task as TaskType} from "@/types/Task.ts";
-import {groupByMonth, sortCompletedTasks, sortFutureTasks, sortGoals} from '@/functions/Sorting.tsx'
+import {groupByMonth, sortCompletedTasks, sortFutureTasks, sortSomeday} from '@/functions/Sorting.tsx'
 import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
@@ -27,13 +27,13 @@ const MainList = () => {
         return <div>Loading...</div>;
     }
 
-    const tasks = itemList.filter((task) => task.data.itemType === "Task");
+    const tasks = itemList.filter((task) => task.data.date);
 
-    const goals = itemList
-        .filter((goal) => goal.data.itemType === "Goal")
-        .filter((goal) => !goal.data.completed)
-        .filter((goal) => applyContentFilter(goal))
-        .sort(sortGoals);
+    const someday = itemList
+        .filter((item) => !item.data.date)
+        .filter((item) => !item.data.completed)
+        .filter((item) => applyContentFilter(item))
+        .sort(sortSomeday);
 
     const futureTasks = tasks
         .filter((task) => !task.data.completed)
@@ -97,15 +97,15 @@ const MainList = () => {
         });
     };
 
-    const renderGoals = (goals: TaskType[]) => {
-        if (goals.length === 0) return;
+    const renderSomeday = (someday: TaskType[]) => {
+        if (someday.length === 0) return;
         return (
             <Box position="relative" mt="30px">
                 <Box bg="primary.darker" position="relative" p="10px" borderRadius="5px">
                     <GroupMarker text={"Someday"} adjacent={false}/>
-                    {goals.map((goal) => (
-                        <Box key={goal.itemID} position="relative" mb="2">
-                            <Task {...goal} />
+                    {someday.map((item) => (
+                        <Box key={item.itemID} position="relative" mb="2">
+                            <Task {...item} />
                         </Box>
                     ))}
                 </Box>
@@ -122,7 +122,7 @@ const MainList = () => {
 
                     {renderGroupedTasks(overdueTasks)}
 
-                    {renderGoals(goals)}
+                    {renderSomeday(someday)}
 
                     {renderGroupedTasks(completedItems, true)}
                 </Box>

@@ -21,10 +21,10 @@ const TaskView = (task: TaskType) => {
               cursor="button"
               position="relative"
               justifyContent="space-between"
-              {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.Reddish"})}>
+              {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
-                    <Show when={task.data.itemType === "Task" && !task.data.completed}>
+                    <Show when={task.data.date && !task.data.completed}>
                         <Flex w="120px" align="center" gap="5px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                             <Show when={task.data.repeatEvent}>

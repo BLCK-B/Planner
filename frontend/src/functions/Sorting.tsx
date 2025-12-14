@@ -1,6 +1,6 @@
 import type {Task as TaskType} from "@/types/Task.ts";
 
-export const sortGoals = (a: TaskType, b: TaskType) => {
+export const sortSomeday = (a: TaskType, b: TaskType) => {
     return a.data.name.toLowerCase().localeCompare(b.data.name.toLowerCase());
 };
 

@@ -1,9 +1,20 @@
-import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Popover, useBreakpointValue} from "@chakra-ui/react";
+import {
+    Dialog,
+    Portal,
+    Flex,
+    Input,
+    Show,
+    Box,
+    Field,
+    Tag,
+    Popover,
+    useBreakpointValue,
+    Spacer
+} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
-import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {getNewTask} from "@/types/Task.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
@@ -33,6 +44,7 @@ const TaskCreator = () => {
     const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
+        console.log(key, value);
         setNewItem(prev => ({
             ...prev,
             data: {
@@ -58,19 +70,22 @@ const TaskCreator = () => {
     };
 
     const inactiveDateStyle = () => {
-        return !newItem.data.date && !newItem.data.repeatEvent;
+        return !newItem.data.date;
     };
 
     const invalidNameRule = () => {
         return !newItem.data.name;
     }
 
-    const invalidDateRule = () => {
-        return !newItem.data.date && !!newItem.data.repeatEvent;
-    }
-
     const disableSave = () => {
-        return invalidNameRule() || invalidDateRule();
+        return invalidNameRule();
+    };
+
+    const updateDate = (date: string) => {
+        if (!date) {
+            updateItem("repeatEvent", "none");
+        }
+        updateItem("date", date);
     };
 
     const assignTag = (tag: TagType) => {
@@ -86,6 +101,7 @@ const TaskCreator = () => {
     };
 
     const repeatOptions = [
+        {label: "No repeat", value: "none"},
         {label: "Repeat every week", value: "week"},
         {label: "Repeat every 2 weeks", value: "two-weeks"},
         {label: "Repeat every month", value: "month"},
@@ -106,6 +122,10 @@ const TaskCreator = () => {
         updateItem("plan", plans.find(plan => plan.planID === planID));
     };
 
+    const showTaskType = () => {
+        return newItem.data.date ? "Task" : "Someday";
+    };
+
     return (
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
@@ -114,11 +134,7 @@ const TaskCreator = () => {
                     <Dialog.Content bg="primary" color="primary.contrast" height="25rem" boxShadow="none">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
-                                <SelectTabs tabs={["Task", "Someday"]} selected={newItem.data.itemType}
-                                            valueChanged={(value) => updateItem("itemType", value)}/>
-                                <Show when={newItem !== getNewTask()}>
-                                    <MyButton type="delete" onClick={deleteItem}/>
-                                </Show>
+                                {showTaskType()}
                             </Flex>
                         </Dialog.Header>
                         <Dialog.Body>
@@ -131,21 +147,21 @@ const TaskCreator = () => {
                                 </Field.Root>
                                 <Flex style={styles.dateFlex}>
                                     <Box w="160px">
-                                        <Field.Root invalid={invalidDateRule()}>
+                                        <Field.Root>
                                             <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
                                                    opacity={inactiveDateStyle() ? 0.5 : 1}
                                                    value={newItem.data.date}
-                                                   onChange={(e) => updateItem("date", e.target.value)}/>
+                                                   onChange={(e) => updateDate(e.target.value)}/>
                                         </Field.Root>
                                     </Box>
-                                    <Box w="215px">
-                                        <DropSelection items={repeatOptions}
-                                                       selected={newItem.data.repeatEvent}
-                                                       onSelect={(repeat) => setEventRepeat(repeat)}
-                                                       placeholderText="No repeat"
-                                                       isInactive={inactiveDateStyle()}
-                                        />
-                                    </Box>
+                                    <Show when={!inactiveDateStyle()}>
+                                        <Box w="215px">
+                                            <DropSelection items={repeatOptions}
+                                                           selected={newItem.data.repeatEvent}
+                                                           onSelect={(repeat) => setEventRepeat(repeat)}
+                                            />
+                                        </Box>
+                                    </Show>
                                 </Flex>
                                 {/* tags */}
                                 <Box>
@@ -175,12 +191,15 @@ const TaskCreator = () => {
                                     <DropSelection items={planOptions}
                                                    selected={newItem.data.plan?.planID ?? ''}
                                                    onSelect={(planID) => setAssignedPlanTask(planID)}
-                                                   placeholderText="Assign to plan"
                                     />
                                 </Box>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
+                            <Show when={newItem !== getNewTask()}>
+                                <MyButton type="delete" onClick={deleteItem}/>
+                                <Spacer/>
+                            </Show>
                             <MyButton type="confirm" onClick={saveItem} disabled={disableSave()}/>
                             <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
                         </Dialog.Footer>
