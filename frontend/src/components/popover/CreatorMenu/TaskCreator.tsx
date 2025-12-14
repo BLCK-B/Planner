@@ -1,4 +1,4 @@
-import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Popover} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Field, Tag, Popover, useBreakpointValue} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
@@ -17,6 +17,8 @@ import type {PlanType} from "@/types/PlanType.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 
 const TaskCreator = () => {
+
+    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
 
     const queryClient = useQueryClient();
 
@@ -108,12 +110,7 @@ const TaskCreator = () => {
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
                 <Dialog.Backdrop/>
-                <Dialog.Positioner
-                    style={{
-                        alignItems: "center",
-                        padding: "0.5rem"
-                    }}
-                >
+                <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" height="25rem" boxShadow="none">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
@@ -200,5 +197,13 @@ const styles = {
     dateFlex: {
         width: "90%",
         gap: "2rem",
+    },
+    dialogMobile: {
+        alignItems: "end",
+        padding: "0"
+    },
+    dialogDesktop: {
+        alignItems: "center",
+        padding: "0.5rem"
     }
 };

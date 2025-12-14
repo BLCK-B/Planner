@@ -110,7 +110,7 @@ const AuthPage = () => {
                 <Center>
                     <GridItem colSpan={1}>
                         <Card.Root width="320px" variant="elevated" bg="rgba(80, 80, 80, 0.6)"
-                                   backdropFilter="blur(100px)">
+                                   backdropFilter="blur(100px)" boxShadow="xs">
                             <Card.Header color="white">
                                 <Show when={formType === "register"}>
                                     <Card.Title>Sign up</Card.Title>
