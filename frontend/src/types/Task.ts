@@ -11,6 +11,7 @@ export type Task = {
         completed: string; // date of completion - empty if not completed
         repeatEvent: 'none' | 'week' | 'two-weeks' | 'month'; // create copy when completed
         repeatOriginDay: number; // for month repeat option to prevent day shifting
+        important: boolean;
     };
 };
 
@@ -26,6 +27,7 @@ export const TaskEncryptSpec: EncryptSpec = {
     completed: true,
     repeatEvent: false,
     repeatOriginDay: false,
+    important: false,
 };
 
 const newTask: Task = {
@@ -38,6 +40,7 @@ const newTask: Task = {
         completed: '',
         repeatEvent: 'none',
         repeatOriginDay: 0,
+        important: false,
     },
 } as const;
 

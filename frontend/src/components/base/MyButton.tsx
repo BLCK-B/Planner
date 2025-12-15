@@ -4,10 +4,11 @@ import {RxCross2} from "react-icons/rx";
 import {MdDelete} from "react-icons/md";
 import {RxExit} from "react-icons/rx";
 import {FaHashtag} from "react-icons/fa";
+import {FaStar} from "react-icons/fa6";
 import * as React from "react";
 
 type Props = {
-    type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit' | 'tagedit'
+    type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit' | 'tagedit' | 'important'
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
     disabled?: boolean;
 }
@@ -48,6 +49,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
             {type === "delete" && <MdDelete/>}
             {type === "exit" && <RxExit/>}
             {type === "tagedit" && <FaHashtag/>}
+            {type === "important" && <FaStar/>}
         </IconButton>
     );
 };

@@ -1,16 +1,4 @@
-import {
-    Dialog,
-    Portal,
-    Flex,
-    Input,
-    Show,
-    Box,
-    Field,
-    Tag,
-    Popover,
-    useBreakpointValue,
-    Spacer, Grid, Button
-} from "@chakra-ui/react";
+import {Dialog, Portal, Flex, Input, Show, Box, Field, useBreakpointValue, Spacer, Textarea} from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
@@ -77,7 +65,7 @@ const TaskCreator = () => {
     };
 
     const invalidNameRule = () => {
-        return !newItem.data.name;
+        return !newItem.data.name || newItem.data.name.length > 120;
     }
 
     const disableSave = () => {
@@ -105,9 +93,9 @@ const TaskCreator = () => {
 
     const repeatOptions = [
         {label: "No repeat", value: "none"},
-        {label: "Repeat every week", value: "week"},
-        {label: "Repeat every 2 weeks", value: "two-weeks"},
-        {label: "Repeat every month", value: "month"},
+        {label: "Every week", value: "week"},
+        {label: "Every 2 weeks", value: "two-weeks"},
+        {label: "Every month", value: "month"},
     ];
 
     const setEventRepeat = (repeat: string) => {
@@ -125,10 +113,6 @@ const TaskCreator = () => {
         updateItem("plan", plans.find(plan => plan.planID === planID));
     };
 
-    const showTaskType = () => {
-        return newItem.data.date ? "Task" : "Someday";
-    };
-
     const isTagInactive = (tag: TagType) => {
         const assigned = newItem.data.tags ?? [];
         return !assigned.some(t => t.tagID === tag.tagID);
@@ -143,22 +127,17 @@ const TaskCreator = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
-                    <Dialog.Content bg="primary" color="primary.contrast" height="25rem" boxShadow="none">
-                        <Dialog.Header>
-                            <Flex justifyContent="space-between" w="100%">
-                                {showTaskType()}
-                            </Flex>
-                        </Dialog.Header>
-                        <Dialog.Body>
+                    <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none">
+                        <Dialog.Body mt="20px">
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
                                 <Field.Root invalid={invalidNameRule()}>
-                                    <Input p="2px" variant="subtle" value={newItem.data.name}
-                                           placeholder="Task name"
-                                           onChange={(e) => updateItem("name", e.target.value)}
-                                           bg="primary.lighter"/>
+                                    <Textarea p="2px" variant="subtle" value={newItem.data.name}
+                                              placeholder="Task name"
+                                              onChange={(e) => updateItem("name", e.target.value)}
+                                              bg="primary.lighter" resize="none" autoresize/>
                                 </Field.Root>
-                                <Flex style={styles.dateFlex}>
-                                    <Box w="160px">
+                                <Flex w="100%" align="center" gap="1.5rem" wrap="wrap">
+                                    <Box w="145px">
                                         <Field.Root>
                                             <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
                                                    opacity={inactiveDateStyle() ? 0.5 : 1}
@@ -167,7 +146,7 @@ const TaskCreator = () => {
                                         </Field.Root>
                                     </Box>
                                     <Show when={!inactiveDateStyle()}>
-                                        <Box w="210px">
+                                        <Box w="160px">
                                             <DropSelection items={repeatOptions}
                                                            selected={newItem.data.repeatEvent}
                                                            onSelect={(repeat) => setEventRepeat(repeat)}
@@ -176,7 +155,8 @@ const TaskCreator = () => {
                                     </Show>
                                 </Flex>
                                 {/* tags */}
-                                <Flex w="100%" align="center" bg="primary.lighter" p="8px" borderRadius="md">
+                                <Flex w="100%" align="center" bg="primary.lighter" p="8px" borderRadius="md"
+                                      justify="space-between">
                                     <Flex wrap="wrap" gap={2}>
                                         {tags?.map((tag, i) => (
                                             <Box key={i} onClick={() => assignTag(tag)}>
@@ -188,20 +168,26 @@ const TaskCreator = () => {
                                             </Box>
                                         ))}
                                     </Flex>
-                                    <Box ml="10px">
+                                    <Box ml="10px" right="0">
                                         <MyButton type="tagedit" onClick={goToTagEditPage}/>
                                     </Box>
                                 </Flex>
-                                {/*  plans select  */}
-                                <Box w="70%">
-                                    <DropSelection items={planOptions}
-                                                   selected={newItem.data.plan?.planID ?? ''}
-                                                   onSelect={(planID) => setAssignedPlanTask(planID)}
+                                <Flex w="100%" align="center" gap="1.5rem">
+                                    <MyButton
+                                        type="important"
+                                        onClick={() => updateItem("important", !newItem.data.important)}
                                     />
-                                </Box>
+                                    <Box w="15rem">
+                                        <DropSelection
+                                            items={planOptions}
+                                            selected={newItem.data.plan?.planID ?? ''}
+                                            onSelect={(planID) => setAssignedPlanTask(planID)}
+                                        />
+                                    </Box>
+                                </Flex>
                             </Flex>
                         </Dialog.Body>
-                        <Dialog.Footer>
+                        <Dialog.Footer mt="0.5rem">
                             <Show when={newItem !== getNewTask()}>
                                 <MyButton type="delete" onClick={deleteItem}/>
                                 <Spacer/>
@@ -219,10 +205,6 @@ const TaskCreator = () => {
 export default TaskCreator;
 
 const styles = {
-    dateFlex: {
-        width: "90%",
-        gap: "2rem",
-    },
     dialogMobile: {
         alignItems: "end",
         padding: "0"

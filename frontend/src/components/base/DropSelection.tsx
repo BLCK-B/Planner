@@ -26,7 +26,7 @@ const DropSelection = ({items, selected, onSelect, isInactive = false, isClearab
             collection={selectOptions}
             value={[selected]}
             size="sm"
-            positioning={{placement: "top", flip: false}}
+            positioning={{placement: "top"}}
             onValueChange={handleValueChange}
         >
             <Select.HiddenSelect/>

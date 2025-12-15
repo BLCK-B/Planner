@@ -18,6 +18,7 @@ public record TaskDTO(
             String completed,
             String repeatEvent,
             int repeatOriginDay,
+            boolean important,
             Set<TagDTO> tags,
             PlanDTO plan
     ) {
@@ -35,6 +36,7 @@ public record TaskDTO(
                 data.completed,
                 data.repeatEvent,
                 data.repeatOriginDay,
+                data.important,
                 tags,
                 data.plan != null ? data.plan.toPlan(userID) : null
         );
