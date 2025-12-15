@@ -48,7 +48,7 @@ const TagsEditList = () => {
                 <Center>
                     <Card.Footer>
                         <Flex gap={5}>
-                            <MyButton type="add" onClick={createNewTag}/>
+                            <MyButton type="add" onClick={createNewTag} disabled={tagList?.length >= 10}/>
                             <MyButton type="exit" onClick={goBack}></MyButton>
                         </Flex>
                     </Card.Footer>

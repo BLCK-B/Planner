@@ -9,7 +9,7 @@ import {
     Tag,
     Popover,
     useBreakpointValue,
-    Spacer
+    Spacer, Grid, Button
 } from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
@@ -21,11 +21,12 @@ import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
-import TagsSelect from "@/components/popover/CreatorMenu/TagsSelect.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 import type {TagType} from "@/types/TagType.ts";
 import type {PlanType} from "@/types/PlanType.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
+import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
+import {router, tagsEditRoute} from "@/routes/__root.tsx";
 
 const TaskCreator = () => {
 
@@ -40,6 +41,8 @@ const TaskCreator = () => {
     const saveTaskMutation = useSaveTask();
 
     const deleteTaskMutation = useDeleteTask();
+
+    const {data: tags} = useQuery<TagType[]>(loadTagsQuery());
 
     const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
@@ -126,6 +129,15 @@ const TaskCreator = () => {
         return newItem.data.date ? "Task" : "Someday";
     };
 
+    const isTagInactive = (tag: TagType) => {
+        const assigned = newItem.data.tags ?? [];
+        return !assigned.some(t => t.tagID === tag.tagID);
+    }
+
+    const goToTagEditPage = () => {
+        router.navigate({to: tagsEditRoute.fullPath});
+    };
+
     return (
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
@@ -155,7 +167,7 @@ const TaskCreator = () => {
                                         </Field.Root>
                                     </Box>
                                     <Show when={!inactiveDateStyle()}>
-                                        <Box w="215px">
+                                        <Box w="210px">
                                             <DropSelection items={repeatOptions}
                                                            selected={newItem.data.repeatEvent}
                                                            onSelect={(repeat) => setEventRepeat(repeat)}
@@ -164,28 +176,22 @@ const TaskCreator = () => {
                                     </Show>
                                 </Flex>
                                 {/* tags */}
-                                <Box>
-                                    <Popover.Root positioning={{placement: "bottom-start"}}>
-                                        <Popover.Trigger asChild>
-                                            <Flex gap={1} h="1rem">
-                                                {/* tag list */}
-                                                {newItem.data.tags.map((tag, index) => (
-                                                    <MyTag key={index} tag={tag}/>
-                                                ))}
-                                                {/* button for opening tag add menu */}
-                                                <Show when={newItem.data.tags.length === 0}>
-                                                    <Tag.Root variant="surface" bg="theme.Spruit1"
-                                                              color="primary.contrast"
-                                                              h="25px" boxShadow="none" cursor="pointer">
-                                                        <Tag.Label>assign tags</Tag.Label>
-                                                    </Tag.Root>
-                                                </Show>
-                                            </Flex>
-                                        </Popover.Trigger>
-                                        <TagsSelect assignedTags={newItem.data.tags}
-                                                    updateTags={(tag) => assignTag(tag)}/>
-                                    </Popover.Root>
-                                </Box>
+                                <Flex w="100%" align="center" bg="primary.lighter" p="8px" borderRadius="md">
+                                    <Flex wrap="wrap" gap={2}>
+                                        {tags?.map((tag, i) => (
+                                            <Box key={i} onClick={() => assignTag(tag)}>
+                                                <MyTag
+                                                    tag={tag}
+                                                    isEditable={false}
+                                                    isInactive={isTagInactive(tag)}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Flex>
+                                    <Box ml="10px">
+                                        <MyButton type="tagedit" onClick={goToTagEditPage}/>
+                                    </Box>
+                                </Flex>
                                 {/*  plans select  */}
                                 <Box w="70%">
                                     <DropSelection items={planOptions}

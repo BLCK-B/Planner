@@ -3,10 +3,11 @@ import {IoMdAdd, IoMdCheckmark} from "react-icons/io";
 import {RxCross2} from "react-icons/rx";
 import {MdDelete} from "react-icons/md";
 import {RxExit} from "react-icons/rx";
+import {FaHashtag} from "react-icons/fa";
 import * as React from "react";
 
 type Props = {
-    type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit'
+    type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit' | 'tagedit'
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
     disabled?: boolean;
 }
@@ -46,6 +47,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
             {type === "cancel" && <RxCross2/>}
             {type === "delete" && <MdDelete/>}
             {type === "exit" && <RxExit/>}
+            {type === "tagedit" && <FaHashtag/>}
         </IconButton>
     );
 };
