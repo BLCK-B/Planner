@@ -1,68 +1,64 @@
 package com.blck.planner.integrationTests;
 
-import com.blck.planner.userData.Task;
-import com.blck.planner.userData.UserTaskRepository;
+import com.blck.planner.userData.Task.Task;
+import com.blck.planner.userData.Task.UserTaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Flux;
+import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
-import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
+@SpringBootTest
+@org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 public class UserControllerTests {
 
     @MockitoBean
     private UserTaskRepository userTaskRepository;
 
     @Autowired
-    private WebTestClient webTestClient;
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void setup() {
-        when(userTaskRepository.findByUserID(any())).thenReturn(Flux.just(new Task(UUID.randomUUID(), "userid", "", "", "", null, "", "", 0, "")));
+        when(userTaskRepository.findByUserID(any()))
+                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", null, "", 0, false, Set.of(), null)));
     }
 
     @Test
-    void unauthenticatedUserIsUnauthorized() {
-        webTestClient
-                .get()
-                .uri("/users/userTasks")
-                .exchange()
-                .expectStatus().isUnauthorized();
+    void unauthenticatedUserIsUnauthorized() throws Exception {
+        mockMvc.perform(get("/users/userTasks")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void authenticatedUserWithoutUserRoleIsForbidden() {
-        webTestClient
-                .mutateWith(mockJwt()
-                        .jwt(jwt -> jwt.subject("username")))
-                .get()
-                .uri("/users/userTasks")
-                .exchange()
-                .expectStatus().isForbidden();
+    void authenticatedUserWithoutUserRoleIsForbidden() throws Exception {
+        mockMvc.perform(get("/users/userTasks")
+                        .with(jwt().jwt(jwt -> jwt.subject("username")))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    void authenticatedUserHasAccess() {
-        webTestClient
-                .mutateWith(mockJwt()
-                        .jwt(jwt -> jwt.subject("username"))
-                        .authorities(createAuthorityList("ROLE_USER")))
-                .get()
-                .uri("/users/userTasks")
-                .exchange()
-                .expectStatus().isOk();
+    void authenticatedUserHasAccess() throws Exception {
+        mockMvc.perform(get("/users/userTasks")
+                        .with(jwt().jwt(jwt -> jwt.subject("username"))
+                                .authorities(() -> "ROLE_USER"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
 }

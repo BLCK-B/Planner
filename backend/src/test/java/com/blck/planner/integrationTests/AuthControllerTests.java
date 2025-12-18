@@ -3,37 +3,40 @@ package com.blck.planner.integrationTests;
 import com.blck.planner.accounts.AccountRepository;
 import com.blck.planner.accounts.UserAccount;
 import com.blck.planner.security.CredentialsDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.blck.planner.security.SecurityNames;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Mono;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
-import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
+@SpringBootTest
+@AutoConfigureMockMvc
 class AuthControllerTests {
 
-	@Autowired
-	private WebTestClient webTestClient;
+    @Autowired
+    private MockMvc mockMvc;
 
 	@MockitoBean
 	AccountRepository accountRepository;
@@ -47,248 +50,188 @@ class AuthControllerTests {
 	final UserAccount encodedAccountDiffPswd = new UserAccount(null, "username", bCryptPasswordEncoder.encode("different"), "frontendSalt", "encryptionSalt",  true, Set.of("ROLE_USER"));
 
 	@Test
-	void registerUserSuccess() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.empty());
-		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
+	void registerUserSuccess() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.empty());
+		when(accountRepository.save(any(UserAccount.class))).thenReturn(existingUserAccount);
 
-		webTestClient
-			.post()
-			.uri("/auth/register")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody()
-			.jsonPath("$.username").isEqualTo("username")
-			.jsonPath("$.password").isEqualTo("password")
-			.jsonPath("$.roles[0]").isEqualTo("ROLE_USER");
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("username"))
+                .andExpect(jsonPath("$.password").value("password"))
+                .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"));
 	}
 
 	@Test
-	void registerExistingUserReturnsConlict() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(existingUserAccount));
-		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
+	void registerExistingUserReturnsConlict() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(existingUserAccount));
+		when(accountRepository.save(any(UserAccount.class))).thenReturn(existingUserAccount);
 
-		webTestClient
-			.post()
-			.uri("/auth/register")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isEqualTo(409)
-			.expectBody().isEmpty();
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isConflict())
+                .andExpect(content().string(""));
 	}
 
 	@Test
-	void registerExistingUserReturnsConlictDiffPasswordCheck() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(existingUserAccount));
-		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(encodedAccountDiffPswd));
+	void registerExistingUserReturnsConlictDiffPasswordCheck() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(existingUserAccount));
+		when(accountRepository.save(any(UserAccount.class))).thenReturn(encodedAccountDiffPswd);
 
-		webTestClient
-				.post()
-				.uri("/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(credentials)
-				.exchange()
-				.expectStatus().isEqualTo(409)
-				.expectBody().isEmpty();
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isConflict())
+                .andExpect(content().string(""));
 	}
 
 	@Test
-	void registerUserFromLoggedInUser() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.empty());
-		when(accountRepository.save(any(UserAccount.class))).thenReturn(Mono.just(existingUserAccount));
+	void registerUserFromLoggedInUser() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.empty());
+		when(accountRepository.save(any(UserAccount.class))).thenReturn(existingUserAccount);
 
-		webTestClient
-			.mutateWith(mockJwt()
-					.jwt(jwt -> jwt.subject("username"))
-					.authorities(createAuthorityList("ROLE_USER")))
-			.post()
-			.uri("/auth/register")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody()
-			.jsonPath("$.username").isEqualTo("username")
-			.jsonPath("$.password").isEqualTo("password")
-			.jsonPath("$.roles[0]").isEqualTo("ROLE_USER");
+        mockMvc.perform(post("/auth/register")
+                        .with(jwt().jwt(jwt -> jwt.subject("username"))
+                                .authorities(createAuthorityList("ROLE_USER")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("username"))
+                .andExpect(jsonPath("$.password").value("password"))
+                .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"));
 	}
 
 	@Test
-	void registerUserNullCredentialsIsBadRequest() {
-		webTestClient
-			.post()
-			.uri("/auth/register")
-			.contentType(MediaType.APPLICATION_JSON)
-			.exchange()
-			.expectStatus().isBadRequest();
+	void registerUserNullCredentialsIsBadRequest() throws Exception {
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
 	}
 
 	@Test
-	void loginUserSuccess() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void loginUserSuccess() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 
-		webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk();
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk());
 	}
 
+
 	@Test
-	void loginUserWrongCredentialsReturnsUnauthorized() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void loginUserWrongCredentialsReturnsUnauthorized() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 		credentials = new CredentialsDTO("username", "wrongPassword", "frontendSalt", "encryptionSalt");
 
-		webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isUnauthorized();
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isUnauthorized());
 	}
 
 	@Test
-	void jwtIsNotEmbeddedInResponseBodyOrHeader() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void jwtIsNotEmbeddedInResponseBodyOrHeader() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 
-		webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody()
-			.consumeWith(response -> {
-				assertAll(
-						() -> assertEquals("encryptionSalt", new String(Objects.requireNonNull(response.getResponseBody()), StandardCharsets.UTF_8)),
-						() -> assertNull(response.getResponseHeaders().getFirst(HttpHeaders.AUTHORIZATION))
-				);
-			});
+        MvcResult result = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        MockHttpServletResponse response = result.getResponse();
+        String body = response.getContentAsString(StandardCharsets.UTF_8);
+        String authHeader = response.getHeader(HttpHeaders.AUTHORIZATION);
+
+        assertEquals("encryptionSalt", body);
+        assertNull(authHeader);
 	}
 
 	@Test
-	void jwtIsInSecureCookie() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void jwtIsInSecureCookie() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 
-		webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody()
-			.consumeWith(response -> {
-				ResponseCookie token = response.getResponseCookies().getFirst(String.valueOf(JWT_COOKIE_NAME));
-				String setCookieHeader = response.getResponseHeaders().getFirst(HttpHeaders.SET_COOKIE);
+        MvcResult result = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk())
+                .andReturn();
 
-				assertNotNull(token, "JWT token is present in cookie");
-				assertNotNull(setCookieHeader, "Cookie has header");
-				assertAll(
-					() -> assertTrue(token.isHttpOnly(), "Cookie is not accessible by client-side JS"),
-					() -> assertTrue(token.isSecure(), "HTTPS cookie"),
-					() -> assertTrue(setCookieHeader.contains("SameSite=Strict"), "Only send cookie when request originates from our site")
-				);
-			});
+        Cookie token = result.getResponse().getCookie(String.valueOf(SecurityNames.JWT_COOKIE_NAME));
+        String setCookieHeader = result.getResponse().getHeader(HttpHeaders.SET_COOKIE);
+
+        assertNotNull(token, "JWT token is present in cookie");
+        assertNotNull(setCookieHeader, "Cookie has header");
+        assertTrue(token.isHttpOnly(), "Cookie is not accessible by client-side JS");
+        assertTrue(token.getSecure(), "HTTPS cookie");
+        assertTrue(setCookieHeader.contains("SameSite=Strict"), "Only send cookie when request originates from our site");
 	}
 
 	@Test
-	void jwtContentsAreCorrect() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void jwtContentsAreCorrect() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 
-		webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody()
-			.consumeWith(response -> {
-				ResponseCookie token = response.getResponseCookies().getFirst(String.valueOf(JWT_COOKIE_NAME));
+        MvcResult result = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk())
+                .andReturn();
 
-				assertNotNull(token, "JWT token is present in cookie");
-				String[] parts = token.getValue().split("\\.");
-				assertEquals(3, parts.length, "JWT token has 3 parts: header, payload, signature");
+        Cookie token = result.getResponse().getCookie(String.valueOf(SecurityNames.JWT_COOKIE_NAME));
+        assertNotNull(token, "JWT token is present in cookie");
 
-				String decodedPayload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-				JsonNode payload;
-				try {
-					payload = new ObjectMapper().readTree(decodedPayload);
-				} catch (JsonProcessingException e) {
-					throw new RuntimeException(e);
-				}
+        String[] parts = token.getValue().split("\\.");
+        assertEquals(3, parts.length, "JWT token has 3 parts: header, payload, signature");
 
-				assertAll(
-					() -> assertEquals("username", payload.get("sub").asText()),
-					() -> assertTrue(payload.hasNonNull("iat")),
-					() -> assertTrue(payload.hasNonNull("exp")),
-					() -> {
-						JsonNode rolesNode = payload.get("roles");
-						List<String> roles = new ArrayList<>();
-						rolesNode.forEach(node -> roles.add(node.asText()));
-						assertTrue(roles.contains("ROLE_USER"));
-					}
-				);
-			});
+        String decodedPayload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+        JsonNode payload = objectMapper.readTree(decodedPayload);
+
+        assertEquals("username", payload.get("sub").asString());
+        assertTrue(payload.hasNonNull("iat"));
+        assertTrue(payload.hasNonNull("exp"));
+        List<String> roles = new ArrayList<>();
+        payload.get("roles").forEach(node -> roles.add(node.asString()));
+        assertTrue(roles.contains("ROLE_USER"));
 	}
 
 	@Test
-	void securityContextRetention() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void securityContextRetention() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 
-		String jwtToken = Objects.requireNonNull(webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody(String.class)
-			.returnResult()
-			.getResponseCookies()
-			.getFirst(String.valueOf(JWT_COOKIE_NAME)))
-			.getValue();
-		webTestClient
-			.get()
-			.uri("/users/userAccountInfo")
-			.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
-			.exchange()
-			.expectStatus().isOk()
-			.expectBody(String.class)
-			.value(response -> assertEquals(encodedAccount.getUsername(), response));
+        MvcResult loginResult = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Cookie jwtCookie = loginResult.getResponse().getCookie(String.valueOf(SecurityNames.JWT_COOKIE_NAME));
+        assertNotNull(jwtCookie);
+        mockMvc.perform(get("/users/userAccountInfo")
+                        .cookie(jwtCookie))
+                .andExpect(status().isOk())
+                .andExpect(content().string(encodedAccount.getUsername()));
 	}
 
 	@Test
-	void loginFromLoggedInUser() {
-		when(accountRepository.findByUsername(any())).thenReturn(Mono.just(encodedAccount));
+	void loginFromLoggedInUser() throws Exception {
+		when(accountRepository.findByUsername(any())).thenReturn(Optional.of(encodedAccount));
 
-		webTestClient
-			.mutateWith(mockJwt()
-					.jwt(jwt -> jwt.subject("username"))
-					.authorities(createAuthorityList("ROLE_USER")))
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(credentials)
-			.exchange()
-			.expectStatus().isOk();
+        mockMvc.perform(post("/auth/login")
+                        .with(jwt().jwt(jwt -> jwt.subject("username"))
+                                .authorities(createAuthorityList("ROLE_USER")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(credentials)))
+                .andExpect(status().isOk());
 	}
 
 	@Test
-	void loginUserNullCredentialsIsBadRequest() {
-		webTestClient
-			.post()
-			.uri("/auth/login")
-			.contentType(MediaType.APPLICATION_JSON)
-			.exchange()
-			.expectStatus().isBadRequest();
+	void loginUserNullCredentialsIsBadRequest() throws Exception {
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
 	}
 
 }

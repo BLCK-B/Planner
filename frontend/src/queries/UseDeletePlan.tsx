@@ -1,10 +1,10 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import FetchRequest from "@/functions/FetchRequest.tsx";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
-import type {Plan as PlanType} from "@/types/Plan.ts";
+import type {PlanType} from "@/types/PlanType.ts";
 
 const deleteRequest = async (plan: PlanType): Promise<PlanType[]> => {
-    return await FetchRequest("DELETE", `/users/userPlan/${plan.itemID}`);
+    return await FetchRequest("DELETE", `/users/userPlan/${plan.planID}`);
 };
 
 const useDeletePlan = () => {

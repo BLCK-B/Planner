@@ -9,9 +9,11 @@ type Props = {
     items: SelectItem[];
     selected: string;
     onSelect: (selected: string) => void;
+    isInactive?: boolean;
+    isClearable?: boolean;
 }
 
-const DropSelection = ({items, selected, onSelect}: Props) => {
+const DropSelection = ({items, selected, onSelect, isInactive = false, isClearable = false}: Props) => {
 
     const selectOptions = createListCollection({items});
 
@@ -22,25 +24,27 @@ const DropSelection = ({items, selected, onSelect}: Props) => {
     return (
         <Select.Root
             collection={selectOptions}
-            defaultValue={[selected]}
+            value={[selected]}
             size="sm"
-            positioning={{placement: "top", flip: false}}
+            positioning={{placement: "top"}}
             onValueChange={handleValueChange}
         >
             <Select.HiddenSelect/>
-            <Select.Control>
-                <Select.Trigger>
-                    <Select.ValueText placeholder="No repeat"/>
+            <Select.Control opacity={isInactive ? 0.5 : 1}>
+                <Select.Trigger bg="primary.lighter" border="none" h="45px">
+                    <Select.ValueText/>
                 </Select.Trigger>
                 <Select.IndicatorGroup>
-                    <Select.ClearTrigger/>
+                    {isClearable && <Select.ClearTrigger/>}
                 </Select.IndicatorGroup>
             </Select.Control>
 
             <Select.Positioner>
-                <Select.Content bg="primary.darker">
+                <Select.Content bg="primary.lighter" border="1px solid grey" boxShadow="none">
                     {selectOptions.items.map((item) => (
-                        <Select.Item item={item} key={item.value}>
+                        <Select.Item item={item} key={item.value}
+                                     bg="primary.lighter"
+                                     _hover={{bg: "theme.Spruit1", color: "black"}}>
                             {item.label}
                             <Select.ItemIndicator/>
                         </Select.Item>

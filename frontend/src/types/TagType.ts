@@ -15,10 +15,12 @@ export const TagEncryptSpec: EncryptSpec = {
     color: false,
 };
 
-export const newTag: TagType = {
+const newTag: TagType = {
     tagID: '',
     data: {
         tagName: '',
         color: 'rgb(128, 128, 128)',
     },
 } as const;
+
+export const getNewTag = (): TagType => structuredClone(newTag);

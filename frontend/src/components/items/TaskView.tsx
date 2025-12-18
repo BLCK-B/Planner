@@ -1,12 +1,11 @@
-import {Box, Text, Flex, Spacer, Show} from "@chakra-ui/react";
+import {Box, Text, Flex, Show} from "@chakra-ui/react";
 import {
     isDatePast,
     globalDateFormatter
 } from "@/functions/Dates.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
-import {MdEventRepeat} from "react-icons/md";
 import MyTag from "@/components/items/MyTag.tsx";
 
 const TaskView = (task: TaskType) => {
@@ -14,36 +13,32 @@ const TaskView = (task: TaskType) => {
     const showExactDates = useAtomValue(showExactDatesAtom);
 
     return (
-        <Box
-            p="2"
-            bg="primary.lighter"
-            color="black"
-            borderRadius="md"
-            boxShadow="sm"
-            mb="3.5"
-            {...(isDatePast(task.data.date) && {bg: "theme.ReddishLight"})}
-            {...(task.data.completed && {bg: "theme.LightGreen"})}
-            position="relative"
-        >
-            <Flex align="center" justifyContent="space-between">
-                <Show when={task.data.itemType === "Task" && !task.data.completed}>
-                    <Flex w="120px" align="center" gap="5px">
-                        <Text>{globalDateFormatter(task, showExactDates)}</Text>
-                        <Show when={task.data.repeatEvent}>
-                            <MdEventRepeat color="grey"/>
-                        </Show>
+        <Flex bg="primary.lighter"
+              color="primary.contrast"
+              mb="3.5"
+              borderRadius="md"
+              cursor="button"
+              position="relative"
+              justifyContent="space-between"
+              {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
+            <Box p="2">
+                <Flex align="center" justifyContent="space-between">
+                    <Show when={task.data.date && !task.data.completed}>
+                        <Flex w="120px" align="center" gap="5px">
+                            <Text>{globalDateFormatter(task, showExactDates)}</Text>
+                        </Flex>
+                    </Show>
+                    <Text>{task.data.name}</Text>
+                </Flex>
+                <Show when={task.data.tags.length}>
+                    <Flex mt="5px" gap={2}>
+                        {task.data.tags.map((tag, index) => (
+                            <MyTag key={index} tag={tag}/>
+                        ))}
                     </Flex>
                 </Show>
-                <Text>{task.data.name}</Text>
-                <Spacer/>
-                <Show when={task.data.completed}>
-                    <Text>✔ {globalDateFormatter(task, showExactDates)}</Text>
-                </Show>
-            </Flex>
-            {task.data.tags!.map((tagName, index) => (
-                <MyTag key={index} name={tagName}/>
-            ))}
-        </Box>
+            </Box>
+        </Flex>
     );
 };
 

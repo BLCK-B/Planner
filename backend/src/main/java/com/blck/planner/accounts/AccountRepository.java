@@ -1,8 +1,10 @@
 package com.blck.planner.accounts;
 
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Mono;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AccountRepository extends ReactiveCrudRepository<UserAccount, String> {
-	Mono<UserAccount> findByUsername(String username);
+import java.util.Optional;
+import java.util.UUID;
+
+public interface AccountRepository extends JpaRepository<UserAccount, UUID> {
+    Optional<UserAccount> findByUsername(String username);
 }

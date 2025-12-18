@@ -1,4 +1,4 @@
-import {Flex, IconButton} from "@chakra-ui/react";
+import {IconButton} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useSetAtom} from "jotai";
@@ -7,7 +7,8 @@ import {
     showExactDatesAtom,
     showPlanCreator
 } from "@/global/atoms.ts";
-import {newPlan} from "@/types/Plan.ts";
+import {getNewPlan} from "@/types/PlanType.ts";
+import BaseActionButtons from "@/components/actions/BaseActionButtons.tsx";
 
 const ActionButtonsPlansPage = () => {
 
@@ -18,21 +19,26 @@ const ActionButtonsPlansPage = () => {
     const setEditPlan = useSetAtom(existingPlanForEdit);
 
     const createNewPlan = () => {
-        setEditPlan(newPlan);
+        setEditPlan(getNewPlan());
         setShowAddDialog(true);
     };
 
-    const activeColor = (active: boolean) => {
-        return active ? "black" : "grey";
+    const activeIconColor = (active: boolean) => {
+        return active ? "theme.Spruit2" : "primary.lighter";
     };
 
-    return (
-        <Flex justify="center" w="80%" ml="20px" justifyContent="flex-start" gap="1em">
-            <IconButton onClick={() => setShowExactDates(!showExactDates)} bg="none">
-                <IoCalendarNumber color={activeColor(showExactDates)} aria-label="Complete"/>
-            </IconButton>
+    const actionButtons = (
+        <>
             <MyButton type="add" onClick={createNewPlan}/>
-        </Flex>
+            <IconButton onClick={() => setShowExactDates(!showExactDates)} size="xs"
+                        bg={activeIconColor(showExactDates)}>
+                <IoCalendarNumber color="black" aria-label="Complete"/>
+            </IconButton>
+        </>
+    );
+
+    return (
+        <BaseActionButtons buttons={actionButtons}/>
     );
 };
 

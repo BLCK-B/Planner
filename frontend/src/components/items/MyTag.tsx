@@ -1,53 +1,40 @@
 import {Tag} from "@chakra-ui/react";
 import {useSetAtom} from "jotai";
-import {existingTagForEdit, showAddDialog, showPlanCreator, showTagCreator} from "@/global/atoms.ts";
-import {newTag} from "@/types/TagType.ts";
+import {existingTagForEdit, showTagCreator} from "@/global/atoms.ts";
+import type {TagType} from "@/types/TagType.ts";
 
 type Props = {
-    name: string;
-    bg?: string;
+    tag: TagType;
     isEditable?: boolean;
-    isNewButton?: boolean;
+    isInactive?: boolean;
 };
 
-const MyTag = ({name, bg = "primary.base", isEditable = true, isNewButton = false}: Props) => {
+const MyTag = ({tag, isEditable = false, isInactive = false}: Props) => {
 
     const setShowAddTagDialog = useSetAtom(showTagCreator);
 
     const setEditTag = useSetAtom(existingTagForEdit);
 
-    const setShowTaskDialog = useSetAtom(showAddDialog);
-    const setShowPlanDialog = useSetAtom(showPlanCreator);
-
     const clicked = () => {
-        if (isNewButton) {
-            createNewTag();
-        } else if (isEditable) {
-            editExistingTag();
+        if (isEditable) {
+            setEditTag(tag);
+            setShowAddTagDialog(true);
         }
     };
 
-    const createNewTag = () => {
-        console.log("create");
-        setEditTag(newTag);
-        setShowTaskDialog(false);
-        setShowPlanDialog(false);
-        setShowAddTagDialog(true);
-    };
-
-    const editExistingTag = () => {
-        console.log("edit");
-        setEditTag(newTag);
-        setShowTaskDialog(false);
-        setShowPlanDialog(false);
-        setShowAddTagDialog(true);
+    const inactiveStyle = () => {
+        if (isInactive) {
+            return styles.inactive;
+        }
     };
 
     return (
-        <Tag.Root variant="surface" style={styles.tag} bg={bg} color="primary.contrast"
-                  onClick={clicked}>
+        <Tag.Root variant="surface" style={{...styles.tag, ...inactiveStyle()}} bg={tag.data.color}
+                  color="white"
+                  onClick={clicked} boxShadow="none" cursor="pointer"
+        >
             <Tag.Label>
-                {name}
+                {tag.data.tagName}
             </Tag.Label>
         </Tag.Root>
     );
@@ -58,5 +45,8 @@ export default MyTag;
 const styles = {
     tag: {
         height: "25px",
+    },
+    inactive: {
+        opacity: "0.5",
     },
 };

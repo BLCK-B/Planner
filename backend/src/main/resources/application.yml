@@ -4,16 +4,13 @@ server:
 logging:
   level:
     org.springframework.security: trace
+#    liquibase: debug
 
 spring:
   main:
-    web-application-type: reactive
+    web-application-type: servlet
   application:
     name: planner
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/personaldb
-    username: username
-    password: password
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,9 +21,11 @@ spring:
     user:
       name: user
       password: password
+  datasource:
+    url: jdbc:postgresql://localhost:5432/personaldb
+    username: username
+    password: password
+    driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog.groovy
-    user: username
-    password: password
-    url: jdbc:postgresql://localhost:5432/personaldb
+    change-log: classpath:db/changelogs.xml

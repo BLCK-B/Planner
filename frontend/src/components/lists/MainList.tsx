@@ -2,51 +2,54 @@ import {useQuery} from "@tanstack/react-query"
 import {Box, Flex, Show} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
-import {sortCompletedTasks, sortFutureTasks, sortGoals} from '@/functions/Sorting.tsx'
+import type {TaskType} from "@/types/TaskType.ts";
+import {groupByMonth, sortCompletedTasks, sortFutureTasks, sortSomeday} from '@/functions/Sorting.tsx'
 import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
+import {useAtomValue} from "jotai";
+import {filterContentAtom} from "@/global/atoms.ts";
 
 const MainList = () => {
 
     const {data: itemList} = useQuery<TaskType[]>(loadItemsQuery());
 
+    const [filterContent] = useAtomValue(filterContentAtom);
+
     const adjacent = useBreakpointValue({base: false, md: true}) as boolean;
+
+    const applyContentFilter = (item: TaskType) => {
+        if (!filterContent || filterContent.length === 0) return true;
+        return item.data.tags.some(tag => filterContent.includes(tag.tagID));
+    }
 
     if (!itemList) {
         return <div>Loading...</div>;
     }
 
-    const tasks = itemList.filter((task) => task.data.itemType === "Task");
+    const tasks = itemList.filter((task) => task.data.date);
 
-    const goals = itemList
-        .filter((goal) => goal.data.itemType === "Goal")
-        .filter((goal) => !goal.data.completed)
-        .sort(sortGoals);
+    const someday = itemList
+        .filter((item) => !item.data.date)
+        .filter((item) => !item.data.completed)
+        .filter((item) => applyContentFilter(item))
+        .sort(sortSomeday);
 
     const futureTasks = tasks
         .filter((task) => !task.data.completed)
         .filter((task) => !isDatePast(task.data.date))
+        .filter((task) => applyContentFilter(task))
         .sort(sortFutureTasks);
 
     const overdueTasks = tasks
         .filter((task) => !task.data.completed)
         .filter((task) => isDatePast(task.data.date))
+        .filter((task) => applyContentFilter(task))
         .sort(sortFutureTasks);
 
-    const completedTasks = itemList.filter((item) => item.data.completed).sort(sortCompletedTasks);
-
-    const groupByMonth = (tasks: TaskType[], byCompleted: boolean) => {
-        return tasks.reduce<Record<string, TaskType[]>>((groupedTasks, task) => {
-            const monthKey = byCompleted ? task.data.completed.slice(0, 7) : task.data.date.slice(0, 7);
-            if (!groupedTasks[monthKey]) {
-                groupedTasks[monthKey] = [];
-            }
-            groupedTasks[monthKey].push(task);
-            return groupedTasks;
-        }, {});
-    };
+    const completedItems = itemList
+        .filter((item) => item.data.completed).sort(sortCompletedTasks)
+        .filter((item) => applyContentFilter(item));
 
     const renderGroupedTasks = (tasks: TaskType[], byCompletedDate = false) => {
         const groups = groupByMonth(tasks, byCompletedDate);
@@ -79,9 +82,8 @@ const MainList = () => {
                     {groupList}
                 </Box>
             ) : (
-                <Box key={ym} position="relative" mt="15px">
-                    <Box key={ym} bg="primary.base" position="relative" p="10px" borderRadius="5px"
-                         border="2px solid #d0d0d0">
+                <Box key={ym} position="relative" mt="30px">
+                    <Box key={ym} bg="primary" position="relative">
                         <Show when={byCompletedDate}>
                             {groupMarker}
                         </Show>
@@ -95,16 +97,15 @@ const MainList = () => {
         });
     };
 
-    const renderGoals = (goals: TaskType[]) => {
-        if (goals.length === 0)
-            return;
+    const renderSomeday = (someday: TaskType[]) => {
+        if (someday.length === 0) return;
         return (
             <Box position="relative" mt="30px">
-                <Box bg="primary.darker" position="relative" p="15px" mb="0.5rem" borderRadius="5px">
-                    <GroupMarker text={"Goals"} adjacent={false}/>
-                    {goals.map((goal) => (
-                        <Box key={goal.itemID} position="relative" mb="2">
-                            <Task {...goal} />
+                <Box bg="primary.darker" position="relative" p="10px" borderRadius="5px">
+                    <GroupMarker text={"Someday"} adjacent={false}/>
+                    {someday.map((item) => (
+                        <Box key={item.itemID} position="relative" mb="2">
+                            <Task {...item} />
                         </Box>
                     ))}
                 </Box>
@@ -113,16 +114,17 @@ const MainList = () => {
     };
 
     return (
-        <Flex direction="column" height="100%" style={styles.deadlineList}>
-            <Box style={{overflowY: "scroll", scrollbarWidth: "none"}}>
-                <Box w={{base: "90%", sm: "90%", md: "50%"}} mx="auto" position="relative" top="150px">
+        <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
+            <Box overflowY="scroll" scrollbarWidth="none">
+                <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="100px"
+                     paddingBottom="100px" animation="fade-in 0.05s">
                     {renderGroupedTasks(futureTasks)}
 
                     {renderGroupedTasks(overdueTasks)}
 
-                    {renderGoals(goals)}
+                    {renderSomeday(someday)}
 
-                    {renderGroupedTasks(completedTasks, true)}
+                    {renderGroupedTasks(completedItems, true)}
                 </Box>
             </Box>
         </Flex>
@@ -130,10 +132,3 @@ const MainList = () => {
 };
 
 export default MainList;
-
-const styles = {
-    deadlineList: {
-        justifyContent: "flex-end",
-        margin: "0 auto",
-    },
-};

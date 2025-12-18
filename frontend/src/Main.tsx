@@ -6,6 +6,7 @@ import {RouterProvider} from '@tanstack/react-router'
 import {router} from '@/routes/__root';
 import {queryClient} from "@/QueryClient.tsx";
 import {styles} from "@/globalStyles.ts";
+import {ColorModeProvider} from "@/components/ui/color-mode.tsx";
 
 declare module '@tanstack/react-router' {
     interface Register {
@@ -24,7 +25,9 @@ createRoot(rootElement).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
             <ChakraProvider value={system}>
-                <RouterProvider router={router}/>
+                <ColorModeProvider>
+                    <RouterProvider router={router}/>
+                </ColorModeProvider>
             </ChakraProvider>
         </QueryClientProvider>
     </StrictMode>

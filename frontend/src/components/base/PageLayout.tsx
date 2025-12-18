@@ -2,6 +2,7 @@ import {Box, GridItem, Grid} from "@chakra-ui/react";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import * as React from "react";
 import TagCreator from "@/components/popover/CreatorMenu/TagCreator.tsx";
+import ErrorModal from "@/components/popover/ErrorModal.tsx";
 
 type Props = {
     header: React.ReactNode;
@@ -47,7 +48,7 @@ const PageLayout = ({header, content, popover}: Props) => {
                     colSpan={{base: 10, sm: 10, md: 9}} colStart={{base: 1, sm: 1, md: 2}}
                     rowSpan={{base: 1, sm: 1, md: 9}} rowStart={{base: 2, sm: 2, md: 2}}
                     minHeight="0px"
-                    bg="primary.base"
+                    bg="primary"
                     style={styles.gridSection}
                 >
                     {content}
@@ -55,8 +56,10 @@ const PageLayout = ({header, content, popover}: Props) => {
 
                 {/* popover */}
                 {popover}
+                {/* globally accessible */}
                 {/* todo: temporarily placed */}
                 <TagCreator/>
+                <ErrorModal/>
             </Grid>
         </Box>
     );

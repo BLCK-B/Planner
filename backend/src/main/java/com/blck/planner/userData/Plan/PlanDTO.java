@@ -1,9 +1,9 @@
-package com.blck.planner.userData;
+package com.blck.planner.userData.Plan;
 
 import java.util.UUID;
 
 public record PlanDTO(
-        UUID itemID,
+        UUID planID,
         Data data
 ) {
     public record Data(
@@ -16,7 +16,7 @@ public record PlanDTO(
 
     public Plan toPlan(String userID) {
         return new Plan(
-                itemID,
+                planID,
                 userID,
                 data.name,
                 data.description,

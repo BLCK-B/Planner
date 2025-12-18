@@ -1,24 +1,29 @@
 import {atom} from 'jotai';
-import {newTask, type Task} from "@/types/Task.ts";
-import {newPlan, type Plan} from "@/types/Plan.ts";
-import {newTag, type TagType} from "@/types/TagType.ts";
+import {getNewTask, type TaskType} from "@/types/TaskType.ts";
+import {getNewPlan, type PlanType} from "@/types/PlanType.ts";
+import {getNewTag, type TagType} from "@/types/TagType.ts";
 
+// user controlled
 export const activePage = atom("Tasks");
 
 export const showExactDatesAtom = atom(false);
 
-// todo: one global show creator based on smth like url param
-// todo: {...} immutable new item local copies with getNew methods
+export const filterContentAtom = atom<string[]>([]);
+
+// system
+export const errorModalContent = atom<string>('');
+
+
 export const showAddDialog = atom(false);
 
-export const existingItemForEdit = atom<Task>(newTask);
+export const existingItemForEdit = atom<TaskType>(getNewTask());
 
 
 export const showPlanCreator = atom(false);
 
-export const existingPlanForEdit = atom<Plan>(newPlan);
+export const existingPlanForEdit = atom<PlanType>(getNewPlan());
 
 
 export const showTagCreator = atom(false);
 
-export const existingTagForEdit = atom<TagType>(newTag);
+export const existingTagForEdit = atom<TagType>(getNewTag());

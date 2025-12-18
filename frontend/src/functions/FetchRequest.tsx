@@ -1,30 +1,49 @@
 import type {FetchError} from "@/types/FetchError.ts";
-import type {Task} from "@/types/Task.ts";
-import type {Plan} from "@/types/Plan.ts";
+import type {TaskType} from "@/types/TaskType.ts";
+import type {PlanType} from "@/types/PlanType.ts";
 import {encrypt, decrypt} from "@/functions/Crypto.ts";
+import type {TagType} from "@/types/TagType.ts";
+import {getDefaultStore} from 'jotai';
+import {errorModalContent} from "@/global/atoms.ts";
 
 const URL = "http://localhost:8081";
 
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
-type Encryptable = Task | Plan;
+type Encryptable = TaskType | PlanType | TagType;
 
-export const encryptBody = async (body: any) => {
-    if (Array.isArray(body) && body.length && ("data" in body[0])) {
-        return await Promise.all(body.map((item) => encrypt(item)));
-    } else if ("data" in body) {
-        return await encrypt(body);
+export const encryptBody = async (body: any): Promise<any> => {
+    if (Array.isArray(body)) {
+        return await Promise.all(body.map(encryptBody));
+    }
+    if (body && typeof body === "object") {
+        const objectKeys: any = {};
+        for (const [key, value] of Object.entries(body)) {
+            objectKeys[key] = await encryptBody(value);
+        }
+        if ("data" in objectKeys) {
+            return encrypt(objectKeys);
+        }
+        return objectKeys;
     }
     return body;
 };
 
-export const decryptBody = async (body: any) => {
-    if (Array.isArray(body) && body.length && ("data" in body[0])) {
-        return await Promise.all(body.map((item) => decrypt(item)));
-    } else if ("data" in body) {
-        return await decrypt(body);
+export const decryptBody = async (body: any): Promise<any> => {
+    if (Array.isArray(body)) {
+        return await Promise.all(body.map(decryptBody));
+    }
+    if (body && typeof body === "object") {
+        const objectKeys: any = {};
+        for (const [key, value] of Object.entries(body)) {
+            objectKeys[key] = await decryptBody(value);
+        }
+        if ("data" in objectKeys) {
+            return decrypt(objectKeys);
+        }
+        return objectKeys;
     }
     return body;
-}
+};
 
 type FetchRequestFunction = {
     (method: Methods, request: string, body?: object | null): Promise<any>;
@@ -33,6 +52,7 @@ type FetchRequestFunction = {
 };
 
 const FetchRequest: FetchRequestFunction = async (method, request, body) => {
+
     const headers = {
         "Content-Type": "application/json"
     };
@@ -53,6 +73,11 @@ const FetchRequest: FetchRequestFunction = async (method, request, body) => {
     if (!response.ok) {
         const error = new Error(`${response.statusText}`) as FetchError;
         error.status = response.status;
+        if (error.status !== 401) {
+            const store = getDefaultStore();
+            const data = await response.json();
+            store.set(errorModalContent, data.message);
+        }
         throw error;
     }
 

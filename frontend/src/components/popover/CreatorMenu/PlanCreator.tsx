@@ -14,7 +14,7 @@ import {useAtom} from "jotai";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import MyButton from "@/components/base/MyButton.tsx";
-import {newPlan} from "@/types/Plan.ts";
+import {getNewPlan} from "@/types/PlanType.ts";
 import ColorPick from "@/components/base/ColorPick.tsx";
 
 const PlanCreator = () => {
@@ -62,12 +62,17 @@ const PlanCreator = () => {
         <Dialog.Root size={"sm"} open={showDialog}>
             <Portal>
                 <Dialog.Backdrop/>
-                <Dialog.Positioner>
-                    <Dialog.Content bg="primary.base" color="primary.contrast">
+                <Dialog.Positioner
+                    style={{
+                        alignItems: "center",
+                        padding: "0.5rem",
+                    }}
+                >
+                    <Dialog.Content bg="primary" color="primary.contrast">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 Plan
-                                <Show when={newItem !== newPlan}>
+                                <Show when={newItem !== getNewPlan()}>
                                     <MyButton type="delete" onClick={deleteItem}/>
                                 </Show>
                             </Flex>

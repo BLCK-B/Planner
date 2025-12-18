@@ -5,12 +5,11 @@ import {
     getNextDate,
     globalDateFormatter
 } from "@/functions/Dates.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
-import {MdEventRepeat} from "react-icons/md";
 import MyTag from "@/components/items/MyTag.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
@@ -42,7 +41,7 @@ const Task = (task: TaskType) => {
         }
         await saveTaskMutation.mutateAsync(newTask);
 
-        if (newTask.data.repeatEvent && newTask.data.itemType === 'Task' && newTask.data.completed) {
+        if (newTask.data.repeatEvent && newTask.data.date && newTask.data.completed) {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
@@ -63,30 +62,38 @@ const Task = (task: TaskType) => {
               position="relative"
               justifyContent="space-between"
               onClick={handleClick}
-              {...(!task.data.completed && isDatePast(task.data.date) && task.data.itemType === "Task" && {bg: "theme.Reddish"})}>
+              {...(task.data.important && styles.important)}
+              {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
-                    <Show when={task.data.itemType === "Task" && !task.data.completed}>
+                    <Show when={task.data.date && !task.data.completed}>
                         <Flex w="120px" align="center" gap="5px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
-                            <Show when={task.data.repeatEvent}>
-                                <MdEventRepeat color="grey"/>
-                            </Show>
                         </Flex>
                     </Show>
                     <Text>{task.data.name}</Text>
                 </Flex>
                 <Show when={task.data.tags.length}>
-                    <Box mt="5px">
-                        {task.data.tags!.map((tagName, index) => (
-                            <MyTag key={index} name={tagName}/>
+                    <Flex mt="5px" gap={2}>
+                        {task.data.tags.map((tag, index) => (
+                            <MyTag key={index} tag={tag}/>
                         ))}
-                    </Box>
+                    </Flex>
                 </Show>
             </Box>
-            <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}/>
+            <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}
+                             taskPlanColor={task.data.plan ? task.data.plan.data.color : undefined}
+                             isRepeat={!!task.data.repeatEvent}/>
         </Flex>
     );
 };
 
 export default Task;
+
+const styles = {
+    important: {
+        borderWidth: "2px",
+        borderStyle: "solid",
+        borderColor: "theme.BrightYellow",
+    },
+};

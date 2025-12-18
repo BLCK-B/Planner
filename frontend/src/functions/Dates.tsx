@@ -1,4 +1,4 @@
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 
 export const daysFromToday = (dateString: string) => {
     const date = new Date(dateString);
@@ -29,9 +29,13 @@ export const readableTimeToDate = (dateString: string) => {
     const months = Math.floor((dayDiff % 365) / 30);
     const parts = [];
     if (years > 0) {
-        parts.push(`${years}y`);
-        if (months > 0 && years < 3) parts.push(`${months}m`);
-    } else if (months > 2) {
+        if (months === 12) {
+            parts.push(`${years + 1}y`);
+        } else {
+            parts.push(`${years}y`);
+        }
+        if (months > 0 && months < 12 && years < 3) parts.push(`${months}m`);
+    } else if (months > 1) {
         parts.push(`${months}mo`);
     } else {
         parts.push(`${dayDiff} days`);

@@ -10,19 +10,9 @@ import {
     decodeFromBase64,
     deriveAuthHash,
     encodeToBase64,
-    generateNewSalt
+    generateNewSalt,
 } from "@/functions/Crypto.ts";
-
-type credentials = {
-    username: string;
-    password: string;
-};
-
-type backendCredentials = {
-    username: string;
-    frontendPasswordHash: string;
-    passwordAuthSalt: string;
-};
+import type {BackendCredentials, Credentials} from "@/types/Credentials.ts";
 
 const AuthPage = () => {
     const {formType} = useParams({from: authRoute.id});
@@ -32,9 +22,9 @@ const AuthPage = () => {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<credentials>();
-// TODO: simple register / login tests
-    const registerNewAccount = async (credentials: credentials) => {
+    } = useForm<Credentials>();
+
+    const registerNewAccount = async (credentials: Credentials) => {
         const newAuthSalt = generateNewSalt();
         const newEncryptionKeySalt = generateNewSalt();
 
@@ -58,19 +48,18 @@ const AuthPage = () => {
     const reencryptAllData = async () => {
         const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
         const allPlansReencrypted = await FetchRequest("GET", "/users/userPlans");
-        // todo: completely atomic
+
         if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
         if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserPlans", allPlansReencrypted);
     };
 
-    const login = async (credentials: credentials) => {
+    const login = async (credentials: Credentials) => {
         const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
         if (frontendAuthSalt.error) {
             alert("Login failed: " + (frontendAuthSalt?.error || "Unknown error"));
             return;
         }
         const authHash = await deriveAuthHash(decodeFromBase64(frontendAuthSalt), credentials.password);
-
         const backendCredentials = {
             username: credentials.username,
             frontendPasswordHash: authHash,
@@ -90,12 +79,12 @@ const AuthPage = () => {
         await router.navigate({to: mainRoute.fullPath});
     };
 
-    const onSubmit: SubmitHandler<credentials> = async (credentials: credentials) => {
+    const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
         if (formType === "log-in") await login(credentials);
         else if (formType === "register") await registerNewAccount(credentials);
     };
 
-    const sendAuthRequest = async (request: string, credentials: backendCredentials) => {
+    const sendAuthRequest = async (request: string, credentials: BackendCredentials) => {
         const body = {...credentials};
         try {
             return await FetchRequest("POST", request, body);
@@ -109,7 +98,9 @@ const AuthPage = () => {
     };
 
     return (
-        <Box w="100vw" h="100vh" bg="primary.base" textStyle="body">
+        <Box w="100vw" h="100vh" bg="primary" textStyle="body" backgroundImage="url('/skybg.jpg')"
+             bgSize="cover"
+             bgRepeat="no-repeat">
             <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
 
                 <GridItem h="3em" colSpan={1} rowSpan={1}>
@@ -118,38 +109,38 @@ const AuthPage = () => {
 
                 <Center>
                     <GridItem colSpan={1}>
-                        <Card.Root width="320px" variant="elevated" bg="primary.lighter">
-                            <Card.Header color="primary.contrast">
+                        <Card.Root width="320px" variant="elevated" bg="rgba(80, 80, 80, 0.6)"
+                                   backdropFilter="blur(100px)" boxShadow="xs">
+                            <Card.Header color="white">
                                 <Show when={formType === "register"}>
                                     <Card.Title>Sign up</Card.Title>
                                     <Card.Description>Create an account.</Card.Description>
                                 </Show>
                                 <Show when={formType === "log-in"}>
                                     <Card.Title>Log in</Card.Title>
-                                    <Card.Description>Welcome back.</Card.Description>
+                                    <Card.Description color="white">Welcome back.</Card.Description>
                                 </Show>
                             </Card.Header>
-                            <Card.Body gap="2" color="primary.contrast">
+                            <Card.Body gap="2" color="white">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
-                                        {/*<OAuthProviders/>*/}
 
                                         <Field.Root invalid={!!errors.username}>
                                             <Field.Label>E-mail</Field.Label>
                                             <Input
+                                                color="white" _placeholder={{color: "lightgrey"}}
                                                 placeholder="me@example.com" {...register("username", {required: "Username is required"})} />
                                             <Field.ErrorText>{String(errors.username?.message)}</Field.ErrorText>
                                         </Field.Root>
 
                                         <Field.Root invalid={!!errors.password}>
-                                            <Field.Label>Password</Field.Label>
+                                            <Field.Label color="white">Password</Field.Label>
                                             <PasswordInput {...register("password", {required: "Password is required"})} />
                                             <Field.ErrorText>{String(errors.password?.message)}</Field.ErrorText>
                                         </Field.Root>
 
-                                        <Button type="submit">Submit</Button>
-
-                                        <Show when={formType === "log-in"}>Forgot password</Show>
+                                        <Button type="submit" alignSelf="center" variant="subtle">Submit</Button>
+                                        {/*<Show when={formType === "log-in"}>Forgot password</Show>*/}
                                     </Stack>
                                 </form>
                             </Card.Body>
