@@ -1,4 +1,4 @@
-import {type Task, TaskEncryptSpec} from "@/types/Task.ts";
+import {type TaskType, TaskEncryptSpec} from "@/types/TaskType.ts";
 import {type PlanType, PlanEncryptSpec} from "@/types/PlanType.ts";
 import {TagEncryptSpec, type TagType} from "@/types/TagType.ts";
 
@@ -175,18 +175,18 @@ export const decryptFields = async (
     return result;
 };
 
-const isTask = (item: Task | PlanType | TagType): item is Task => {
-    return (item as Task).data.plan !== undefined;
+const isTask = (item: TaskType | PlanType | TagType): item is TaskType => {
+    return (item as TaskType).data.plan !== undefined;
 }
 
-const isTag = (item: Task | PlanType | TagType): item is TagType => {
+const isTag = (item: TaskType | PlanType | TagType): item is TagType => {
     return (item as TagType).data.tagName !== undefined;
 }
 
-export async function encrypt(item: Task): Promise<Task>;
+export async function encrypt(item: TaskType): Promise<TaskType>;
 export async function encrypt(item: PlanType): Promise<PlanType>;
 export async function encrypt(item: TagType): Promise<TagType>;
-export async function encrypt(item: Task | PlanType | TagType): Promise<Task | PlanType | TagType> {
+export async function encrypt(item: TaskType | PlanType | TagType): Promise<TaskType | PlanType | TagType> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;
@@ -203,10 +203,10 @@ export async function encrypt(item: Task | PlanType | TagType): Promise<Task | P
     return item;
 }
 
-export async function decrypt(item: Task): Promise<Task>;
+export async function decrypt(item: TaskType): Promise<TaskType>;
 export async function decrypt(item: PlanType): Promise<PlanType>;
 export async function decrypt(item: TagType): Promise<TagType>;
-export async function decrypt(item: Task | PlanType | TagType): Promise<Task | PlanType | TagType> {
+export async function decrypt(item: TaskType | PlanType | TagType): Promise<TaskType | PlanType | TagType> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;

@@ -1,5 +1,5 @@
 import {atom} from 'jotai';
-import {getNewTask, type Task} from "@/types/Task.ts";
+import {getNewTask, type TaskType} from "@/types/TaskType.ts";
 import {getNewPlan, type PlanType} from "@/types/PlanType.ts";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 
@@ -16,7 +16,7 @@ export const errorModalContent = atom<string>('');
 
 export const showAddDialog = atom(false);
 
-export const existingItemForEdit = atom<Task>(getNewTask());
+export const existingItemForEdit = atom<TaskType>(getNewTask());
 
 
 export const showPlanCreator = atom(false);

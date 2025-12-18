@@ -3,7 +3,7 @@ import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
 import {existingItemForEdit, filterContentAtom, showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
-import {getNewTask} from "@/types/Task.ts";
+import {getNewTask} from "@/types/TaskType.ts";
 import {MdFilterAlt} from "react-icons/md";
 import FilterSelects from "@/components/sidemenu/FilterSelects.tsx";
 import BaseActionButtons from "@/components/actions/BaseActionButtons.tsx";

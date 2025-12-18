@@ -5,7 +5,7 @@ import {
     getNextDate,
     globalDateFormatter
 } from "@/functions/Dates.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';

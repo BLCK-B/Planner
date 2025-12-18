@@ -1,4 +1,4 @@
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 
 export type PlanType = {
     planID: string;

@@ -15,7 +15,7 @@ import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
-import {getNewTask} from "@/types/Task.ts";
+import {getNewTask} from "@/types/TaskType.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
@@ -48,7 +48,6 @@ const TaskCreator = () => {
     const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
-        console.log(key, value);
         setNewItem(prev => ({
             ...prev,
             data: {
@@ -149,7 +148,7 @@ const TaskCreator = () => {
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
                                 <Field.Root invalid={invalidNameRule()}>
                                     <Textarea p="2px" variant="subtle" value={newItem.data.name}
-                                              placeholder="Task name"
+                                              placeholder="TaskType name"
                                               onChange={(e) => updateItem("name", e.target.value)}
                                               bg="primary.lighter" resize="none" autoresize/>
                                 </Field.Root>

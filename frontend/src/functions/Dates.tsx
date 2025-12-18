@@ -1,4 +1,4 @@
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 
 export const daysFromToday = (dateString: string) => {
     const date = new Date(dateString);

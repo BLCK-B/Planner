@@ -3,7 +3,7 @@ import {
     isDatePast,
     globalDateFormatter
 } from "@/functions/Dates.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
 import MyTag from "@/components/items/MyTag.tsx";

@@ -3,7 +3,7 @@ import Plan from '@/components/items/Plan.tsx'
 import {useQuery} from "@tanstack/react-query";
 import type {PlanType, PlanWithTasks} from "@/types/PlanType.ts";
 import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import loadTasksAssignedToPlansQuery from "@/queries/LoadTasksAssignedToPlansQuery.tsx";
 
 const PlansList = () => {

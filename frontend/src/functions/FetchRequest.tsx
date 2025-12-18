@@ -1,5 +1,5 @@
 import type {FetchError} from "@/types/FetchError.ts";
-import type {Task} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import type {PlanType} from "@/types/PlanType.ts";
 import {encrypt, decrypt} from "@/functions/Crypto.ts";
 import type {TagType} from "@/types/TagType.ts";
@@ -9,7 +9,7 @@ import {errorModalContent} from "@/global/atoms.ts";
 const URL = "http://localhost:8081";
 
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
-type Encryptable = Task | PlanType | TagType;
+type Encryptable = TaskType | PlanType | TagType;
 
 export const encryptBody = async (body: any): Promise<any> => {
     if (Array.isArray(body)) {

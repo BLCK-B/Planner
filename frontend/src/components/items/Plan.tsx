@@ -6,7 +6,7 @@ import TaskView from "@/components/items/TaskView.tsx";
 import CompletionProgress from "@/components/base/CompletionProgress.tsx";
 import {sortFutureTasks, sortSomeday} from "@/functions/Sorting.tsx";
 import {isDatePast} from "@/functions/Dates.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 
 const Plan = (plan: PlanWithTasks) => {
 

@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import FetchRequest from "@/functions/FetchRequest.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 
 const deleteRequest = async (task: TaskType): Promise<TaskType[]> => {
     return await FetchRequest("DELETE", `/users/userTask/${task.itemID}`);

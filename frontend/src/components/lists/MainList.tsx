@@ -2,7 +2,7 @@ import {useQuery} from "@tanstack/react-query"
 import {Box, Flex, Show} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 import {groupByMonth, sortCompletedTasks, sortFutureTasks, sortSomeday} from '@/functions/Sorting.tsx'
 import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";

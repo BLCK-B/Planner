@@ -1,7 +1,7 @@
 import type {TagType} from "@/types/TagType.ts";
 import type {PlanType} from "@/types/PlanType.ts";
 
-export type Task = {
+export type TaskType = {
     itemID: string;
     data: {
         name: string;
@@ -16,7 +16,7 @@ export type Task = {
 };
 
 type EncryptSpec = {
-    [K in keyof Task["data"]]: boolean;
+    [K in keyof TaskType["data"]]: boolean;
 };
 
 export const TaskEncryptSpec: EncryptSpec = {
@@ -30,7 +30,7 @@ export const TaskEncryptSpec: EncryptSpec = {
     important: false,
 };
 
-const newTask: Task = {
+const newTask: TaskType = {
     itemID: '',
     data: {
         name: '',
@@ -44,4 +44,4 @@ const newTask: Task = {
     },
 } as const;
 
-export const getNewTask = (): Task => structuredClone(newTask);
+export const getNewTask = (): TaskType => structuredClone(newTask);

@@ -1,5 +1,5 @@
 import FetchRequest from "@/functions/FetchRequest.tsx";
-import type {Task as TaskType} from "@/types/Task.ts";
+import type {TaskType} from "@/types/TaskType.ts";
 
 const fetchItems = async (): Promise<TaskType[]> => {
     return await FetchRequest("GET", "/users/userTasks");
