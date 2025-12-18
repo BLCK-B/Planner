@@ -63,6 +63,7 @@ const Task = (task: TaskType) => {
               position="relative"
               justifyContent="space-between"
               onClick={handleClick}
+              {...(task.data.important && styles.important)}
               {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
@@ -91,3 +92,11 @@ const Task = (task: TaskType) => {
 };
 
 export default Task;
+
+const styles = {
+    important: {
+        borderWidth: "2px",
+        borderStyle: "solid",
+        borderColor: "theme.BrightYellow",
+    },
+};

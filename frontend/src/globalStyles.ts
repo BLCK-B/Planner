@@ -60,6 +60,7 @@ export const styles = defineConfig({
                     Spruit3Hover: {value: "#5bba41"},
                     Reddish: {value: "#f87171"},
                     ReddishHover: {value: "#ff4e4e"},
+                    BrightYellow: {value: "#ffda3c"},
                 },
             },
         },
