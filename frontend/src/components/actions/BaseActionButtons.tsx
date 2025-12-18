@@ -12,7 +12,7 @@ const BaseActionButtons = ({buttons}: Props) => {
     if (!buttons) {
         return <></>;
     }
-    
+
     if (isLargeScreen) {
         return (
             <SimpleGrid

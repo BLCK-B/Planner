@@ -28,11 +28,6 @@ import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
-import {IoMdAdd, IoMdCheckmark} from "react-icons/io";
-import {RxCross2, RxExit} from "react-icons/rx";
-import {MdDelete} from "react-icons/md";
-import {FaHashtag} from "react-icons/fa";
-import * as React from "react";
 
 const TaskCreator = () => {
 
@@ -141,7 +136,7 @@ const TaskCreator = () => {
     };
 
     const importantStyle = () => {
-        return newItem.data.important ? "theme.BrightYellow" : "grey";
+        return newItem.data.important ? "theme.BrightYellow" : "primary.lighterer";
     }
 
     return (

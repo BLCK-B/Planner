@@ -10,7 +10,6 @@ import * as React from "react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
-import {MdEventRepeat} from "react-icons/md";
 import MyTag from "@/components/items/MyTag.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
@@ -70,9 +69,6 @@ const Task = (task: TaskType) => {
                     <Show when={task.data.date && !task.data.completed}>
                         <Flex w="120px" align="center" gap="5px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
-                            <Show when={task.data.repeatEvent}>
-                                <MdEventRepeat color="grey"/>
-                            </Show>
                         </Flex>
                     </Show>
                     <Text>{task.data.name}</Text>
@@ -86,7 +82,8 @@ const Task = (task: TaskType) => {
                 </Show>
             </Box>
             <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}
-                             taskPlanColor={task.data.plan ? task.data.plan.data.color : undefined}/>
+                             taskPlanColor={task.data.plan ? task.data.plan.data.color : undefined}
+                             isRepeat={!!task.data.repeatEvent}/>
         </Flex>
     );
 };

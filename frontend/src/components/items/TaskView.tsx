@@ -6,7 +6,6 @@ import {
 import type {Task as TaskType} from "@/types/Task.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
-import {MdEventRepeat} from "react-icons/md";
 import MyTag from "@/components/items/MyTag.tsx";
 
 const TaskView = (task: TaskType) => {
@@ -27,9 +26,6 @@ const TaskView = (task: TaskType) => {
                     <Show when={task.data.date && !task.data.completed}>
                         <Flex w="120px" align="center" gap="5px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
-                            <Show when={task.data.repeatEvent}>
-                                <MdEventRepeat color="grey"/>
-                            </Show>
                         </Flex>
                     </Show>
                     <Text>{task.data.name}</Text>
