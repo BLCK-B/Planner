@@ -26,7 +26,10 @@ const CompleteSection = ({
               borderRight={`1px solid ${taskPlanColor}`}
         >
             <Box>
-                <IconButton onClick={onClick} disabled={disabled} bg="none" h="2em" w="2em">
+                <IconButton onClick={(e) => {
+                    e.stopPropagation();
+                    onClick(e);
+                }} disabled={disabled} bg="none" h="2em" w="2em">
                     <Show when={!isRepeat}>
                         <IoMdCheckmark color="#141414" aria-label="Complete"/>
                     </Show>
