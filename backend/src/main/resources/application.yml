@@ -19,12 +19,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   security:
     user:
-      name: ${SPRING_USER_NAME:user}
-      password: ${SPRING_USER_PASSWORD:password}
+      name: ${SPRING_USER_NAME}
+      password: ${SPRING_USER_PASSWORD}
   datasource:
-    url: jdbc:postgresql://localhost:5432/personaldb
-    username: ${SPRING_DATASOURCE_USERNAME:username}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
