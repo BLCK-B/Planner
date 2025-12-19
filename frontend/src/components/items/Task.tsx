@@ -83,7 +83,7 @@ const Task = (task: TaskType) => {
             </Box>
             <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}
                              taskPlanColor={task.data.plan ? task.data.plan.data.color : undefined}
-                             isRepeat={!!task.data.repeatEvent}/>
+                             isRepeat={task.data.repeatEvent !== 'none'}/>
         </Flex>
     );
 };
