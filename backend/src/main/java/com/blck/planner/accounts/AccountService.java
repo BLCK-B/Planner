@@ -4,6 +4,7 @@ import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.security.CredentialsDTO;
 import com.blck.planner.security.Roles;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseCookie;
@@ -96,7 +97,7 @@ public class AccountService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         return accountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }

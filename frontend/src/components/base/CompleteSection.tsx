@@ -7,7 +7,6 @@ type Props = {
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
     isCompleted: boolean;
     disabled?: boolean;
-    taskPlanColor?: string;
     isRepeat: boolean;
 }
 
@@ -15,18 +14,20 @@ const CompleteSection = ({
                              onClick,
                              isCompleted,
                              disabled = false,
-                             taskPlanColor = 'primary',
                              isRepeat = true
                          }: Props) => {
     return (
-        <Flex bg={isCompleted ? "theme.Spruit2" : "primary.lighterer"}
+        <Flex bg={isCompleted ? "theme.Spruit2" : "primary.lighter"}
               _hover={{bg: "theme.Spruit1", _active: {bg: "theme.Spruit2",},}} w="2.5rem"
               borderRadius="0px 5px 5px 0px"
               alignItems="center"
-              borderRight={`1px solid ${taskPlanColor}`}
+              transition="background-color 0.15s ease-in-out"
         >
             <Box>
-                <IconButton onClick={onClick} disabled={disabled} bg="none" h="2em" w="2em">
+                <IconButton onClick={(e) => {
+                    e.stopPropagation();
+                    onClick(e);
+                }} disabled={disabled} bg="none" h="2em" w="2em">
                     <Show when={!isRepeat}>
                         <IoMdCheckmark color="#141414" aria-label="Complete"/>
                     </Show>

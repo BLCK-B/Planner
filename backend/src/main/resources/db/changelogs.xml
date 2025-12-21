@@ -15,5 +15,6 @@
     <include file="/db/changelogs/2025-11-23-drop-planid-column.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2025-12-14-simplify-tasks-goals.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2025-12-15-add-important-column-tasks.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2025-12-19-not-null-repeat.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -38,8 +39,11 @@ import java.util.Collection;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    @Value("${JWT_SECRET}")
+    private String jwtSecret;
+
     @Bean
-    public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter) throws Exception {
+    public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(exchanges -> exchanges
@@ -97,14 +101,12 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        String jwtSecret = "12345678901234567890123456789012";
         SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey));
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String jwtSecret = "12345678901234567890123456789012";
         SecretKeySpec secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }

@@ -31,7 +31,7 @@ const MyTag = ({tag, isEditable = false, isInactive = false}: Props) => {
     return (
         <Tag.Root variant="surface" style={{...styles.tag, ...inactiveStyle()}} bg={tag.data.color}
                   color="white"
-                  onClick={clicked} boxShadow="none" cursor="pointer"
+                  onClick={clicked} boxShadow="none" cursor="pointer" p="6px"
         >
             <Tag.Label>
                 {tag.data.tagName}
@@ -44,7 +44,7 @@ export default MyTag;
 
 const styles = {
     tag: {
-        height: "25px",
+        height: "22px",
     },
     inactive: {
         opacity: "0.5",

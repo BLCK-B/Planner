@@ -14,6 +14,7 @@ import MyTag from "@/components/items/MyTag.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import CompleteSection from "@/components/base/CompleteSection.tsx";
+import {LuGoal} from "react-icons/lu";
 
 const Task = (task: TaskType) => {
     const queryClient = useQueryClient();
@@ -41,7 +42,7 @@ const Task = (task: TaskType) => {
         }
         await saveTaskMutation.mutateAsync(newTask);
 
-        if (newTask.data.repeatEvent && newTask.data.date && newTask.data.completed) {
+        if (newTask.data.repeatEvent !== 'none' && newTask.data.date && newTask.data.completed) {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
@@ -71,7 +72,10 @@ const Task = (task: TaskType) => {
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                         </Flex>
                     </Show>
-                    <Text>{task.data.name}</Text>
+                    <Text mr="5px">{task.data.name}</Text>
+                    {task.data.plan && (
+                        <LuGoal color={task.data.plan.data.color}/>
+                    )}
                 </Flex>
                 <Show when={task.data.tags.length}>
                     <Flex mt="5px" gap={2}>
@@ -82,8 +86,7 @@ const Task = (task: TaskType) => {
                 </Show>
             </Box>
             <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}
-                             taskPlanColor={task.data.plan ? task.data.plan.data.color : undefined}
-                             isRepeat={!!task.data.repeatEvent}/>
+                             isRepeat={task.data.repeatEvent !== 'none'}/>
         </Flex>
     );
 };
