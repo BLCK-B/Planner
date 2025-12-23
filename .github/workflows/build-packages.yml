@@ -30,6 +30,7 @@ jobs:
           npm run build
       - name: Build JAR
         run: |
+          cd backend
           chmod +x ./gradlew
           ./gradlew clean bootJar -x test
       - name: Log in to container registry
