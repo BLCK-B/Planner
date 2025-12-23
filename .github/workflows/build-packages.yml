@@ -41,8 +41,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner | lower }}/planner:latest .
-      - name: Push Docker image to registry
+          docker build -t ghcr.io/blck-b/planner:latest .
+      - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository_owner | lower }}/planner:latest
+          docker push ghcr.io/blck-b/planner:latest
+
 
