@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
-          cache-dependency-path: "vue/package-lock.json"
+          cache-dependency-path: "frontend/package-lock.json"
       - name: Install npm dependencies
         run: |
           cd frontend
