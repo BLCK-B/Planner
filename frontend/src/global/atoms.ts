@@ -27,3 +27,5 @@ export const existingPlanForEdit = atom<PlanType>(getNewPlan());
 export const showTagCreator = atom(false);
 
 export const existingTagForEdit = atom<TagType>(getNewTag());
+
+export const isDemoMode = atom(false);
