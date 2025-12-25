@@ -6,7 +6,7 @@ import type {TagType} from "@/types/TagType.ts";
 import {getDefaultStore} from 'jotai';
 import {errorModalContent} from "@/global/atoms.ts";
 
-const URL = "http://localhost:8081";
+const URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8081"; // VITE_API_URL=
 
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 type Encryptable = TaskType | PlanType | TagType;
