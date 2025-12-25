@@ -2,6 +2,12 @@ name: build packages
 
 on:
   workflow_dispatch:
+    inputs:
+      frontend_only:
+        description: "Deploy only frontend"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -40,20 +46,24 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy frontend/dist --project-name=planner-frontend
       - name: Build JAR
+        if: ${{ github.event.inputs.frontend_only != 'true' }}
         run: |
           cd backend
           chmod +x ./gradlew
           ./gradlew clean bootJar -x test
       - name: Log in to container registry
+        if: ${{ github.event.inputs.frontend_only != 'true' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
+        if: ${{ github.event.inputs.frontend_only != 'true' }}
         run: |
           docker build -t ghcr.io/blck-b/planner:latest .
       - name: Push Docker image
+        if: ${{ github.event.inputs.frontend_only != 'true' }}
         run: |
           docker push ghcr.io/blck-b/planner:latest
 
