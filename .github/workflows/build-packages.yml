@@ -39,6 +39,8 @@ jobs:
         run: |
           cd frontend
           npm run build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
       - name: Deploy static files to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
@@ -66,5 +68,3 @@ jobs:
         if: ${{ github.event.inputs.frontend_only != 'true' }}
         run: |
           docker push ghcr.io/blck-b/planner:latest
-
-
