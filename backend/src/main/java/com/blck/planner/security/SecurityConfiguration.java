@@ -27,12 +27,14 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -42,10 +44,21 @@ public class SecurityConfiguration {
     @Value("${JWT_SECRET}")
     private String jwtSecret;
 
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
+
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(_ -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(List.of(frontendUrl));
+                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setAllowedHeaders(List.of("*"));
+                    return configuration;
+                }))
                 .authorizeHttpRequests(exchanges -> exchanges
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
