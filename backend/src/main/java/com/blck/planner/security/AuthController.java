@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,11 +43,11 @@ public class AuthController {
 
     @GetMapping("/authSalt/{username}")
     public ResponseEntity<String> getFrontendHashSalt(@PathVariable String username) {
-        UserAccount user = (UserAccount) accountService.loadUserByUsername(username);
-        if (user != null) {
+        try {
+            UserAccount user = (UserAccount) accountService.loadUserByUsername(username);
             return ResponseEntity.ok(user.getPasswordAuthSalt());
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -62,10 +63,7 @@ public class AuthController {
         try {
             accountService.loginUser(response, authRequest, authenticationManager);
             UserAccount user = (UserAccount) accountService.loadUserByUsername(credentials.username());
-            if (user != null) {
-                return ResponseEntity.ok(user.getEncryptionKeySalt());
-            }
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(user.getEncryptionKeySalt());
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {

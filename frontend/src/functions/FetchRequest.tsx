@@ -73,7 +73,7 @@ const FetchRequest: FetchRequestFunction = async (method, request, body) => {
     if (!response.ok) {
         const error = new Error(`${response.statusText}`) as FetchError;
         error.status = response.status;
-        if (error.status !== 401) {
+        if (error.status !== 401 && error.status !== 409) {
             const store = getDefaultStore();
             const data = await response.json();
             store.set(errorModalContent, data.message);
