@@ -14,7 +14,7 @@ const MainList = () => {
 
     const {data: itemList} = useQuery<TaskType[]>(loadItemsQuery());
 
-    const [filterContent] = useAtomValue(filterContentAtom);
+    const filterContent = useAtomValue(filterContentAtom);
 
     const adjacent = useBreakpointValue({base: false, md: true}) as boolean;
 

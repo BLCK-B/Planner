@@ -1,4 +1,4 @@
-import {IconButton, Popover} from "@chakra-ui/react";
+import {IconButton, Popover, useBreakpointValue} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
@@ -31,6 +31,8 @@ const ActionButtonsMainPage = () => {
         return filterContent ? "theme.Spruit2" : "primary.lighter";
     };
 
+    const popoverPlacement = useBreakpointValue({base: "top-start", md: "right-start"}) ?? "top-start";
+
     const actionButtons = (
         <>
             <MyButton type="add" onClick={createNewItem}/>
@@ -41,7 +43,7 @@ const ActionButtonsMainPage = () => {
             >
                 <IoCalendarNumber color="black" aria-label="Complete"/>
             </IconButton>
-            <Popover.Root positioning={{placement: "right-start"}}>
+            <Popover.Root positioning={{placement: popoverPlacement}}>
                 <Popover.Trigger asChild>
                     <IconButton size="xs" bg={activeFilterColor()}>
                         <MdFilterAlt color="black"/>
