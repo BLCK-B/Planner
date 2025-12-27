@@ -101,8 +101,16 @@ const AuthPage = () => {
     };
 
     const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
-        if (formType === "log-in") await login(credentials);
-        else if (formType === "register") await registerNewAccount(credentials);
+        if (formType === "log-in") {
+            await login(credentials);
+        } else if (formType === "register") {
+            const key = window.prompt("Enter EA key.");
+            if (key !== "letmein") {
+                alert("Incorrect key. Registration cancelled.");
+                return;
+            }
+            await registerNewAccount(credentials);
+        }
     };
 
     const sendAuthRequest = async (request: string, credentials: BackendCredentials) => {
