@@ -8,7 +8,7 @@ const ErrorModal = () => {
     const [errorMessage, setErrorMessage] = useAtom(errorModalContent);
 
     return (
-        <Dialog.Root size={"md"} open={!!errorMessage}>
+        <Dialog.Root size={"md"} open={!!errorMessage} trapFocus={false}>
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>

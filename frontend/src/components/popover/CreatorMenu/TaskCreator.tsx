@@ -139,18 +139,19 @@ const TaskCreator = () => {
     }
 
     return (
-        <Dialog.Root size={"sm"} open={showDialog}>
+        <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none">
                         <Dialog.Body mt="20px" p={isDesktop ? undefined : "10px"}>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                <Field.Root invalid={invalidNameRule()}>
+                                <Field.Root>
                                     <Textarea p="2px" variant="subtle" value={newItem.data.name}
                                               placeholder="TaskType name"
                                               onChange={(e) => updateItem("name", e.target.value)}
-                                              bg="primary.lighter" resize="none" autoresize/>
+                                              bg="primary.lighter" resize="none" autoresize
+                                    />
                                 </Field.Root>
                                 <Flex w="100%" align="center" gap="1rem" wrap="wrap">
                                     <Box w="140px">

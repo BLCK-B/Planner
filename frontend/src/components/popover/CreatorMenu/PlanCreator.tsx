@@ -59,7 +59,7 @@ const PlanCreator = () => {
     };
 
     return (
-        <Dialog.Root size={"sm"} open={showDialog}>
+        <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner
