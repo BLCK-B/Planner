@@ -4,10 +4,9 @@ import "@fontsource/roboto";
 const textStyles = defineTextStyles({
     body: {
         value: {
-            fontFamily: "Roboto, sans-serif",
-            fontWeight: "500",
-            userSelect: "none",
-            // fontSize: "20px",
+            fontFamily: {value: "Roboto, sans-serif"},
+            fontWeight: {value: "500"},
+            userSelect: {value: "none"},
         },
     },
 })

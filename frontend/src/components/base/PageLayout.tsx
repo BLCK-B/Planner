@@ -12,7 +12,7 @@ type Props = {
 
 const PageLayout = ({header, content, popover}: Props) => {
     return (
-        <Box w="100vw" h="100vh" bg="primary.darker" fontSize="17px" textStyle="body">
+        <Box w="100vw" h="100dvh" bg="primary.darker" fontSize="17px" textStyle="body">
             <Grid
                 templateColumns={{
                     base: "1fr", // 1 column

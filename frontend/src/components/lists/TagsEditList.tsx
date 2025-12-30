@@ -30,7 +30,7 @@ const TagsEditList = () => {
     }
     return (
         <Center>
-            <Card.Root w="320px" h="70vh" variant="elevated" bg="primary.lighter" top="50px">
+            <Card.Root w="320px" h="70dvh" variant="elevated" bg="primary.lighter" top="50px">
                 <Card.Header color="primary.contrast">
                     Tags edit
                 </Card.Header>

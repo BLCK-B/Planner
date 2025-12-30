@@ -3,7 +3,7 @@ import HeaderLandingPage from "@/components/header/HeaderLandingPage.tsx";
 
 const LandingPage = () => {
     return (
-        <Box w="100vw" h="100vh" bg="primary.lighter" textStyle="body">
+        <Box w="100vw" h="100dvh" bg="primary.lighter" textStyle="body">
             <Grid templateRows="auto 1fr" templateColumns="repeat(7, 1fr)" h="100%">
 
                 <GridItem colSpan={10} rowSpan={1}>
