@@ -21,6 +21,4 @@ public interface UserTaskRepository extends JpaRepository<Task, UUID> {
         WHERE t.userID = :userId AND tag.tagID = :tagId
     """)
     List<Task> getAllUserTasksWithTag(String userId, UUID tagId);
-
-    List<Task> findByUserIDAndPlanIsNotNull(String userId);
 }

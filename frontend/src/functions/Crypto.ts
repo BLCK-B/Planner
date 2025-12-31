@@ -1,5 +1,4 @@
 import {type TaskType, TaskEncryptSpec} from "@/types/TaskType.ts";
-import {type PlanType, PlanEncryptSpec} from "@/types/PlanType.ts";
 import {TagEncryptSpec, type TagType} from "@/types/TagType.ts";
 
 // for converting between unicode text and UTF bytes
@@ -175,27 +174,24 @@ export const decryptFields = async (
     return result;
 };
 
-const isTask = (item: TaskType | PlanType | TagType): item is TaskType => {
-    return (item as TaskType).data.plan !== undefined;
+const isTask = (item: TaskType | TagType): item is TaskType => {
+    return (item as TaskType).data.name !== undefined;
 }
 
-const isTag = (item: TaskType | PlanType | TagType): item is TagType => {
-    return (item as TagType).data.tagName !== undefined;
-}
+// const isTag = (item: TaskType | TagType): item is TagType => {
+//     return (item as TagType).data.tagName !== undefined;
+// }
 
 export async function encrypt(item: TaskType): Promise<TaskType>;
-export async function encrypt(item: PlanType): Promise<PlanType>;
 export async function encrypt(item: TagType): Promise<TagType>;
-export async function encrypt(item: TaskType | PlanType | TagType): Promise<TaskType | PlanType | TagType> {
+export async function encrypt(item: TaskType | TagType): Promise<TaskType | TagType> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;
         if (isTask(item)) {
             spec = TaskEncryptSpec;
-        } else if (isTag(item)) {
-            spec = TagEncryptSpec;
         } else {
-            spec = PlanEncryptSpec;
+            spec = TagEncryptSpec;
         }
         const encryptedData = await encryptFields(item.data, spec, cryptoKey);
         return {...item, data: encryptedData};
@@ -204,18 +200,15 @@ export async function encrypt(item: TaskType | PlanType | TagType): Promise<Task
 }
 
 export async function decrypt(item: TaskType): Promise<TaskType>;
-export async function decrypt(item: PlanType): Promise<PlanType>;
 export async function decrypt(item: TagType): Promise<TagType>;
-export async function decrypt(item: TaskType | PlanType | TagType): Promise<TaskType | PlanType | TagType> {
+export async function decrypt(item: TaskType | TagType): Promise<TaskType | TagType> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;
         if (isTask(item)) {
             spec = TaskEncryptSpec;
-        } else if (isTag(item)) {
-            spec = TagEncryptSpec;
         } else {
-            spec = PlanEncryptSpec;
+            spec = TagEncryptSpec;
         }
         const decryptedData = await decryptFields(item.data, spec, cryptoKey);
         return {...item, data: decryptedData};

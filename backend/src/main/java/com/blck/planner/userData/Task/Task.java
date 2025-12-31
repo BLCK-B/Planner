@@ -1,6 +1,5 @@
 package com.blck.planner.userData.Task;
 
-import com.blck.planner.userData.Plan.Plan;
 import com.blck.planner.userData.Tag.Tag;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -48,14 +47,10 @@ public class Task {
     )
     private Set<Tag> tags;
 
-    @ManyToOne
-    @JoinColumn(name = "plan_id")
-    private Plan plan;
-
     public Task() {}
 
     public Task(UUID itemID, String userID, String name, String date, String completed,
-                String repeatEvent, int repeatOriginDay, boolean important, Set<Tag> tags, Plan plan) {
+                String repeatEvent, int repeatOriginDay, boolean important, Set<Tag> tags) {
         this.itemID = itemID;
         this.userID = userID;
         this.name = name;
@@ -64,7 +59,6 @@ public class Task {
         this.repeatEvent = repeatEvent;
         this.repeatOriginDay = repeatOriginDay;
         this.tags = tags;
-        this.plan = plan;
         this.important = important;
     }
 
@@ -72,8 +66,7 @@ public class Task {
         var tagDtos = tags.stream()
                 .map(Tag::toDTO)
                 .collect(Collectors.toSet());
-        var planDto = (plan != null) ? plan.toDTO() : null;
-        var data = new TaskDTO.Data(name, date, completed, repeatEvent, repeatOriginDay, important, tagDtos, planDto);
+        var data = new TaskDTO.Data(name, date, completed, repeatEvent, repeatOriginDay, important, tagDtos);
         return new TaskDTO(itemID, data);
     }
 
@@ -135,13 +128,5 @@ public class Task {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
-    }
-
-    public Plan getPlan() {
-        return plan;
-    }
-
-    public void setPlan(Plan plan) {
-        this.plan = plan;
     }
 }

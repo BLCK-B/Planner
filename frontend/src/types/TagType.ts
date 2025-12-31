@@ -3,6 +3,8 @@ export type TagType = {
     data: {
         tagName: string;
         color: string;
+        isTracked: boolean;
+        description: string;
     };
 };
 
@@ -13,6 +15,8 @@ type EncryptSpec = {
 export const TagEncryptSpec: EncryptSpec = {
     tagName: true,
     color: false,
+    isTracked: false,
+    description: true,
 };
 
 const newTag: TagType = {
@@ -20,6 +24,8 @@ const newTag: TagType = {
     data: {
         tagName: '',
         color: 'rgb(128, 128, 128)',
+        isTracked: false,
+        description: '',
     },
 } as const;
 

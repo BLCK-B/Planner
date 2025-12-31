@@ -7,7 +7,7 @@ import ErrorModal from "@/components/popover/ErrorModal.tsx";
 type Props = {
     header: React.ReactNode;
     content: React.ReactNode;
-    popover: React.ReactNode;
+    popover?: React.ReactNode;
 };
 
 const PageLayout = ({header, content, popover}: Props) => {

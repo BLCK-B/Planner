@@ -1,25 +1,29 @@
 import {Box, Flex, Text, Spacer} from "@chakra-ui/react";
-import type {PlanWithTasks} from "@/types/PlanType.ts";
-import {useSetAtom} from "jotai";
-import {existingPlanForEdit, showPlanCreator} from "@/global/atoms.ts";
 import TaskView from "@/components/items/TaskView.tsx";
 import CompletionProgress from "@/components/base/CompletionProgress.tsx";
 import {sortFutureTasks, sortSomeday} from "@/functions/Sorting.tsx";
 import {isDatePast} from "@/functions/Dates.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
+import type {TagType} from "@/types/TagType.ts";
+import {useQuery} from "@tanstack/react-query";
+import loadTasksOfTagQuery from "@/queries/LoadTasksOfTagQuery.tsx";
+import {useSetAtom} from "jotai";
+import {existingTagForEdit, showTagCreator} from "@/global/atoms.ts";
 
-const Plan = (plan: PlanWithTasks) => {
+const Plan = (tag: TagType) => {
 
-    const setEditPlan = useSetAtom(existingPlanForEdit);
+    const setShowAddTagDialog = useSetAtom(showTagCreator);
 
-    const setShowDialog = useSetAtom(showPlanCreator);
+    const setEditTag = useSetAtom(existingTagForEdit);
 
-    const handleClick = () => {
-        setEditPlan(plan);
-        setShowDialog(true);
+    const clicked = () => {
+        setEditTag(tag);
+        setShowAddTagDialog(true);
     };
 
-    const itemList = plan.tasks;
+    const {data: itemList} = useQuery(loadTasksOfTagQuery(tag));
+
+    if (!itemList) return <div>Loading...</div>;
 
     const tasks = itemList.filter((task) => task.data.date);
 
@@ -52,7 +56,7 @@ const Plan = (plan: PlanWithTasks) => {
     };
 
     const countCompletedTasks = () => {
-        return plan.tasks
+        return itemList
             .filter((task) => task.data.completed)
             .length;
     };
@@ -60,25 +64,25 @@ const Plan = (plan: PlanWithTasks) => {
     return (
         <Box
             p="15px"
-            bg={`rgba${plan.data.color.slice(3, -1)}, 0.1)`}
+            bg={`rgba${tag.data.color.slice(3, -1)}, 0.1)`}
             color="primary.contrast"
             borderRadius="md"
             boxShadow="xs"
             mb="6"
             position="relative"
             cursor="button"
-            onClick={handleClick}
-            border={"2px solid " + `rgba${plan.data.color.slice(3, -1)}, 0.4)`}
-            _hover={{border: "2px solid " + `rgba${plan.data.color.slice(3, -1)}, 0.6)`}}
+            border={"2px solid " + `rgba${tag.data.color.slice(3, -1)}, 0.4)`}
+            _hover={{border: "2px solid " + `rgba${tag.data.color.slice(3, -1)}, 0.6)`}}
             transition="0.1s ease-in-out"
+            onClick={clicked}
         >
             <Flex align="center" justifyContent="space-between">
-                <Text fontWeight="bold">{plan.data.name}</Text>
+                <Text fontWeight="bold">{tag.data.tagName}</Text>
                 <Spacer/>
-                <CompletionProgress total={plan.tasks.length} completed={countCompletedTasks()}
-                                    color={plan.data.color}/>
+                <CompletionProgress total={itemList.length} completed={countCompletedTasks()}
+                                    color={tag.data.color}/>
             </Flex>
-            <Text>{plan.data.description}</Text>
+            <Text>{tag.data.description}</Text>
             <Flex direction="column" overflow="scroll" p="10px" mt="15px">
                 {renderItems(futureTasks)}
 

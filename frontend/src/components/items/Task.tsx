@@ -14,7 +14,6 @@ import MyTag from "@/components/items/MyTag.tsx";
 import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import CompleteSection from "@/components/base/CompleteSection.tsx";
-import {LuGoal} from "react-icons/lu";
 
 const Task = (task: TaskType) => {
     const queryClient = useQueryClient();
@@ -73,9 +72,6 @@ const Task = (task: TaskType) => {
                         </Flex>
                     </Show>
                     <Text mr="5px">{task.data.name}</Text>
-                    {task.data.plan && (
-                        <LuGoal color={task.data.plan.data.color}/>
-                    )}
                 </Flex>
                 <Show when={task.data.tags.length}>
                     <Flex mt="5px" gap={2}>

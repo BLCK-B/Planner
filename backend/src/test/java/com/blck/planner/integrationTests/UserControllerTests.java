@@ -37,7 +37,7 @@ public class UserControllerTests {
     @BeforeEach
     public void setup() {
         when(userTaskRepository.findByUserID(any()))
-                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", null, "", 0, false, Set.of(), null)));
+                .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", null, "", 0, false, Set.of())));
     }
 
     @Test

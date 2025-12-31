@@ -1,6 +1,5 @@
 package com.blck.planner.userData.Task;
 
-import com.blck.planner.userData.Plan.PlanDTO;
 import com.blck.planner.userData.Tag.Tag;
 import com.blck.planner.userData.Tag.TagDTO;
 
@@ -19,10 +18,8 @@ public record TaskDTO(
             String repeatEvent,
             int repeatOriginDay,
             boolean important,
-            Set<TagDTO> tags,
-            PlanDTO plan
-    ) {
-    }
+            Set<TagDTO> tags
+    ) { }
 
     public Task toTask(String userID) {
         Set<Tag> tags = data.tags.stream()
@@ -37,8 +34,7 @@ public record TaskDTO(
                 data.repeatEvent,
                 data.repeatOriginDay,
                 data.important,
-                tags,
-                data.plan != null ? data.plan.toPlan(userID) : null
+                tags
         );
     }
 }

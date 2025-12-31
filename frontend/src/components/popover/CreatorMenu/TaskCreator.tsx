@@ -23,8 +23,6 @@ import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 import type {TagType} from "@/types/TagType.ts";
-import type {PlanType} from "@/types/PlanType.ts";
-import loadPlansQuery from "@/queries/LoadPlansQuery.tsx";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
@@ -44,8 +42,6 @@ const TaskCreator = () => {
     const deleteTaskMutation = useDeleteTask();
 
     const {data: tags} = useQuery<TagType[]>(loadTagsQuery());
-
-    const {data: plans} = useQuery<PlanType[]>(loadPlansQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
@@ -115,16 +111,6 @@ const TaskCreator = () => {
         updateItem("repeatEvent", repeat);
     };
 
-    const planOptions = plans?.map(plan => ({
-        label: plan.data.name,
-        value: plan.planID,
-    })) ?? [];
-
-    const setAssignedPlanTask = async (planID: string) => {
-        if (!plans) return;
-        updateItem("plan", plans.find(plan => plan.planID === planID));
-    };
-
     const isTagInactive = (tag: TagType) => {
         const assigned = newItem.data.tags ?? [];
         return !assigned.some(t => t.tagID === tag.tagID);
@@ -146,13 +132,24 @@ const TaskCreator = () => {
                     <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none">
                         <Dialog.Body mt="20px" p={isDesktop ? undefined : "10px"}>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                <Field.Root>
-                                    <Textarea p="2px" variant="subtle" value={newItem.data.name}
-                                              placeholder="TaskType name"
-                                              onChange={(e) => updateItem("name", e.target.value)}
-                                              bg="primary.lighter" resize="none" autoresize
-                                    />
-                                </Field.Root>
+                                <Flex gap="3" w="100%" align="center">
+                                    <Field.Root>
+                                        <Textarea p="2px" variant="subtle" value={newItem.data.name}
+                                                  placeholder="TaskType name"
+                                                  onChange={(e) => updateItem("name", e.target.value)}
+                                                  bg="primary.lighter" resize="none" autoresize
+                                        />
+                                    </Field.Root>
+                                    <IconButton
+                                        onClick={() => updateItem("important", !newItem.data.important)}
+                                        size="xs"
+                                        aria-label={"important"}
+                                        bg={importantStyle()}
+                                        color="black"
+                                    >
+                                        <FaStar/>
+                                    </IconButton>
+                                </Flex>
                                 <Flex w="100%" align="center" gap="1rem" wrap="wrap">
                                     <Box w="140px">
                                         <Field.Root>
@@ -189,24 +186,6 @@ const TaskCreator = () => {
                                         <MyButton type="tagedit" onClick={goToTagEditPage}/>
                                     </Box>
                                 </Flex>
-                                <Flex w="100%" align="center" gap="1.5rem">
-                                    <IconButton
-                                        onClick={() => updateItem("important", !newItem.data.important)}
-                                        size="xs"
-                                        aria-label={"important"}
-                                        bg={importantStyle()}
-                                        color="black"
-                                    >
-                                        <FaStar/>
-                                    </IconButton>
-                                    <Box w="15rem">
-                                        <DropSelection
-                                            items={planOptions}
-                                            selected={newItem.data.plan?.planID ?? ''}
-                                            onSelect={(planID) => setAssignedPlanTask(planID)}
-                                        />
-                                    </Box>
-                                </Flex>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer mt="0.5rem">
@@ -228,7 +207,7 @@ export default TaskCreator;
 
 const styles = {
     dialogMobile: {
-        alignItems: "center",
+        alignItems: "end",
         padding: "0"
     },
     dialogDesktop: {

@@ -43,6 +43,13 @@ public class TaskController {
                 .toList();
     }
 
+    @GetMapping("/allUserTasksOfThisTag/{tagID}")
+    public List<TaskDTO> getAllTasksOfThisTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
+        return userTaskRepository.getAllUserTasksWithTag(jwt.getSubject(), UUID.fromString(tagID)).stream()
+                .map(Task::toDTO)
+                .toList();
+    }
+
     @PutMapping("/userTask")
     public TaskDTO setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
         TaskDTO dto = new TaskDTO(userItem.itemID(), userItem.data());
@@ -54,13 +61,6 @@ public class TaskController {
     public String deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
         userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), UUID.fromString(taskID));
         return "User task removed successfully.";
-    }
-
-    @GetMapping("/userTasksAssignedToPlans")
-    public List<TaskDTO> userTasksAssignedToPlans(@AuthenticationPrincipal Jwt jwt) {
-        return userTaskRepository.findByUserIDAndPlanIsNotNull(jwt.getSubject()).stream()
-                .map(Task::toDTO)
-                .toList();
     }
 
     @Transactional

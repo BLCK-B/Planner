@@ -1,14 +1,14 @@
 import PlansList from "@/components/lists/PlansList.tsx";
 import HeaderPlansPage from "@/components/header/HeaderPlansPage.tsx";
-import PlanCreator from "@/components/popover/CreatorMenu/PlanCreator.tsx";
 import PageLayout from "@/components/base/PageLayout.tsx";
+import TagCreator from "@/components/popover/CreatorMenu/TagCreator.tsx";
 
 const PlansPage = () => {
     return (
         <PageLayout
             header={<HeaderPlansPage/>}
             content={<PlansList/>}
-            popover={<PlanCreator/>}
+            popover={<TagCreator/>}
         />
     );
 };
