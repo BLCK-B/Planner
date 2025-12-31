@@ -130,11 +130,11 @@ const TaskCreator = () => {
                 <Dialog.Backdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none">
-                        <Dialog.Body mt="20px" p={isDesktop ? undefined : "10px"}>
+                        <Dialog.Body mt="1.2rem" p={isDesktop ? undefined : "0.3rem"}>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
-                                <Flex gap="3" w="100%" align="center">
+                                <Flex gap="1.2rem" w="100%" align="center">
                                     <Field.Root>
-                                        <Textarea p="2px" variant="subtle" value={newItem.data.name}
+                                        <Textarea p="0.3rem" variant="subtle" value={newItem.data.name}
                                                   placeholder="TaskType name"
                                                   onChange={(e) => updateItem("name", e.target.value)}
                                                   bg="primary.lighter" resize="none" autoresize
@@ -150,10 +150,10 @@ const TaskCreator = () => {
                                         <FaStar/>
                                     </IconButton>
                                 </Flex>
-                                <Flex w="100%" align="center" gap="1rem" wrap="wrap">
+                                <Flex w="100%" align="center" gap="1.2rem" wrap="wrap">
                                     <Box w="140px">
                                         <Field.Root>
-                                            <Input p="2px" variant="subtle" type="date" bg="primary.lighter"
+                                            <Input p="0.3rem" variant="subtle" type="date" bg="primary.lighter"
                                                    opacity={inactiveDateStyle() ? 0.5 : 1}
                                                    value={newItem.data.date}
                                                    onChange={(e) => updateDate(e.target.value)}/>
@@ -169,7 +169,7 @@ const TaskCreator = () => {
                                     </Show>
                                 </Flex>
                                 {/* tags */}
-                                <Flex w="100%" align="center" bg="primary.lighter" p="8px" borderRadius="md"
+                                <Flex w="100%" align="center" bg="primary.lighter" p="0.6rem" borderRadius="md"
                                       justify="space-between">
                                     <Flex wrap="wrap" gap={2}>
                                         {tags?.map((tag, i) => (
@@ -188,7 +188,7 @@ const TaskCreator = () => {
                                 </Flex>
                             </Flex>
                         </Dialog.Body>
-                        <Dialog.Footer mt="0.5rem">
+                        <Dialog.Footer>
                             <Show when={newItem !== getNewTask()}>
                                 <MyButton type="delete" onClick={deleteItem}/>
                                 <Spacer/>
@@ -212,6 +212,6 @@ const styles = {
     },
     dialogDesktop: {
         alignItems: "center",
-        padding: "0.5rem"
+        padding: "0.6rem"
     }
 };

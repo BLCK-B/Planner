@@ -54,7 +54,7 @@ const Task = (task: TaskType) => {
     };
 
     return (
-        <Flex bg="primary.lighter"
+        <Flex bg="primary.lighter/70"
               color="primary.contrast"
               mb="3.5"
               borderRadius="md"
@@ -62,6 +62,7 @@ const Task = (task: TaskType) => {
               position="relative"
               justifyContent="space-between"
               onClick={handleClick}
+              boxShadow="xs"
               {...(task.data.important && styles.important)}
               {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="2">

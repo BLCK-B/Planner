@@ -18,10 +18,10 @@ const BaseActionButtons = ({buttons}: Props) => {
             <SimpleGrid
                 columns={2}
                 justifyItems="center"
-                p="5px"
-                rowGap={3}
-                columnGap={1.5}
-                margin="0 1rem 0 1rem"
+                p="0.3rem"
+                rowGap="0.6rem"
+                columnGap="0.6rem"
+                margin="0 0.6rem 0 0.6rem"
             >
                 {buttons}
             </SimpleGrid>

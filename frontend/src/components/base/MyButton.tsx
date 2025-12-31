@@ -23,8 +23,8 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
 
     const hoverColors: Record<string, string> = {
         delete: "theme.ReddishHover",
-        exit: "lightgrey",
-        cancel: "lightgrey",
+        exit: "darkgrey",
+        cancel: "darkgrey",
         default: "theme.Spruit3Hover",
     };
 

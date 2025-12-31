@@ -34,7 +34,7 @@ const Menu = () => {
     };
 
     const actionButtons = (
-        <Box mt="10px" bg="primary" borderRadius="5px">
+        <Box mt="5px" p="0.3rem 0 0.3rem 0" bg="primary" borderRadius="5px">
             {
                 router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
                     selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
@@ -45,12 +45,12 @@ const Menu = () => {
 
     return (
         <Box>
-            <Box bg="primary" borderRadius="5px" p="5px">
+            <Box bg="primary" borderRadius="5px" p="0.3rem">
                 {!isLargeScreen &&
-                    <Flex justifyContent="center" paddingBottom="5px" bg="primary">{actionButtons}</Flex>}
+                    <Flex justifyContent="center" paddingBottom="0.3rem" bg="primary">{actionButtons}</Flex>}
 
                 <Show when={isLargeScreen}>
-                    <Box m="0.5rem">
+                    <Box m="0.6rem 0 0.6rem 0">
                         <PlannerLogo/>
                     </Box>
                 </Show>

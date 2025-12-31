@@ -13,20 +13,20 @@ const textStyles = defineTextStyles({
 
 const dark = {
     contrast: "#FFFFFF",
-    darker: "#1a1a1a",
-    base: "#262626",
+    darker: "#141414",
+    base: "#1B1B1B",
     lighter: "#454545",
     lighterer: "#585858"
 };
 
 const light = {
     contrast: "#000000",
-    darker: "#d0d0d0",
-    base: "#ebebeb",
+    darker: "#C8C8C8",
+    base: "#E1E1E1",
     lighter: "#FFFFFF",
     lighterer: "#FFFFFF",
 }
-
+// spacing: 0.3 rem, 0.6 rem, 1.2 rem, 2.4 rem
 export const styles = defineConfig({
     theme: {
         textStyles,

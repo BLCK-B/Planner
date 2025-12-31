@@ -22,6 +22,7 @@ const CompleteSection = ({
               borderRadius="0px 5px 5px 0px"
               alignItems="center"
               transition="background-color 0.15s ease-in-out"
+              boxShadow="xs"
         >
             <Box>
                 <IconButton onClick={(e) => {
