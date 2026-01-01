@@ -15,8 +15,8 @@ const textStyles = defineTextStyles({
 const dark = {
     contrast: "#FFFFFF",
     darker: "#141414",
-    base: "#1B1B1B",
-    lighter: "#454545",
+    base: "#202020",
+    lighter: "#4a4a4a",
     lighterer: "#585858"
 };
 

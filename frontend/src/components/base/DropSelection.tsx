@@ -1,4 +1,6 @@
 import {Select, createListCollection} from "@chakra-ui/react";
+import {MdEventRepeat} from "react-icons/md";
+import * as React from "react";
 
 type SelectItem = {
     label: string;
@@ -11,9 +13,17 @@ type Props = {
     onSelect: (selected: string) => void;
     isInactive?: boolean;
     isClearable?: boolean;
+    selectIcon?: React.ReactNode;
 }
 
-const DropSelection = ({items, selected, onSelect, isInactive = false, isClearable = false}: Props) => {
+const DropSelection = ({
+                           items,
+                           selected,
+                           onSelect,
+                           isInactive = false,
+                           isClearable = false,
+                           selectIcon = <></>
+                       }: Props) => {
 
     const selectOptions = createListCollection({items});
 
@@ -33,6 +43,7 @@ const DropSelection = ({items, selected, onSelect, isInactive = false, isClearab
             <Select.Control opacity={isInactive ? 0.5 : 1}>
                 <Select.Trigger bg="primary.lighter" border="none" h="45px">
                     <Select.ValueText/>
+                    {selectIcon}
                 </Select.Trigger>
                 <Select.IndicatorGroup>
                     {isClearable && <Select.ClearTrigger/>}

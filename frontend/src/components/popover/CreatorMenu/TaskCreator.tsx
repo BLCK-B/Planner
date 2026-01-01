@@ -26,6 +26,8 @@ import type {TagType} from "@/types/TagType.ts";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
+import {MdEventRepeat} from "react-icons/md";
+import * as React from "react";
 
 const TaskCreator = () => {
 
@@ -164,6 +166,8 @@ const TaskCreator = () => {
                                             <DropSelection items={repeatOptions}
                                                            selected={newItem.data.repeatEvent}
                                                            onSelect={(repeat) => setEventRepeat(repeat)}
+                                                           isInactive={newItem.data.repeatEvent === "none"}
+                                                           selectIcon={<MdEventRepeat size="1rem"/>}
                                             />
                                         </Box>
                                     </Show>

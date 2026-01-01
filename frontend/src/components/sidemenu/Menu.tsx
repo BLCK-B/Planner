@@ -3,7 +3,7 @@ import {useRouter} from '@tanstack/react-router';
 import {useAtom} from 'jotai';
 import {activePage} from "@/global/atoms.ts";
 import {mainRoute, plansRoute} from "@/routes/__root.tsx";
-import {Box, Center, Flex, Show, SimpleGrid, useBreakpointValue} from "@chakra-ui/react";
+import {Box, Center, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsTagsEditPage from "@/components/actions/ActionButtonsTagsEditPage.tsx";
@@ -34,13 +34,13 @@ const Menu = () => {
     };
 
     const actionButtons = (
-        <Box mt="5px" bg="primary" borderRadius="5px">
+        <Flex mt="5px" bg="primary" borderRadius="5px" justifyContent="center">
             {
                 router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
                     selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
                         null
             }
-        </Box>
+        </Flex>
     );
 
     return (
@@ -53,7 +53,7 @@ const Menu = () => {
                 }
 
                 <Show when={isLargeScreen}>
-                    <Box m="0.6rem">
+                    <Box m="0.6rem 0.6rem 1.2rem 0.6rem">
                         <Center>
                             <PlannerLogo/>
                         </Center>

@@ -1,4 +1,4 @@
-import {IconButton, Popover, useBreakpointValue} from "@chakra-ui/react";
+import {Box, IconButton, Popover, useBreakpointValue} from "@chakra-ui/react";
 import {IoCalendarNumber} from "react-icons/io5";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useAtom, useAtomValue, useSetAtom} from "jotai";
@@ -6,9 +6,10 @@ import {existingItemForEdit, filterContentAtom, showAddDialog, showExactDatesAto
 import {getNewTask} from "@/types/TaskType.ts";
 import {MdFilterAlt} from "react-icons/md";
 import FilterSelects from "@/components/sidemenu/FilterSelects.tsx";
-import BaseActionButtons from "@/components/actions/BaseActionButtons.tsx";
 
 const ActionButtonsMainPage = () => {
+
+    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
 
     const [showExactDates, setShowExactDates] = useAtom(showExactDatesAtom);
 
@@ -34,7 +35,12 @@ const ActionButtonsMainPage = () => {
     const popoverPlacement = useBreakpointValue({base: "top-start", md: "right-start"}) ?? "top-start";
 
     const actionButtons = (
-        <>
+        <Box
+            display="grid"
+            gridTemplateColumns={isDesktop ? "auto auto" : "auto auto auto auto"}
+            gap="0.6rem"
+            m={isDesktop ? "0.6rem" : "0 0 0.3rem 0"}
+        >
             <MyButton type="add" onClick={createNewItem}/>
             <IconButton
                 onClick={() => setShowExactDates(!showExactDates)}
@@ -51,12 +57,10 @@ const ActionButtonsMainPage = () => {
                 </Popover.Trigger>
                 <FilterSelects/>
             </Popover.Root>
-        </>
+        </Box>
     );
 
-    return (
-        <BaseActionButtons buttons={actionButtons}/>
-    );
+    return (actionButtons);
 };
 
 export default ActionButtonsMainPage;
