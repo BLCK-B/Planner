@@ -12,7 +12,7 @@ const SettingsPage = () => {
     };
 
     return (
-        <Box w="100vw" h="100dvh" bg="primary.darker" fontSize="17px" textStyle="body">
+        <Box w="100vw" h="100dvh" bg="primary.darker" textStyle="body">
             <HeaderSettingsPage/>
 
             <Flex p="5px">

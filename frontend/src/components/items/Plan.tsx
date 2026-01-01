@@ -64,7 +64,7 @@ const Plan = (tag: TagType) => {
     return (
         <Box
             p="15px"
-            bg={`rgba${tag.data.color.slice(3, -1)}, 0.1)`}
+            bg={`rgba${tag.data.color.slice(3, -1)}, 0.08)`}
             color="primary.contrast"
             borderRadius="md"
             boxShadow="xs"

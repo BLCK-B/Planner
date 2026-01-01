@@ -3,7 +3,7 @@ import {useRouter} from '@tanstack/react-router';
 import {useAtom} from 'jotai';
 import {activePage} from "@/global/atoms.ts";
 import {mainRoute, plansRoute} from "@/routes/__root.tsx";
-import {Box, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
+import {Box, Center, Flex, Show, SimpleGrid, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsTagsEditPage from "@/components/actions/ActionButtonsTagsEditPage.tsx";
@@ -34,7 +34,7 @@ const Menu = () => {
     };
 
     const actionButtons = (
-        <Box mt="5px" p="0.3rem 0 0.3rem 0" bg="primary" borderRadius="5px">
+        <Box mt="5px" bg="primary" borderRadius="5px">
             {
                 router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
                     selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
@@ -47,11 +47,16 @@ const Menu = () => {
         <Box>
             <Box bg="primary" borderRadius="5px" p="0.3rem">
                 {!isLargeScreen &&
-                    <Flex justifyContent="center" paddingBottom="0.3rem" bg="primary">{actionButtons}</Flex>}
+                    <Flex justifyContent="center" paddingBottom="0.3rem" bg="primary">
+                        {actionButtons}
+                    </Flex>
+                }
 
                 <Show when={isLargeScreen}>
-                    <Box m="0.6rem 0 0.6rem 0">
-                        <PlannerLogo/>
+                    <Box m="0.6rem">
+                        <Center>
+                            <PlannerLogo/>
+                        </Center>
                     </Box>
                 </Show>
 

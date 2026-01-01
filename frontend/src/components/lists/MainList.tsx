@@ -77,12 +77,12 @@ const MainList = () => {
             );
 
             return adjacent ? (
-                <Box key={ym} position="relative" mt="38px">
+                <Box key={ym} position="relative" mt="2.4rem">
                     {groupMarker}
                     {groupList}
                 </Box>
             ) : (
-                <Box key={ym} position="relative" mt="30px">
+                <Box key={ym} position="relative" mt="1.2rem">
                     <Box key={ym} bg="primary" position="relative">
                         <Show when={byCompletedDate}>
                             {groupMarker}
@@ -100,11 +100,11 @@ const MainList = () => {
     const renderSomeday = (someday: TaskType[]) => {
         if (someday.length === 0) return;
         return (
-            <Box position="relative" mt="30px">
-                <Box bg="primary.darker" position="relative" p="10px" borderRadius="5px">
+            <Box position="relative" mt="2.4rem">
+                <Box bg="primary.darker" position="relative" p="0.3rem 0.6rem 0.3rem 0.6rem" borderRadius="5px">
                     <GroupMarker text={"Someday"} adjacent={false}/>
                     {someday.map((item) => (
-                        <Box key={item.itemID} position="relative" mb="2">
+                        <Box key={item.itemID} position="relative" mb="0.9rem">
                             <Task {...item} />
                         </Box>
                     ))}
@@ -116,7 +116,7 @@ const MainList = () => {
     return (
         <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
-                <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="100px"
+                <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="4.8rem"
                      paddingBottom="100px" animation="fade-in 0.05s">
                     {renderGroupedTasks(futureTasks)}
 

@@ -13,13 +13,15 @@ const TaskView = (task: TaskType) => {
     const showExactDates = useAtomValue(showExactDatesAtom);
 
     return (
-        <Flex bg="primary.lighter"
+        <Flex bg="primary.lighter/70"
               color="primary.contrast"
-              mb="3.5"
+              mb="0.9rem"
               borderRadius="md"
               cursor="button"
               position="relative"
               justifyContent="space-between"
+              boxShadow="xs"
+              {...(task.data.important && styles.important)}
               {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
@@ -43,3 +45,11 @@ const TaskView = (task: TaskType) => {
 };
 
 export default TaskView;
+
+const styles = {
+    important: {
+        borderWidth: "2px",
+        borderStyle: "solid",
+        borderColor: "theme.BrightYellow",
+    },
+};

@@ -56,7 +56,7 @@ const Task = (task: TaskType) => {
     return (
         <Flex bg="primary.lighter/70"
               color="primary.contrast"
-              mb="3.5"
+              mb="0.9rem"
               borderRadius="md"
               cursor="button"
               position="relative"
@@ -72,10 +72,10 @@ const Task = (task: TaskType) => {
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                         </Flex>
                     </Show>
-                    <Text mr="5px">{task.data.name}</Text>
+                    <Text mr="0.3rem">{task.data.name}</Text>
                 </Flex>
                 <Show when={task.data.tags.length}>
-                    <Flex mt="5px" gap={2}>
+                    <Flex mt="0.3rem" gap="0.3rem">
                         {task.data.tags.map((tag, index) => (
                             <MyTag key={index} tag={tag}/>
                         ))}

@@ -1,4 +1,4 @@
-import {Box, GridItem, Grid} from "@chakra-ui/react";
+import {Box, GridItem, Grid, useBreakpointValue} from "@chakra-ui/react";
 import Menu from "@/components/sidemenu/Menu.tsx";
 import * as React from "react";
 import TagCreator from "@/components/popover/CreatorMenu/TagCreator.tsx";
@@ -11,8 +11,10 @@ type Props = {
 };
 
 const PageLayout = ({header, content, popover}: Props) => {
+    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
+
     return (
-        <Box w="100vw" h="100dvh" bg="primary.darker" fontSize="17px" textStyle="body">
+        <Box w="100vw" h="100dvh" bg="primary.darker" textStyle="body">
             <Grid
                 templateColumns={{
                     base: "1fr", // 1 column
@@ -25,7 +27,7 @@ const PageLayout = ({header, content, popover}: Props) => {
                     md: "auto repeat(9, 1fr)" // 9 rows header on large screen
                 }}
                 h="100%"
-                gap={1}
+                gap={isDesktop ? "0.3rem" : "0"}
             >
                 {/* header */}
                 <GridItem
@@ -39,6 +41,7 @@ const PageLayout = ({header, content, popover}: Props) => {
                 <GridItem
                     colSpan={{base: 10, sm: 10, md: 1}}
                     gridRow={{base: 3, sm: 3, md: 2}}
+                    marginLeft={isDesktop ? "0.3rem" : "0"}
                 >
                     <Menu/>
                 </GridItem>
@@ -50,6 +53,7 @@ const PageLayout = ({header, content, popover}: Props) => {
                     minHeight="0px"
                     bg="primary"
                     style={styles.gridSection}
+                    marginRight={isDesktop ? "0.3rem" : "0"}
                 >
                     {content}
                 </GridItem>
@@ -57,7 +61,6 @@ const PageLayout = ({header, content, popover}: Props) => {
                 {/* popover */}
                 {popover}
                 {/* globally accessible */}
-                {/* todo: temporarily placed */}
                 <TagCreator/>
                 <ErrorModal/>
             </Grid>

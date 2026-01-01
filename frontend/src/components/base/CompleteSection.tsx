@@ -1,7 +1,7 @@
 import {Box, Flex, IconButton, Show} from "@chakra-ui/react";
 import {IoMdCheckmark} from "react-icons/io";
-import * as React from "react";
 import {MdEventRepeat} from "react-icons/md";
+import * as React from "react";
 
 type Props = {
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
@@ -18,17 +18,17 @@ const CompleteSection = ({
                          }: Props) => {
     return (
         <Flex bg={isCompleted ? "theme.Spruit2" : "primary.lighter"}
-              _hover={{bg: "theme.Spruit1", _active: {bg: "theme.Spruit2",},}} w="2.5rem"
+              _hover={{bg: "theme.Spruit1", _active: {bg: "theme.Spruit2",},}} w="2.4rem"
               borderRadius="0px 5px 5px 0px"
               alignItems="center"
-              transition="background-color 0.15s ease-in-out"
+              transition="background-color 0.15s ease-out"
               boxShadow="xs"
         >
             <Box>
                 <IconButton onClick={(e) => {
                     e.stopPropagation();
                     onClick(e);
-                }} disabled={disabled} bg="none" h="2em" w="2em">
+                }} disabled={disabled} bg="none" h="2rem" w="2rem">
                     <Show when={!isRepeat}>
                         <IoMdCheckmark color="#141414" aria-label="Complete"/>
                     </Show>

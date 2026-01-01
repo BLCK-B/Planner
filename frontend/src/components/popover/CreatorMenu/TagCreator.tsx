@@ -66,7 +66,7 @@ const TagCreator = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
-                    <Dialog.Content bg="primary" color="primary.contrast">
+                    <Dialog.Content bg="primary" color="primary.contrast" textStyle="body">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 <Show when={newTag.data.tagName}>
