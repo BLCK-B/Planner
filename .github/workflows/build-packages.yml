@@ -57,10 +57,11 @@ jobs:
         if: ${{ github.event.inputs.frontend_only != 'true' }}
         run: |
           curl -X POST \
-            "https://dokploy.spruits.eu/api/trpc/application.deploy" \
+            "https://dokploy.spruits.eu/api/application.deploy" \
             -H "accept: application/json" \
-            -H "Authorization: Bearer ${{ secrets.DOKPLOY_API_TOKEN }}" \
             -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.DOKPLOY_API_TOKEN }}" \
+            -H "x-api-key: ${{ secrets.DOKPLOY_API_TOKEN }}" \
             -d '{
               "json": {
                 "applicationId": "${{ secrets.DOKPLOY_APPLICATION_ID }}"
