@@ -36,7 +36,7 @@ export const readableTimeToDate = (dateString: string) => {
         }
         if (months > 0 && months < 12 && years < 3) parts.push(`${months}m`);
     } else if (months > 1) {
-        parts.push(`${months}mo`);
+        parts.push(`${months} mo`);
     } else {
         parts.push(`${dayDiff} days`);
     }

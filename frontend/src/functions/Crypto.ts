@@ -101,13 +101,13 @@ export const createEncryptionKey = async (
 
     const rawKey = await crypto.subtle.exportKey("raw", encryptionKey);
     const encodedKey = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
-    sessionStorage.setItem("encryptionKey", encodedKey);
+    localStorage.setItem("encryptionKey", encodedKey);
 };
 
 const getCryptoKey = async (): Promise<CryptoKey> => {
-    const keyBase64 = sessionStorage.getItem("encryptionKey");
+    const keyBase64 = localStorage.getItem("encryptionKey");
     if (!keyBase64) {
-        throw new Error("Encryption key not found in session storage");
+        throw new Error("Encryption key not found in localstorage");
     }
     const rawKey = decodeFromBase64(keyBase64);
     return crypto.subtle.importKey(

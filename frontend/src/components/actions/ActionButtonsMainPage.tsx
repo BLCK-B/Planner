@@ -34,7 +34,7 @@ const ActionButtonsMainPage = () => {
 
     const popoverPlacement = useBreakpointValue({base: "top-start", md: "right-start"}) ?? "top-start";
 
-    const actionButtons = (
+    return (
         <Box
             display="grid"
             gridTemplateColumns={isDesktop ? "auto auto" : "auto auto auto auto"}
@@ -59,8 +59,6 @@ const ActionButtonsMainPage = () => {
             </Popover.Root>
         </Box>
     );
-
-    return (actionButtons);
 };
 
 export default ActionButtonsMainPage;

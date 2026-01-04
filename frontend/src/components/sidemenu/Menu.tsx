@@ -47,7 +47,7 @@ const Menu = () => {
         <Box>
             <Box bg="primary" borderRadius="5px" p="0.3rem">
                 {!isLargeScreen &&
-                    <Flex justifyContent="center" paddingBottom="0.3rem" bg="primary">
+                    <Flex justifyContent="center" paddingBottom="0.3rem">
                         {actionButtons}
                     </Flex>
                 }

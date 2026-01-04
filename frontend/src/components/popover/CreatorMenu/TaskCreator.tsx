@@ -27,7 +27,6 @@ import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
 import {MdEventRepeat} from "react-icons/md";
-import * as React from "react";
 
 const TaskCreator = () => {
 
@@ -137,12 +136,13 @@ const TaskCreator = () => {
                                 <Flex gap="1.2rem" w="100%" align="center">
                                     <Field.Root>
                                         <Textarea p="0.3rem" variant="subtle" value={newItem.data.name}
-                                                  placeholder="TaskType name"
+                                                  placeholder="Task name"
                                                   onChange={(e) => updateItem("name", e.target.value)}
                                                   bg="primary.lighter" resize="none" autoresize
                                         />
                                     </Field.Root>
                                     <IconButton
+                                        marginRight="0.6rem"
                                         onClick={() => updateItem("important", !newItem.data.important)}
                                         size="xs"
                                         aria-label={"important"}

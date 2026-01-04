@@ -20,31 +20,31 @@ export const landingRoute = createRoute({
 
 export const authRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'auth/$formType',
+    path: 'app/auth/$formType',
     component: AuthPage,
 })
 
 export const mainRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'main',
+    path: 'app/tasks',
     component: MainPage,
 })
 
 export const plansRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'plans',
+    path: 'app/plans',
     component: PlansPage,
 })
 
 export const tagsEditRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'tagsEdit',
+    path: 'app/tagsEdit',
     component: TagsEditPage,
 })
 
 export const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'settings',
+    path: 'app/settings',
     component: SettingsPage,
 })
 

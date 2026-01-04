@@ -116,7 +116,8 @@ const MainList = () => {
     return (
         <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
-                <Box w={{base: "92%", sm: "90%", md: "55%"}} mx="auto" position="relative" top="4.8rem"
+                <Box w={{base: "95%", sm: "90%", md: "55%"}} mx="auto"
+                     position="relative" top="4.8rem"
                      paddingBottom="100px" animation="fade-in 0.05s">
                     {renderGroupedTasks(futureTasks)}
 

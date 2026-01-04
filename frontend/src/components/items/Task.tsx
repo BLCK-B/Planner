@@ -16,6 +16,7 @@ import {useQueryClient} from "@tanstack/react-query";
 import CompleteSection from "@/components/base/CompleteSection.tsx";
 
 const Task = (task: TaskType) => {
+
     const queryClient = useQueryClient();
 
     const saveTaskMutation = useSaveTask();
@@ -68,7 +69,7 @@ const Task = (task: TaskType) => {
             <Box p="2">
                 <Flex align="center" justifyContent="space-between">
                     <Show when={task.data.date && !task.data.completed}>
-                        <Flex w="120px" align="center" gap="5px">
+                        <Flex minW="80px" maxW="120px" marginRight="0.6rem">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                         </Flex>
                     </Show>

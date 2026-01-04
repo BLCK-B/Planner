@@ -132,7 +132,7 @@ const AuthPage = () => {
     };
 
     return (
-        <Box w="100vw" h="100dvh" bg="primary" textStyle="body" backgroundImage="url('/skybg.jpg')"
+        <Box w="100vw" h="100svh" bg="primary" textStyle="body" backgroundImage="url('/skybg.jpg')"
              bgSize="cover"
              bgRepeat="no-repeat">
             <Grid templateRows="auto 1fr" templateColumns="repeat(1, 1fr)" gap={2} h="100%">
@@ -183,7 +183,8 @@ const AuthPage = () => {
                                             <Field.ErrorText>{String(errors.password?.message)}</Field.ErrorText>
                                         </Field.Root>
 
-                                        <Button type="submit" alignSelf="center" variant="subtle">Submit</Button>
+                                        <Button type="submit" alignSelf="center"
+                                                variant="subtle">{formType === "register" ? "Sign up" : "Log in"}</Button>
                                         {/*<Show when={formType === "log-in"}>Forgot password</Show>*/}
 
                                     </Stack>

@@ -3,7 +3,7 @@ import {IoMdAdd, IoMdCheckmark} from "react-icons/io";
 import {RxCross2} from "react-icons/rx";
 import {MdDelete} from "react-icons/md";
 import {RxExit} from "react-icons/rx";
-import {FaHashtag} from "react-icons/fa";
+import {FaTags} from "react-icons/fa";
 import * as React from "react";
 
 type Props = {
@@ -18,6 +18,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
         delete: "theme.Reddish",
         exit: "grey",
         cancel: "grey",
+        tagedit: "grey",
         default: "theme.Spruit3",
     };
 
@@ -25,6 +26,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
         delete: "theme.ReddishHover",
         exit: "darkgrey",
         cancel: "darkgrey",
+        tagedit: "darkgrey",
         default: "theme.Spruit3Hover",
     };
 
@@ -47,7 +49,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
             {type === "cancel" && <RxCross2/>}
             {type === "delete" && <MdDelete/>}
             {type === "exit" && <RxExit/>}
-            {type === "tagedit" && <FaHashtag/>}
+            {type === "tagedit" && <FaTags/>}
         </IconButton>
     );
 };
