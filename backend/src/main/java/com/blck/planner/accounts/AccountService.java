@@ -78,7 +78,7 @@ public class AccountService implements UserDetailsService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .subject(authResponse.getName())
                 .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plus(1, ChronoUnit.HOURS))
+                .expiresAt(Instant.now().plus(90, ChronoUnit.DAYS))
                 .claim("roles", authResponse.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).toList())
                 .build();

@@ -30,7 +30,7 @@ import {MdEventRepeat} from "react-icons/md";
 
 const TaskCreator = () => {
 
-    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
+    const isDesktop = useBreakpointValue({base: false, sm: true, md: true}) as boolean;
 
     const queryClient = useQueryClient();
 

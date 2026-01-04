@@ -46,7 +46,11 @@ const Task = (task: TaskType) => {
             const newRepeatedTask = structuredClone(task);
             newRepeatedTask.itemID = '';
             newRepeatedTask.data.completed = '';
-            newRepeatedTask.data.date = getNextDate(newTask.data.date, newTask.data.repeatEvent, newTask.data.repeatOriginDay);
+            newRepeatedTask.data.date = getNextDate(
+                newTask.data.date,
+                newTask.data.repeatEvent,
+                newTask.data.repeatOriginDay
+            );
             await saveTaskMutation.mutateAsync(newRepeatedTask);
         }
 
@@ -55,36 +59,41 @@ const Task = (task: TaskType) => {
     };
 
     return (
-        <Flex bg="primary.lighter/70"
-              color="primary.contrast"
-              mb="0.9rem"
-              borderRadius="md"
-              cursor="button"
-              position="relative"
-              justifyContent="space-between"
-              onClick={handleClick}
-              boxShadow="xs"
-              {...(task.data.important && styles.important)}
-              {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
-            <Box p="2">
-                <Flex align="center" justifyContent="space-between">
+        <Flex
+            bg="primary.lighter/70"
+            color="primary.contrast"
+            mb="0.9rem"
+            borderRadius="md"
+            cursor="pointer"
+            position="relative"
+            justifyContent="space-between"
+            onClick={handleClick}
+            boxShadow="xs"
+            {...(task.data.important && styles.important)}
+            {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
+            <Box p="0.5rem" w="100%">
+                <Text mb="0.6rem">{task.data.name}</Text>
+                <Flex align="center" justifyContent="flex-start" wrap="wrap" gap="0.3rem" w="100%">
                     <Show when={task.data.date && !task.data.completed}>
-                        <Flex minW="80px" maxW="120px" marginRight="0.6rem">
+                        <Flex minW="85px" maxW="85px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                         </Flex>
                     </Show>
-                    <Text mr="0.3rem">{task.data.name}</Text>
+                    <Show when={task.data.tags.length}>
+                        <Flex gap="0.3rem">
+                            {task.data.tags.map((tag, index) => (
+                                <MyTag key={index} tag={tag}/>
+                            ))}
+                        </Flex>
+                    </Show>
                 </Flex>
-                <Show when={task.data.tags.length}>
-                    <Flex mt="0.3rem" gap="0.3rem">
-                        {task.data.tags.map((tag, index) => (
-                            <MyTag key={index} tag={tag}/>
-                        ))}
-                    </Flex>
-                </Show>
             </Box>
-            <CompleteSection onClick={toggleCompleted} isCompleted={Boolean(task.data.completed)}
-                             isRepeat={task.data.repeatEvent !== 'none'}/>
+
+            <CompleteSection
+                onClick={toggleCompleted}
+                isCompleted={Boolean(task.data.completed)}
+                isRepeat={task.data.repeatEvent !== 'none'}
+            />
         </Flex>
     );
 };
