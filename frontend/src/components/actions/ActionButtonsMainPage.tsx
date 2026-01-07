@@ -41,7 +41,6 @@ const ActionButtonsMainPage = () => {
             gap="0.6rem"
             m={isDesktop ? "0.6rem" : "0 0 0.3rem 0"}
         >
-            <MyButton type="add" onClick={createNewItem}/>
             <IconButton
                 onClick={() => setShowExactDates(!showExactDates)}
                 size="xs"
@@ -49,6 +48,7 @@ const ActionButtonsMainPage = () => {
             >
                 <IoCalendarNumber color="black" aria-label="Complete"/>
             </IconButton>
+            <MyButton type="add" onClick={createNewItem}/>
             <Popover.Root positioning={{placement: popoverPlacement}}>
                 <Popover.Trigger asChild>
                     <IconButton size="xs" bg={activeFilterColor()}>

@@ -15,7 +15,7 @@ const PlansList = () => {
         <Flex direction="column" height="100%" style={{overflowY: "scroll", scrollbarWidth: "none"}}>
             <Box overflowY="scroll" scrollbarWidth="none">
                 <Box
-                    w={{base: "92%", sm: "90%", md: "65%"}}
+                    w={{base: "92%", sm: "92%", md: "80%"}}
                     mx="auto"
                     position="relative"
                     top="50px"

@@ -131,7 +131,7 @@ export default TagCreator;
 
 const styles = {
     dialogMobile: {
-        alignItems: "end",
+        alignItems: "center",
         padding: "0"
     },
     dialogDesktop: {

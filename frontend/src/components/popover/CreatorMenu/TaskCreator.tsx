@@ -130,7 +130,8 @@ const TaskCreator = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
-                    <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none" textStyle="body">
+                    <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none"
+                                    textStyle="body">
                         <Dialog.Body mt="1.2rem" p={isDesktop ? undefined : "0.3rem"}>
                             <Flex gap="6" align="start" justifyContent="start" direction="column">
                                 <Flex gap="1.2rem" w="100%" align="center">
@@ -211,11 +212,11 @@ export default TaskCreator;
 
 const styles = {
     dialogMobile: {
-        alignItems: "end",
+        alignItems: "center",
         padding: "0"
     },
     dialogDesktop: {
         alignItems: "center",
         padding: "0.6rem"
-    }
+    },
 };
