@@ -1,5 +1,6 @@
 package com.blck.planner.config;
 
+import io.sentry.Sentry;
 import tools.jackson.core.JacksonException;
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +23,7 @@ public class SerializationExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public Map<String, Object> httpMessageNotReadableException(HttpMessageNotReadableException e) {
+        Sentry.capture(e);
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "serialisation_error");
         errorResponse.put("message", "Serialisation error: " + e.getMostSpecificCause().getMessage());
@@ -32,6 +34,7 @@ public class SerializationExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public Map<String, Object> jsonProcessingException(JacksonException e) {
+        Sentry.capture(e);
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "serialisation_error");
         errorResponse.put("message", "JSON processing error: " + e.getOriginalMessage());
@@ -42,6 +45,7 @@ public class SerializationExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public Map<String, Object> handleDatabaseException(Exception e) {
+        Sentry.capture(e);
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "database_constraint_violation");
         errorResponse.put("message", "Database error: " + e.getMessage());
@@ -55,6 +59,7 @@ public class SerializationExceptionHandler {
         if (e instanceof AccessDeniedException || e instanceof AuthenticationException) {
             throw e;
         }
+        Sentry.capture(e);
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("error", "internal_error");
         errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "Unexpected error");

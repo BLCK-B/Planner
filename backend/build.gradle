@@ -24,6 +24,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-liquibase'
 
+    implementation 'io.sentry:sentry:1.7.27'
+
     runtimeOnly 'org.postgresql:postgresql:42.7.8'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test:'

@@ -69,6 +69,10 @@ const AuthPage = () => {
     };
 
     const login = async (credentials: Credentials) => {
+        if (credentials.username === "testsentry") {
+            await FetchRequest("GET", "/auth/test-sentry");
+            return;
+        }
         try {
             setInfoAlertMessage("");
             const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
