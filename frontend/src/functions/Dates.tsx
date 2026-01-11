@@ -64,6 +64,12 @@ export const getDayNumber = (dateString: string) => {
     return date.getDate();
 };
 
+export const getDayInWeek = (date: string) => {
+    if (!date) return "";
+    return new Intl.DateTimeFormat('en-US', {weekday: 'short'})
+        .format(new Date(`${date}T00:00:00`));
+};
+
 export const dateToReadableDDMM = (date: string) => {
     const asDate = new Date(date);
     const day = asDate.getDate();
@@ -98,16 +104,10 @@ export const getNextDate = (previousDate: string, repeat: string, originDay: num
 };
 
 export const globalDateFormatter = (task: TaskType, showExactDates: boolean) => {
-    if (!task.data.completed && showExactDates) {
-        return dateToReadableDDMM(task.data.date);
+    if (showExactDates) {
+        return `${dateToReadableDDMM(task.data.date)} ${getDayInWeek(task.data.date)}`;
     }
-    if (!task.data.completed && !showExactDates) {
+    if (!showExactDates) {
         return readableTimeToDate(task.data.date);
-    }
-    if (task.data.completed && showExactDates) {
-        return dateToReadableDDMM(task.data.completed);
-    }
-    if (task.data.completed && !showExactDates) {
-        return readableTimeToDate(task.data.completed);
     }
 };

@@ -75,7 +75,7 @@ const Task = (task: TaskType) => {
                 <Text mb="0.6rem">{task.data.name}</Text>
                 <Flex align="center" justifyContent="flex-start" wrap="wrap" gap="0.3rem" w="100%">
                     <Show when={task.data.date && !task.data.completed}>
-                        <Flex minW="85px" maxW="85px">
+                        <Flex minW="95px" maxW="95px">
                             <Text>{globalDateFormatter(task, showExactDates)}</Text>
                         </Flex>
                     </Show>
