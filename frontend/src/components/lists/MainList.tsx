@@ -9,6 +9,7 @@ import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
 import {useAtomValue} from "jotai";
 import {filterContentAtom} from "@/global/atoms.ts";
+import {useRef} from "react";
 
 const MainList = () => {
 
@@ -22,6 +23,8 @@ const MainList = () => {
         if (!filterContent || filterContent.length === 0) return true;
         return item.data.tags.some(tag => filterContent.includes(tag.tagID));
     }
+
+    const somedayRef = useRef<HTMLDivElement | null>(null);
 
     if (!itemList) {
         return <div>Loading...</div>;
@@ -98,9 +101,9 @@ const MainList = () => {
     };
 
     const renderSomeday = (someday: TaskType[]) => {
-        if (someday.length === 0) return;
+        if (someday.length === 0) return <Box ref={somedayRef}/>;
         return (
-            <Box position="relative" mt="2.4rem">
+            <Box position="relative" mt="2.4rem" ref={somedayRef}>
                 <Box bg="primary.darker" position="relative" p="0.3rem 0.6rem 0.3rem 0.6rem" borderRadius="5px">
                     <GroupMarker text={"Someday"} adjacent={false}/>
                     {someday.map((item) => (

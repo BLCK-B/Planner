@@ -32,10 +32,10 @@ const AuthPage = () => {
     // not ready for protocol migrations
     const reencryptAllData = async () => {
         const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
-        const allPlansReencrypted = await FetchRequest("GET", "/users/userPlans");
+        const allPlansReencrypted = await FetchRequest("GET", "/users/userTags");
 
         if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
-        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserPlans", allPlansReencrypted);
+        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allPlansReencrypted);
     };
 
     const registerNewAccount = async (credentials: Credentials) => {
@@ -91,7 +91,6 @@ const AuthPage = () => {
             }
             await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
 
-            // here is the place to call reencryption
             // await reencryptAllData();
 
             await router.navigate({to: mainRoute.fullPath});

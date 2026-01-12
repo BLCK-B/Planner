@@ -21,10 +21,10 @@ type EncryptSpec = {
 
 export const TaskEncryptSpec: EncryptSpec = {
     name: true,
-    date: true,
+    date: false,
     tags: false,
     plan: false,
-    completed: true,
+    completed: false,
     repeatEvent: false,
     repeatOriginDay: false,
     important: false,
