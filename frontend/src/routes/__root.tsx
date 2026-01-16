@@ -5,6 +5,7 @@ import AuthPage from '@/pages/AuthPage.tsx'
 import PlansPage from '@/pages/main/PlansPage.tsx'
 import TagsEditPage from "@/pages/main/TagsEditPage.tsx";
 import SettingsPage from "@/pages/settings/SettingsPage.tsx";
+import WorklistPage from "@/pages/main/WorklistPage.tsx";
 
 export const rootRoute = createRootRoute({
     component: () => (
@@ -36,6 +37,13 @@ export const plansRoute = createRoute({
     component: PlansPage,
 })
 
+export const worklistRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: 'app/worklist',
+    component: WorklistPage,
+})
+
+
 export const tagsEditRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: 'app/tagsEdit',
@@ -54,6 +62,7 @@ export const routeTree = rootRoute.addChildren(
         authRoute,
         mainRoute,
         plansRoute,
+        worklistRoute,
         tagsEditRoute,
         settingsRoute,
     ])

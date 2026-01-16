@@ -1,5 +1,4 @@
 import type {TagType} from "@/types/TagType.ts";
-import type {PlanType} from "@/types/PlanType.ts";
 
 export type TaskType = {
     itemID: string;
@@ -7,7 +6,6 @@ export type TaskType = {
         name: string;
         date: string; // target completion date
         tags: TagType[];
-        plan?: PlanType; // TODO: without null?
         completed: string; // date of completion - empty if not completed
         repeatEvent: 'none' | 'week' | 'two-weeks' | 'month'; // create copy when completed
         repeatOriginDay: number; // for month repeat option to prevent day shifting
@@ -23,7 +21,6 @@ export const TaskEncryptSpec: EncryptSpec = {
     name: true,
     date: false,
     tags: false,
-    plan: false,
     completed: false,
     repeatEvent: false,
     repeatOriginDay: false,
@@ -36,7 +33,6 @@ const newTask: TaskType = {
         name: '',
         date: '',
         tags: [],
-        plan: undefined,
         completed: '',
         repeatEvent: 'none',
         repeatOriginDay: 0,

@@ -2,17 +2,19 @@ import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useRouter} from '@tanstack/react-router';
 import {useAtom} from 'jotai';
 import {activePage} from "@/global/atoms.ts";
-import {mainRoute, plansRoute} from "@/routes/__root.tsx";
+import {mainRoute, plansRoute, worklistRoute} from "@/routes/__root.tsx";
 import {Box, Center, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsTagsEditPage from "@/components/actions/ActionButtonsTagsEditPage.tsx";
+import ActionButtonsWorklistPage from "@/components/actions/ActionButtonsWorklistPage.tsx";
+import {useEffect} from "react";
 
 const Menu = () => {
 
     const router = useRouter();
 
-    const tabs = ["Tasks", "Plans"];
+    const tabs = ["Tasks", "Plans", "Worklist"];
 
     const [selectedTab, setSelectedTab] = useAtom(activePage);
 
@@ -28,17 +30,24 @@ const Menu = () => {
                 router.navigate({to: plansRoute.fullPath});
                 break;
             case tabs[2]:
-                router.navigate({to: mainRoute.fullPath});
+                router.navigate({to: worklistRoute.fullPath});
                 break;
         }
     };
 
+    useEffect(() => {
+        const href = router.latestLocation.href.toLowerCase();
+        const latestTab = tabs.find(tab => href.includes(tab.toLowerCase()));
+        if (latestTab) setSelectedTab(latestTab);
+    }, [])
+
     const actionButtons = (
-        <Flex mt="5px" bg="primary" borderRadius="5px" justifyContent="center">
+        <Flex mt="5px" bg="primary" borderRadius="md" justifyContent="center">
             {
                 router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
                     selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
-                        null
+                        selectedTab === 'Worklist' ? <ActionButtonsWorklistPage/> :
+                            null
             }
         </Flex>
     );
