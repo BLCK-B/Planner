@@ -6,6 +6,7 @@ import PlansPage from '@/pages/main/PlansPage.tsx'
 import TagsEditPage from "@/pages/main/TagsEditPage.tsx";
 import SettingsPage from "@/pages/settings/SettingsPage.tsx";
 import WorklistPage from "@/pages/main/WorklistPage.tsx";
+import WorklistSubtasksPage from "@/pages/main/WorklistSubtasksPage.tsx";
 
 export const rootRoute = createRootRoute({
     component: () => (
@@ -43,6 +44,11 @@ export const worklistRoute = createRoute({
     component: WorklistPage,
 })
 
+export const worklistSubtasksRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: 'app/worklist/subtasks',
+    component: WorklistSubtasksPage,
+})
 
 export const tagsEditRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -63,6 +69,7 @@ export const routeTree = rootRoute.addChildren(
         mainRoute,
         plansRoute,
         worklistRoute,
+        worklistSubtasksRoute,
         tagsEditRoute,
         settingsRoute,
     ])

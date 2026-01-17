@@ -6,48 +6,38 @@ import {mainRoute, plansRoute, worklistRoute} from "@/routes/__root.tsx";
 import {Box, Center, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
-import ActionButtonsTagsEditPage from "@/components/actions/ActionButtonsTagsEditPage.tsx";
 import ActionButtonsWorklistPage from "@/components/actions/ActionButtonsWorklistPage.tsx";
-import {useEffect} from "react";
+import {getTabs, type Tabs} from "@/types/Tabs.ts";
 
 const Menu = () => {
 
     const router = useRouter();
 
-    const tabs = ["Tasks", "Plans", "Worklist"];
-
     const [selectedTab, setSelectedTab] = useAtom(activePage);
 
     const isLargeScreen = useBreakpointValue({base: false, md: true}) as boolean;
 
-    const tabSelected = (tab: string) => {
+    const tabSelected = (tab: Tabs) => {
         setSelectedTab(tab);
         switch (tab) {
-            case tabs[0]:
+            case 'Tasks':
                 router.navigate({to: mainRoute.fullPath});
                 break;
-            case tabs[1]:
+            case 'Plans':
                 router.navigate({to: plansRoute.fullPath});
                 break;
-            case tabs[2]:
+            case 'Worklist':
                 router.navigate({to: worklistRoute.fullPath});
                 break;
         }
     };
 
-    useEffect(() => {
-        const href = router.latestLocation.href.toLowerCase();
-        const latestTab = tabs.find(tab => href.includes(tab.toLowerCase()));
-        if (latestTab) setSelectedTab(latestTab);
-    }, [])
-
     const actionButtons = (
         <Flex mt="5px" bg="primary" borderRadius="md" justifyContent="center">
             {
-                router.state.location.pathname === '/tagsEdit' ? <ActionButtonsTagsEditPage/> :
-                    selectedTab === 'Tasks' ? <ActionButtonsMainPage/> :
-                        selectedTab === 'Worklist' ? <ActionButtonsWorklistPage/> :
-                            null
+                router.state.location.pathname === '/app/tasks' ? <ActionButtonsMainPage/> :
+                    router.state.location.pathname === '/app/worklist' ? <ActionButtonsWorklistPage/> :
+                        null
             }
         </Flex>
     );
@@ -70,9 +60,9 @@ const Menu = () => {
                 </Show>
 
                 <SelectTabs
-                    tabs={tabs}
+                    tabs={getTabs}
                     selected={selectedTab}
-                    valueChanged={tabSelected}
+                    valueChanged={(e) => tabSelected(e as Tabs)}
                     orientation={"vertical"}
                     responsive={true}
                 />

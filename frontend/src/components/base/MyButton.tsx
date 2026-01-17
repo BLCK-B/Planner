@@ -4,10 +4,11 @@ import {RxCross2} from "react-icons/rx";
 import {MdDelete} from "react-icons/md";
 import {RxExit} from "react-icons/rx";
 import {FaTags} from "react-icons/fa";
+import {MdEdit} from "react-icons/md";
 import * as React from "react";
 
 type Props = {
-    type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit' | 'tagedit'
+    type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit' | 'tagedit' | 'edit'
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
     disabled?: boolean;
 }
@@ -19,6 +20,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
         exit: "grey",
         cancel: "grey",
         tagedit: "grey",
+        edit: "primary.lighter",
         default: "theme.Spruit3",
     };
 
@@ -27,6 +29,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
         exit: "darkgrey",
         cancel: "darkgrey",
         tagedit: "darkgrey",
+        edit: "primary.lighterer",
         default: "theme.Spruit3Hover",
     };
 
@@ -50,6 +53,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
             {type === "delete" && <MdDelete/>}
             {type === "exit" && <RxExit/>}
             {type === "tagedit" && <FaTags/>}
+            {type === "edit" && <MdEdit/>}
         </IconButton>
     );
 };

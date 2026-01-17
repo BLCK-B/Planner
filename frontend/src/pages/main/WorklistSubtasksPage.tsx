@@ -1,17 +1,17 @@
 import PageLayout from "@/components/base/PageLayout.tsx";
 import BaseHeader from "@/components/header/BaseHeader.tsx";
-import WorkList from "@/components/lists/WorkList.tsx";
+import SubtasksList from "@/components/lists/SubtasksList.tsx";
 import WorkItemCreator from "@/components/popover/CreatorMenu/WorkItemCreator.tsx";
 
-const WorklistPage = () => {
+const WorklistSubtasksPage = () => {
 
     return (
         <PageLayout
             header={<BaseHeader menu={true}/>}
-            content={<WorkList/>}
+            content={<SubtasksList/>}
             popover={<WorkItemCreator/>}
         />
     );
 };
 
-export default WorklistPage;
+export default WorklistSubtasksPage;

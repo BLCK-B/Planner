@@ -1,13 +1,35 @@
-import {Accordion, Box, Flex, Span} from "@chakra-ui/react";
-import WorkItem from "@/components/items/WorkItem.tsx";
+import {Accordion, Box, Flex} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
+import {useSetAtom} from "jotai";
+import {existingWorkItemForEdit, selectedWorkitem, showWorkItemCreator} from "@/global/atoms.ts";
+import type {WorkItemType} from "@/types/WorkItemType.ts";
+import {router, worklistSubtasksRoute} from "@/routes/__root.tsx";
+import MyButton from "@/components/base/MyButton.tsx";
+import * as React from "react";
 
 const WorkList = () => {
+
+    const setShowAddDialog = useSetAtom(showWorkItemCreator);
+
+    const setEditItem = useSetAtom(existingWorkItemForEdit);
+
+    const setSelectedWorkitem = useSetAtom(selectedWorkitem);
 
     const {data: workItems} = useQuery(loadWorkItemsQuery());
 
     if (!workItems) return <div>Loading...</div>;
+
+    const openSubtasks = (workItem: WorkItemType) => {
+        setSelectedWorkitem(workItem);
+        router.navigate({to: worklistSubtasksRoute.fullPath});
+    }
+
+    const openEdit = (e: React.MouseEvent<HTMLButtonElement>, workItem: WorkItemType) => {
+        e.stopPropagation();
+        setEditItem(workItem);
+        setShowAddDialog(true);
+    };
 
     return (
         <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
@@ -16,20 +38,30 @@ const WorkList = () => {
                      position="relative" top="4.8rem"
                      paddingBottom="100px" animation="fade-in 0.05s">
                     <Accordion.Root multiple defaultValue={["b"]}>
-                        {workItems.map((item, index) => (
-                            <Accordion.Item key={index} value={item.itemID}
-                                            mt="0.6rem"
-                                            borderRadius="md" p="0.3rem" bg="primary.darker">
-                                <Accordion.ItemTrigger p="0.3rem">
-                                    <Span flex="1">{item.data.name}</Span>
-                                    <Accordion.ItemIndicator color="primary.lighterer"/>
-                                </Accordion.ItemTrigger>
-                                <Accordion.ItemContent>
-                                    <Accordion.ItemBody>
-                                        <WorkItem workItem={item}/>
-                                    </Accordion.ItemBody>
-                                </Accordion.ItemContent>
-                            </Accordion.Item>
+                        {workItems?.map((item, i) => (
+                            <Flex
+                                key={i}
+                                bg='primary.lighter/70'
+                                color="primary.contrast"
+                                mb="0.9rem"
+                                p="0.5rem"
+                                borderRadius="md"
+                                cursor="pointer"
+                                position="relative"
+                                justifyContent="space-between"
+                                boxShadow="xs"
+                                align="center"
+                                onClick={() => {
+                                    openSubtasks(item)
+                                }}
+                                border="2px solid darkgrey"
+                            >
+                                {item.data.name}
+                                {/*{item.data.subtasks?.map((subtask) => (*/}
+                                {/*    subtask.data.name*/}
+                                {/*))}*/}
+                                <MyButton type='edit' onClick={e => openEdit(e, item)}/>
+                            </Flex>
                         ))}
                     </Accordion.Root>
                 </Box>
