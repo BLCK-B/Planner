@@ -46,7 +46,7 @@ export const worklistRoute = createRoute({
 
 export const worklistSubtasksRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'app/worklist/subtasks',
+    path: 'app/worklist/subtasks/$workItemId',
     component: WorklistSubtasksPage,
 })
 

@@ -30,5 +30,3 @@ export const existingTagForEdit = atom<TagType>(getNewTag());
 export const showWorkItemCreator = atom(false);
 
 export const existingWorkItemForEdit = atom<WorkItemType>(getNewWorkItem());
-
-export const selectedWorkitem = atom<WorkItemType | null>(null);

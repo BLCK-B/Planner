@@ -12,7 +12,7 @@ const ErrorModal = () => {
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>
-                    <Dialog.Content bg="primary" color="primary.contrast" textStyle="body">
+                    <Dialog.Content bg="primary" color="primary.contrast" textStyle="body" userSelect="text">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 Error

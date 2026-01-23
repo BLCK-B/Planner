@@ -32,6 +32,7 @@ public class WorkItem {
         this.itemID = itemID;
         this.userID = userID;
         this.name = name;
+        this.subtasks = subtasks;
     }
 
     public WorkItemDTO toDTO() {

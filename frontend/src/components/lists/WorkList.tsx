@@ -1,8 +1,8 @@
-import {Accordion, Box, Flex} from "@chakra-ui/react";
+import {Accordion, Box, Checkbox, Editable, Field, Flex, Text} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 import {useSetAtom} from "jotai";
-import {existingWorkItemForEdit, selectedWorkitem, showWorkItemCreator} from "@/global/atoms.ts";
+import {existingWorkItemForEdit, showWorkItemCreator} from "@/global/atoms.ts";
 import type {WorkItemType} from "@/types/WorkItemType.ts";
 import {router, worklistSubtasksRoute} from "@/routes/__root.tsx";
 import MyButton from "@/components/base/MyButton.tsx";
@@ -14,7 +14,8 @@ const WorkList = () => {
 
     const setEditItem = useSetAtom(existingWorkItemForEdit);
 
-    const setSelectedWorkitem = useSetAtom(selectedWorkitem);
+    const setSelectedWorkitem = (item: WorkItemType) => {
+    };
 
     const {data: workItems} = useQuery(loadWorkItemsQuery());
 
@@ -22,7 +23,10 @@ const WorkList = () => {
 
     const openSubtasks = (workItem: WorkItemType) => {
         setSelectedWorkitem(workItem);
-        router.navigate({to: worklistSubtasksRoute.fullPath});
+        router.navigate({
+            to: worklistSubtasksRoute.fullPath,
+            params: {workItemId: workItem.itemID},
+        });
     }
 
     const openEdit = (e: React.MouseEvent<HTMLButtonElement>, workItem: WorkItemType) => {
@@ -36,12 +40,11 @@ const WorkList = () => {
             <Box overflowY="scroll" scrollbarWidth="none">
                 <Box w={{base: "95%", sm: "90%", md: "62%", lg: "50%"}} mx="auto"
                      position="relative" top="4.8rem"
-                     paddingBottom="100px" animation="fade-in 0.05s">
+                     paddingBottom="100px" animation="fade-in 0.05s" cursor="pointer">
                     <Accordion.Root multiple defaultValue={["b"]}>
                         {workItems?.map((item, i) => (
                             <Flex
                                 key={i}
-                                bg='primary.lighter/70'
                                 color="primary.contrast"
                                 mb="0.9rem"
                                 p="0.5rem"
@@ -56,11 +59,33 @@ const WorkList = () => {
                                 }}
                                 border="2px solid darkgrey"
                             >
-                                {item.data.name}
-                                {/*{item.data.subtasks?.map((subtask) => (*/}
-                                {/*    subtask.data.name*/}
-                                {/*))}*/}
-                                <MyButton type='edit' onClick={e => openEdit(e, item)}/>
+                                <Flex flexDirection="column" w="100%">
+                                    <Flex justifyContent="space-between" align="center">
+                                        <Text fontWeight="bold">{item.data.name}</Text>
+                                        <MyButton type='edit' onClick={e => openEdit(e, item)}/>
+                                    </Flex>
+                                    <Box w="100%" mx="auto" position="relative" p="0.6rem">
+                                        {item.data.subtasks?.map((subtask, x) => (
+                                            <Flex
+                                                key={x}
+                                                color="primary.contrast"
+                                                position="relative"
+                                                justifyContent="space-between"
+                                                mb="0.6rem"
+                                            >
+                                                <Field.Root ml="0.3rem">
+                                                    {subtask.data.name}
+                                                </Field.Root>
+                                                <Checkbox.Root
+                                                    checked={subtask.data.completed}
+                                                    variant="subtle"
+                                                >
+                                                    <Checkbox.Control bg="primary.lighter" cursor="pointer"/>
+                                                </Checkbox.Root>
+                                            </Flex>
+                                        ))}
+                                    </Box>
+                                </Flex>
                             </Flex>
                         ))}
                     </Accordion.Root>

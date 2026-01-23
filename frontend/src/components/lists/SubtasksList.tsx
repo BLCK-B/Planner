@@ -1,15 +1,45 @@
 import {Box, Center, Checkbox, Editable, Flex, Spacer, Text} from "@chakra-ui/react";
-import {useAtomValue} from 'jotai';
-import {selectedWorkitem} from "@/global/atoms.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useState, useCallback} from "react";
 import {getNewSubtask} from "@/types/SubtaskType.ts";
-import {router, worklistRoute} from "@/routes/__root.tsx";
+import {router, worklistRoute, worklistSubtasksRoute} from "@/routes/__root.tsx";
+import useSaveWorkItem from "@/queries/UseSaveWorkItem.tsx";
+import {useThrottledCallback} from "@tanstack/react-pacer";
+import type {WorkItemType} from "@/types/WorkItemType.ts";
+import {useQuery} from "@tanstack/react-query";
+import loadWorkItemQuery from "@/queries/LoadWorkItemQuery.tsx";
+import {useParams} from "@tanstack/react-router";
 
 const SubtasksList = () => {
-    const workItem = useAtomValue(selectedWorkitem);
+
+    const {workItemId} = useParams({from: worklistSubtasksRoute.id});
+
+    const saveWorkItemMutation = useSaveWorkItem();
+
+    const {data: workItem} = useQuery(loadWorkItemQuery(workItemId));
+
     const [newSubtasks, setNewSubtasks] = useState(workItem?.data.subtasks ?? []);
+
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+    const throttledSave = useThrottledCallback(
+        () => {
+            if (!workItem) return;
+            const updatedWorkItem: WorkItemType = {
+                itemID: workItem.itemID,
+                data: {
+                    name: workItem.data.name,
+                    subtasks: newSubtasks,
+                },
+            };
+            saveWorkItemMutation.mutateAsync(updatedWorkItem);
+        },
+        {
+            wait: 800,
+            leading: true,
+            trailing: true,
+        }
+    );
 
     const updateSubtask = useCallback((index: number, key: keyof typeof newSubtasks[number]["data"], value: any) => {
         setNewSubtasks(prev =>
@@ -25,6 +55,7 @@ const SubtasksList = () => {
                     : subtask
             )
         );
+        throttledSave();
     }, []);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {

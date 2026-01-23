@@ -30,6 +30,11 @@ public class WorkItemController {
                 .toList();
     }
 
+    @GetMapping("/userWorkItem/{workItemId}")
+    public WorkItemDTO getWorkItem(@AuthenticationPrincipal Jwt jwt, @PathVariable String workItemId) {
+        return userWorkItemRepository.findByUserIDAndItemID(jwt.getSubject(), UUID.fromString(workItemId)).toDTO();
+    }
+
     @PutMapping("/userWorkItem")
     public WorkItemDTO setWorkItem(@AuthenticationPrincipal Jwt jwt, @RequestBody WorkItemDTO userItem) {
         WorkItemDTO dto = new WorkItemDTO(userItem.itemID(), userItem.data());
