@@ -67,7 +67,7 @@ const WorkItemCreator = () => {
                     <Dialog.Content bg="primary" color="primary.contrast" textStyle="body">
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
-                                New work item
+                                New worklist
                                 {/*TODO: detect new vs not new, or via param, for all creators*/}
                                 <Show when={newWorkItem !== getNewWorkItem()}>
                                     <MyButton type="delete" onClick={deleteWorkItem}/>

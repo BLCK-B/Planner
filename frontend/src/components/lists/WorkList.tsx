@@ -1,4 +1,4 @@
-import {Accordion, Box, Checkbox, Editable, Field, Flex, Text} from "@chakra-ui/react";
+import {Box, Checkbox, Field, Flex, SimpleGrid, Text} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 import {useSetAtom} from "jotai";
@@ -14,20 +14,16 @@ const WorkList = () => {
 
     const setEditItem = useSetAtom(existingWorkItemForEdit);
 
-    const setSelectedWorkitem = (item: WorkItemType) => {
-    };
-
     const {data: workItems} = useQuery(loadWorkItemsQuery());
 
     if (!workItems) return <div>Loading...</div>;
 
     const openSubtasks = (workItem: WorkItemType) => {
-        setSelectedWorkitem(workItem);
         router.navigate({
             to: worklistSubtasksRoute.fullPath,
             params: {workItemId: workItem.itemID},
         });
-    }
+    };
 
     const openEdit = (e: React.MouseEvent<HTMLButtonElement>, workItem: WorkItemType) => {
         e.stopPropagation();
@@ -38,58 +34,46 @@ const WorkList = () => {
     return (
         <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
-                <Box w={{base: "95%", sm: "90%", md: "62%", lg: "50%"}} mx="auto"
-                     position="relative" top="4.8rem"
-                     paddingBottom="100px" animation="fade-in 0.05s" cursor="pointer">
-                    <Accordion.Root multiple defaultValue={["b"]}>
-                        {workItems?.map((item, i) => (
-                            <Flex
-                                key={i}
-                                color="primary.contrast"
-                                mb="0.9rem"
-                                p="0.5rem"
-                                borderRadius="md"
-                                cursor="pointer"
-                                position="relative"
-                                justifyContent="space-between"
-                                boxShadow="xs"
-                                align="center"
-                                onClick={() => {
-                                    openSubtasks(item)
-                                }}
-                                border="2px solid darkgrey"
+                <SimpleGrid w={{base: "95%", md: "90%"}} columns={{base: 1, md: 2}}
+                            mx="auto" gap="1.2rem" position="relative" top="4.8rem" paddingBottom="100px">
+                    {workItems?.sort((a, b) => a.data.name.localeCompare(b.data.name))
+                        .map((item, i) => (
+                            <Flex key={i} cursor="pointer" position="relative" boxShadow="xs" p="0.5rem"
+                                  borderRadius="md"
+                                  flexDirection="column" w="100%" bg="primary.lighter/30"
+                                  onClick={() => {
+                                      openSubtasks(item)
+                                  }}
                             >
-                                <Flex flexDirection="column" w="100%">
-                                    <Flex justifyContent="space-between" align="center">
-                                        <Text fontWeight="bold">{item.data.name}</Text>
-                                        <MyButton type='edit' onClick={e => openEdit(e, item)}/>
-                                    </Flex>
-                                    <Box w="100%" mx="auto" position="relative" p="0.6rem">
-                                        {item.data.subtasks?.map((subtask, x) => (
-                                            <Flex
-                                                key={x}
-                                                color="primary.contrast"
-                                                position="relative"
-                                                justifyContent="space-between"
-                                                mb="0.6rem"
-                                            >
-                                                <Field.Root ml="0.3rem">
-                                                    {subtask.data.name}
-                                                </Field.Root>
-                                                <Checkbox.Root
-                                                    checked={subtask.data.completed}
-                                                    variant="subtle"
-                                                >
-                                                    <Checkbox.Control bg="primary.lighter" cursor="pointer"/>
-                                                </Checkbox.Root>
-                                            </Flex>
-                                        ))}
-                                    </Box>
+                                <Flex justifyContent="space-between" align="center">
+                                    <Text fontWeight="bold">{item.data.name}</Text>
+                                    <MyButton type='edit' onClick={e => openEdit(e, item)}/>
                                 </Flex>
+                                <Box w="100%" mx="auto" position="relative" p="0.6rem">
+                                    {item.data.subtasks?.slice(0, 5).map((subtask, x) => (
+                                        <Flex
+                                            key={x}
+                                            color="primary.contrast"
+                                            position="relative"
+                                            justifyContent="space-between"
+                                            mb="0.6rem"
+                                        >
+                                            <Field.Root ml="0.3rem">
+                                                {subtask.data.name}
+                                            </Field.Root>
+                                            <Checkbox.Root
+                                                checked={subtask.data.completed}
+                                                variant="subtle"
+                                            >
+                                                <Checkbox.Control bg="primary.lighter" cursor="pointer"/>
+                                            </Checkbox.Root>
+                                        </Flex>
+                                    ))}
+                                </Box>
                             </Flex>
+
                         ))}
-                    </Accordion.Root>
-                </Box>
+                </SimpleGrid>
             </Box>
         </Flex>
     );

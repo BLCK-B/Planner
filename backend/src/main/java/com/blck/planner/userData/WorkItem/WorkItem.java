@@ -3,7 +3,7 @@ package com.blck.planner.userData.WorkItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,12 +23,12 @@ public class WorkItem {
     private String name;
 
     @Column(name = "subtasks", columnDefinition = "TEXT")
-    @Convert(converter = SubtaskSetConverter.class)
-    private Set<Subtask> subtasks;
+    @Convert(converter = SubtaskListConverter.class)
+    private List<Subtask> subtasks;
 
     public WorkItem() {}
 
-    public WorkItem(UUID itemID, String userID, String name, Set<Subtask> subtasks) {
+    public WorkItem(UUID itemID, String userID, String name, List<Subtask> subtasks) {
         this.itemID = itemID;
         this.userID = userID;
         this.name = name;
@@ -60,11 +60,11 @@ public class WorkItem {
         this.name = name;
     }
 
-    public Set<Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return subtasks;
     }
 
-    public void setSubtasks(Set<Subtask> subtasks) {
+    public void setSubtasks(List<Subtask> subtasks) {
         this.subtasks = subtasks;
     }
 }

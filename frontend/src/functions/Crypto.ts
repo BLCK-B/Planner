@@ -1,5 +1,8 @@
 import {type TaskType, TaskEncryptSpec} from "@/types/TaskType.ts";
 import {TagEncryptSpec, type TagType} from "@/types/TagType.ts";
+import {WorkItemEncryptSpec, type WorkItemType} from "@/types/WorkItemType.ts";
+import type {Encryptable} from "@/functions/FetchRequest.tsx";
+import {SubtaskEncryptSpec, type SubtaskType} from "@/types/SubtaskType.ts";
 
 // for converting between unicode text and UTF bytes
 const encoder = new TextEncoder();
@@ -174,24 +177,41 @@ export const decryptFields = async (
     return result;
 };
 
-const isTask = (item: TaskType | TagType): item is TaskType => {
-    return (item as TaskType).data.name !== undefined;
+const isTask = (item: Encryptable): item is TaskType => {
+    return (item as TaskType).data.repeatOriginDay !== undefined;
 }
 
-// const isTag = (item: TaskType | TagType): item is TagType => {
-//     return (item as TagType).data.tagName !== undefined;
-// }
+const isTag = (item: Encryptable): item is TagType => {
+    return (item as TagType).data.tagName !== undefined;
+}
+
+const isWorkItem = (item: Encryptable): item is WorkItemType => {
+    return (item as WorkItemType).data.subtasks !== undefined;
+}
+
+const isSubTask = (item: Encryptable): item is SubtaskType => {
+    return (item as SubtaskType).data.completed !== undefined;
+}
 
 export async function encrypt(item: TaskType): Promise<TaskType>;
 export async function encrypt(item: TagType): Promise<TagType>;
-export async function encrypt(item: TaskType | TagType): Promise<TaskType | TagType> {
+export async function encrypt(item: WorkItemType): Promise<WorkItemType>;
+export async function encrypt(item: SubtaskType): Promise<SubtaskType>;
+export async function encrypt(item: Encryptable): Promise<Encryptable> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;
         if (isTask(item)) {
             spec = TaskEncryptSpec;
-        } else {
+        } else if (isTag(item)) {
             spec = TagEncryptSpec;
+        } else if (isWorkItem(item)) {
+            spec = WorkItemEncryptSpec;
+        } else if (isSubTask(item)) {
+            spec = SubtaskEncryptSpec;
+        } else {
+            alert("Missing encryption spec.");
+            throw new Error("Missing encryption spec.");
         }
         const encryptedData = await encryptFields(item.data, spec, cryptoKey);
         return {...item, data: encryptedData};
@@ -201,14 +221,23 @@ export async function encrypt(item: TaskType | TagType): Promise<TaskType | TagT
 
 export async function decrypt(item: TaskType): Promise<TaskType>;
 export async function decrypt(item: TagType): Promise<TagType>;
-export async function decrypt(item: TaskType | TagType): Promise<TaskType | TagType> {
+export async function decrypt(item: WorkItemType): Promise<WorkItemType>;
+export async function decrypt(item: SubtaskType): Promise<SubtaskType>;
+export async function decrypt(item: Encryptable): Promise<Encryptable> {
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;
         if (isTask(item)) {
             spec = TaskEncryptSpec;
-        } else {
+        } else if (isTag(item)) {
             spec = TagEncryptSpec;
+        } else if (isWorkItem(item)) {
+            spec = WorkItemEncryptSpec;
+        } else if (isSubTask(item)) {
+            spec = SubtaskEncryptSpec;
+        } else {
+            alert(`Missing encryption spec.`);
+            throw new Error("Missing encryption spec.");
         }
         const decryptedData = await decryptFields(item.data, spec, cryptoKey);
         return {...item, data: decryptedData};

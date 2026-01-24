@@ -1,6 +1,6 @@
 package com.blck.planner.userData.WorkItem;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public record WorkItemDTO(
@@ -9,7 +9,7 @@ public record WorkItemDTO(
 ) {
     public record Data(
             String name,
-            Set<Subtask> subtasks
+            List<Subtask> subtasks
     ) { }
 
     public WorkItem toWorkItem(String userID) {

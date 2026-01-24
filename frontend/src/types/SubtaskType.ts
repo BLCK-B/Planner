@@ -9,7 +9,7 @@ type EncryptSpec = {
     [K in keyof SubtaskType["data"]]: boolean;
 };
 
-export const SubtaskEncryptSpec: EncryptSpec = { // todo: is sent encrypted despite not being implemented? make default error out...
+export const SubtaskEncryptSpec: EncryptSpec = {
     name: true,
     completed: false,
 };

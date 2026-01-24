@@ -8,6 +8,8 @@ const fetchItem = async (itemId: string): Promise<WorkItemType> => {
 export const loadWorkItemQuery = (itemId: string) => ({
     queryKey: ['workItem', itemId],
     queryFn: () => fetchItem(itemId),
+    staleTime: 0,
+    gcTime: 0,
 });
 
 export default loadWorkItemQuery;
