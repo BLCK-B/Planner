@@ -25,9 +25,8 @@ const TagsEditList = () => {
         setShowAddDialog(true);
     };
 
-    if (!tagList) {
-        return <div>Loading...</div>;
-    }
+    if (!tagList) return <></>;
+
     return (
         <Center>
             <Card.Root w="320px" h="70dvh" variant="elevated" bg="primary.lighter" top="50px">

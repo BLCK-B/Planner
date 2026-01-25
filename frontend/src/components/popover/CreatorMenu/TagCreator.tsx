@@ -58,7 +58,7 @@ const TagCreator = () => {
     };
 
     const disableSaveRules = () => {
-        return !newTag.data.tagName;
+        return !newTag.data.tagName || newTag.data.tagName.length >= 15 || newTag.data.description.length >= 120;
     };
 
     return (

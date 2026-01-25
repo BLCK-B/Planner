@@ -105,6 +105,7 @@ describe("FetchRequest", () => {
             ok: false,
             status: 500,
             statusText: "Server Error",
+            json: async () => ({message: "Server Error"}),
         });
 
         await expect(FetchRequest("GET", "/fail")).rejects.toThrow("Server Error");

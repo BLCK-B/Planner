@@ -1,4 +1,4 @@
-import {Box, Center, Checkbox, Editable, Flex, Spacer, Text} from "@chakra-ui/react";
+import {Box, Checkbox, Editable, Flex, Spacer, Text} from "@chakra-ui/react";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useState, useCallback, useEffect} from "react";
 import {getNewSubtask, type SubtaskType} from "@/types/SubtaskType.ts";
@@ -28,7 +28,7 @@ const SubtasksList = () => {
     }, [workItem]);
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
+    // todo: reliable save on copy paste
     const throttledSave = useThrottledCallback(
         () => {
             if (!workItem) return;
@@ -108,7 +108,7 @@ const SubtasksList = () => {
         router.navigate({to: worklistRoute.fullPath});
     };
 
-    if (isLoading) return (<></>);
+    if (isLoading) return <></>;
 
     return (
         <Flex
@@ -163,8 +163,10 @@ const SubtasksList = () => {
                                         bg: "primary.lighter",
                                     }}
                                 />
-                                <Editable.Input
+                                <Editable.Textarea
+                                    maxLength={150}
                                     w="100%"
+                                    resize="none"
                                     _selection={{
                                         bg: "theme.Spruit2",
                                         color: "black",

@@ -23,7 +23,7 @@ const Plan = (tag: TagType) => {
 
     const {data: itemList} = useQuery(loadTasksOfTagQuery(tag));
 
-    if (!itemList) return <div>Loading...</div>;
+    if (!itemList) return <></>;
 
     const tasks = itemList.filter((task) => task.data.date);
 
@@ -82,7 +82,7 @@ const Plan = (tag: TagType) => {
                 <CompletionProgress total={itemList.length} completed={countCompletedTasks()}
                                     color={tag.data.color}/>
             </Flex>
-            <Text>{tag.data.description}</Text>
+            <Text whiteSpace="pre-line">{tag.data.description}</Text>
             <Flex direction="column" overflow="scroll" p="10px" mt="15px">
                 {renderItems(futureTasks)}
 

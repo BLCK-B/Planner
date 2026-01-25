@@ -72,7 +72,7 @@ const Task = (task: TaskType) => {
             {...(task.data.important && styles.important)}
             {...(!task.data.completed && isDatePast(task.data.date) && task.data.date && {bg: "theme.Reddish"})}>
             <Box p="0.5rem" w="100%">
-                <Text mb="0.6rem">{task.data.name}</Text>
+                <Text mb="0.6rem" whiteSpace="pre-line">{task.data.name}</Text>
                 <Flex align="center" justifyContent="flex-start" wrap="wrap" gap="0.3rem" w="100%">
                     <Show when={task.data.date && !task.data.completed}>
                         <Flex minW="95px" maxW="95px">

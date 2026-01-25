@@ -26,9 +26,7 @@ const MainList = () => {
 
     const somedayRef = useRef<HTMLDivElement | null>(null);
 
-    if (!itemList) {
-        return <div>Loading...</div>;
-    }
+    if (!itemList) return <></>;
 
     const tasks = itemList.filter((task) => task.data.date);
 

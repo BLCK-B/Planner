@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="date-created-column-and-trigger" author="BLCK">
+        <sql>
+            ALTER TABLE user_tasks
+                ADD COLUMN date_created DATE NOT NULL DEFAULT CURRENT_DATE;
+        </sql>
+
+        <sql>
+            ALTER TABLE user_tasks
+                ALTER COLUMN date_created DROP DEFAULT;
+        </sql>
+
+        <sql splitStatements="false" endDelimiter="$$">
+            CREATE FUNCTION set_date_created()
+            RETURNS TRIGGER AS $$
+                BEGIN
+                    NEW.date_created := CURRENT_DATE;
+                    RETURN NEW;
+                END;
+            $$ LANGUAGE plpgsql;
+        $$
+        </sql>
+
+        <sql>
+            CREATE TRIGGER trigger_set_date_created
+            BEFORE INSERT OR UPDATE ON user_tasks
+            FOR EACH ROW
+            EXECUTE FUNCTION set_date_created();
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -16,7 +16,7 @@ const WorkList = () => {
 
     const {data: workItems} = useQuery(loadWorkItemsQuery());
 
-    if (!workItems) return <div>Loading...</div>;
+    if (!workItems) return <></>;
 
     const openSubtasks = (workItem: WorkItemType) => {
         router.navigate({

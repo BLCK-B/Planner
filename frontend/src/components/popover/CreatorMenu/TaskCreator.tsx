@@ -74,7 +74,7 @@ const TaskCreator = () => {
     };
 
     const invalidNameRule = () => {
-        return !newItem.data.name || newItem.data.name.length > 120;
+        return !newItem.data.name || newItem.data.name.length > 120 || (newItem.data.name.match(/\n/g) || []).length >= 3;
     }
 
     const disableSave = () => {

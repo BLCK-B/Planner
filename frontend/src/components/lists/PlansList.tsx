@@ -7,7 +7,7 @@ import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 const PlansList = () => {
     const {data: tags} = useQuery<TagType[]>(loadTagsQuery());
 
-    if (!tags) return <div>Loading...</div>;
+    if (!tags) return <></>;
 
     const trackedTags = tags.filter(tag => tag.data.isTracked).sort((a, b) => a.data.tagName.localeCompare(b.data.tagName));
 
