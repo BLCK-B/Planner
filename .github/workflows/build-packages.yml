@@ -64,6 +64,8 @@ jobs:
             -H "x-api-key: ${{ secrets.DOKPLOY_API_TOKEN }}" \
             -d "{\"applicationId\": \"${{ secrets.DOKPLOY_APPLICATION_ID }}\"}"
 
+      - name: Commit ID
+        run: echo "VITE_COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Install npm dependencies
         run: |
           cd frontend
