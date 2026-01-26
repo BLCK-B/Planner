@@ -7,6 +7,8 @@ import {mainRoute, router} from "@/routes/__root.tsx";
 
 const SettingsPage = () => {
 
+    const commitId = import.meta.env.VITE_COMMIT_ID || 'commitId'
+
     const goBack = () => {
         router.navigate({to: mainRoute.fullPath});
     };
@@ -14,7 +16,7 @@ const SettingsPage = () => {
     return (
         <Box w="100vw" h="100dvh" bg="primary.darker" textStyle="body">
             <HeaderSettingsPage/>
-
+            {commitId}
             <Flex p="5px">
                 <Card.Root variant="elevated" bg="primary.lighter" w="100%" color="primary.contrast">
                     <Card.Body>

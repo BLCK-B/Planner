@@ -19,5 +19,6 @@
     <include file="/db/changelogs/2025-12-31-replace-plans-with-tags.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2026-01-16-add-workitems.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2026-01-25-internal-task-creation-date.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2026-01-26-trigger-only-on-create.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
