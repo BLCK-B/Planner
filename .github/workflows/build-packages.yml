@@ -64,18 +64,19 @@ jobs:
             -H "x-api-key: ${{ secrets.DOKPLOY_API_TOKEN }}" \
             -d "{\"applicationId\": \"${{ secrets.DOKPLOY_APPLICATION_ID }}\"}"
 
-      - name: Commit ID
-        run: echo "VITE_COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Install npm dependencies
         run: |
           cd frontend
           npm ci
+      - name: Commit ID
+        run: echo "COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Build frontend
         run: |
           cd frontend
           npm run build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_COMMIT_ID: ${{ env.COMMIT_ID }}
       - name: Deploy SPA to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
