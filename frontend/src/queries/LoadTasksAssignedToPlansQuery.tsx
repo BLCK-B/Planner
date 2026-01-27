@@ -1,8 +1,10 @@
 import FetchRequest from "@/functions/FetchRequest.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
 import {isDemoMode} from "@/global/atoms.ts";
-import {store} from "@/queries/LoadItemsQuery.tsx";
 import {scramble} from "@/functions/Crypto.ts";
+import {createStore} from "jotai";
+
+export const store = createStore();
 
 const fetchTasks = async (): Promise<TaskType[]> => {
     if (!store.get(isDemoMode)) {

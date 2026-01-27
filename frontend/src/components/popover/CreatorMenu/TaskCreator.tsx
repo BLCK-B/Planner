@@ -18,7 +18,7 @@ import {useAtom} from "jotai";
 import {getNewTask} from "@/types/TaskType.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
-import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
+import {loadCompletedItemsQuery, loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getDayNumber} from "@/functions/Dates.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
@@ -59,8 +59,8 @@ const TaskCreator = () => {
         setNewItem(getNewTask());
         setShowDialog(false);
 
-        const queryKey = loadItemsQuery().queryKey;
-        await queryClient.invalidateQueries({queryKey});
+        await queryClient.invalidateQueries({queryKey: loadCompletedItemsQuery().queryKey});
+        await queryClient.invalidateQueries({queryKey: loadUncompletedItemsQuery().queryKey});
     };
 
     const deleteItem = async () => {

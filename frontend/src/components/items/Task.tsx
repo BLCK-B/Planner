@@ -11,7 +11,7 @@ import useSaveTask from "@/queries/UseSaveTask.tsx";
 import {useAtomValue, useSetAtom} from 'jotai';
 import {showExactDatesAtom, existingItemForEdit, showAddDialog} from '@/global/atoms.ts';
 import MyTag from "@/components/items/MyTag.tsx";
-import loadItemsQuery from "@/queries/LoadItemsQuery.tsx";
+import {loadCompletedItemsQuery, loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import {useQueryClient} from "@tanstack/react-query";
 import CompleteSection from "@/components/base/CompleteSection.tsx";
 
@@ -54,8 +54,8 @@ const Task = (task: TaskType) => {
             await saveTaskMutation.mutateAsync(newRepeatedTask);
         }
 
-        const queryKey = loadItemsQuery().queryKey;
-        await queryClient.invalidateQueries({queryKey});
+        await queryClient.invalidateQueries({queryKey: loadCompletedItemsQuery().queryKey});
+        await queryClient.invalidateQueries({queryKey: loadUncompletedItemsQuery().queryKey});
     };
 
     return (
