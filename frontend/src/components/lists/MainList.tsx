@@ -9,6 +9,7 @@ import GroupMarker from "@/components/lists/GroupMarker.tsx";
 import {useBreakpointValue} from "@chakra-ui/react";
 import {useAtomValue} from "jotai";
 import {filterContentAtom} from "@/global/atoms.ts";
+import {useInView} from 'react-intersection-observer'
 import {useEffect, useRef} from "react";
 
 const MainList = () => {
@@ -35,24 +36,20 @@ const MainList = () => {
 
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
-    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+    const {ref: loadMoreRef, inView} = useInView({
+        root: scrollContainerRef.current,
+        rootMargin: "800px",
+        threshold: 0,
+    });
 
     useEffect(() => {
-        if (!hasNextPage || isFetchingNextPage) return;
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
-                    console.log("inter")
-                    fetchNextPage();
-                }
-            },
-        );
-        const node = loadMoreRef.current;
-        if (node) observer.observe(node);
-        return () => {
-            if (node) observer.unobserve(node);
-        };
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            const timer = setTimeout(() => {
+                fetchNextPage();
+            }, 100); // todo: to avoid rendering two pages at once - temporary fix
+            return () => clearTimeout(timer);
+        }
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     useEffect(() => {
         if (!somedayRef.current || !somedayRef.current.offsetTop) return;
@@ -100,7 +97,7 @@ const MainList = () => {
                 month: "short",
             });
 
-            const groupMarker = (<GroupMarker text={dateString} adjacent={adjacent}/>);
+            const groupMarker = <GroupMarker text={dateString} adjacent={adjacent}/>;
 
             const groupList = (
                 <>
@@ -163,7 +160,9 @@ const MainList = () => {
 
                     {renderGroupedTasks(completedItems, true)}
 
-                    <Box ref={loadMoreRef} h="2px" mt="100px" bg="primary.lighter"/>
+                    {hasNextPage && (
+                        <Box ref={loadMoreRef} h="1px" bg="primary.lighter"/>
+                    )}
                 </Box>
             </Box>
         </Flex>
