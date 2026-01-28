@@ -28,14 +28,14 @@ public class TaskController {
         return jwt.getSubject();
     }
 
-    @GetMapping("/uncompleted")
+    @GetMapping("/uncompletedUserTasks")
     public List<TaskDTO> getUncompletedTasks(@AuthenticationPrincipal Jwt jwt) {
         return userTaskRepository.getUncompletedUserTasks(jwt.getSubject()).stream()
                 .map(Task::toDTO)
                 .toList();
     }
 
-    @GetMapping("/completed/{offset}-{size}")
+    @GetMapping("/completedUserTasks/{offset}-{size}")
     public List<TaskDTO> getCompletedTasks(@AuthenticationPrincipal Jwt jwt, @PathVariable int offset, @PathVariable int size) {
         return userTaskRepository.getCompletedUserTasksBetween(jwt.getSubject(), offset, size).stream()
                 .map(Task::toDTO)

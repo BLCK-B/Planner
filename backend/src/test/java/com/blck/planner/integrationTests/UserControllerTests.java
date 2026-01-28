@@ -42,14 +42,14 @@ public class UserControllerTests {
 
     @Test
     void unauthenticatedUserIsUnauthorized() throws Exception {
-        mockMvc.perform(get("/users/userTasks")
+        mockMvc.perform(get("/users/uncompletedUserTasks")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void authenticatedUserWithoutUserRoleIsForbidden() throws Exception {
-        mockMvc.perform(get("/users/userTasks")
+        mockMvc.perform(get("/users/uncompletedUserTasks")
                         .with(jwt().jwt(jwt -> jwt.subject("username")))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
@@ -57,7 +57,7 @@ public class UserControllerTests {
 
     @Test
     void authenticatedUserHasAccess() throws Exception {
-        mockMvc.perform(get("/users/userTasks")
+        mockMvc.perform(get("/users/uncompletedUserTasks")
                         .with(jwt().jwt(jwt -> jwt.subject("username"))
                                 .authorities(() -> "ROLE_USER"))
                         .contentType(MediaType.APPLICATION_JSON))

@@ -8,9 +8,9 @@ export const store = createStore();
 
 const fetchUncompleted = async (): Promise<TaskType[]> => {
     if (!store.get(isDemoMode)) {
-        return await FetchRequest("GET", "/users/uncompleted");
+        return await FetchRequest("GET", "/users/uncompletedUserTasks");
     }
-    const tasks: TaskType[] = await FetchRequest("GET", "/users/uncompleted");
+    const tasks: TaskType[] = await FetchRequest("GET", "/users/uncompletedUserTasks");
     return tasks.map(task => ({
         ...task,
         data: {
@@ -23,7 +23,7 @@ const fetchUncompleted = async (): Promise<TaskType[]> => {
 const PAGE_SIZE = 50;
 
 const fetchCompleted = async (pageParam: number): Promise<TaskType[]> => {
-    return await FetchRequest("GET", `/users/completed/${pageParam}-${PAGE_SIZE}`);
+    return await FetchRequest("GET", `/users/completedUserTasks/${pageParam}-${PAGE_SIZE}`);
 };
 
 const fetchAll = async (): Promise<TaskType[]> => {
