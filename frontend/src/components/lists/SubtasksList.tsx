@@ -70,7 +70,7 @@ const SubtasksList = () => {
         },
         []
     );
-    // todo: dragging on phones
+    
     const dragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         setDraggedIndex(index);
         e.dataTransfer.effectAllowed = 'move';
@@ -124,68 +124,73 @@ const SubtasksList = () => {
                 scrollbarWidth="none" bg="primary.lighter/30"
             >
                 <Box mx="auto" p="0.3rem">
-                    {newSubtasks.map((subtask, i) => (
-                        <Flex
-                            key={i}
-                            color="primary.contrast"
-                            borderRadius="md"
-                            position="relative"
-                            justifyContent="space-between"
-                            bg={draggedIndex === i ? "primary.darker" : "transparent"}
-                            transition="background-color 0.2s ease"
-                            pr="0.3rem"
-                            mb="0.3rem"
-                        >
-                            <Box
-                                userSelect="none"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                fontSize="lg"
-                                draggable
-                                onDragStart={(e) => dragStart(e, i)}
-                                onDragOver={dragOver}
-                                onDrop={(e) => dragDrop(e, i)}
-                                onDragEnd={dragEnd}
-                                cursor="grab"
-                                p="0.3rem"
-                            >
-                                ⋮⋮
-                            </Box>
-                            <Editable.Root
-                                value={subtask.data.name}
-                                onValueChange={(e) => updateSubtask(i, "name", e.value)}
-                                ml="0.3rem"
-                            >
-                                <Editable.Preview
-                                    w="100%"
-                                    _hover={{
-                                        bg: "primary.lighter",
-                                    }}
-                                />
-                                <Editable.Textarea
-                                    maxLength={150}
-                                    w="100%"
-                                    resize="none"
-                                    _selection={{
-                                        bg: "theme.Spruit2",
-                                        color: "black",
-                                    }}
-                                />
-                            </Editable.Root>
-                            <Checkbox.Root
-                                checked={subtask.data.completed}
-                                onCheckedChange={() =>
-                                    updateSubtask(i, "completed", !subtask.data.completed)
-                                }
-                                variant="subtle"
-                                draggable={false}
-                            >
-                                <Checkbox.HiddenInput/>
-                                <Checkbox.Control bg="primary.lighter"/>
-                            </Checkbox.Root>
-                        </Flex>
-                    ))}
+                    {newSubtasks
+                        .map((subtask, i) => {
+                            if (subtask.data.completed) return null;
+                            return (
+                                <Flex
+                                    key={i}
+                                    color="primary.contrast"
+                                    borderRadius="md"
+                                    position="relative"
+                                    justifyContent="space-between"
+                                    bg={draggedIndex === i ? "primary.darker" : "transparent"}
+                                    transition="background-color 0.2s ease"
+                                    pr="0.3rem"
+                                    mb="0.3rem"
+                                >
+                                    <Box
+                                        userSelect="none"
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        fontSize="lg"
+                                        draggable
+                                        onDragStart={(e) => dragStart(e, i)}
+                                        onDragOver={dragOver}
+                                        onDrop={(e) => dragDrop(e, i)}
+                                        onDragEnd={dragEnd}
+                                        cursor="grab"
+                                        p="0.3rem"
+                                    >
+                                        ⋮⋮
+                                    </Box>
+                                    <Editable.Root
+                                        value={subtask.data.name}
+                                        onValueChange={(e) => updateSubtask(i, "name", e.value)}
+                                        ml="0.3rem"
+                                    >
+                                        <Editable.Preview
+                                            w="100%"
+                                            _hover={{
+                                                bg: "primary.lighter",
+                                            }}
+                                        />
+                                        <Editable.Textarea
+                                            maxLength={150}
+                                            w="100%"
+                                            resize="none"
+                                            _selection={{
+                                                bg: "theme.Spruit2",
+                                                color: "black",
+                                            }}
+                                        />
+                                    </Editable.Root>
+                                    <Checkbox.Root
+                                        checked={subtask.data.completed}
+                                        onCheckedChange={() =>
+                                            updateSubtask(i, "completed", !subtask.data.completed)
+                                        }
+                                        variant="subtle"
+                                        draggable={false}
+                                    >
+                                        <Checkbox.HiddenInput/>
+                                        <Checkbox.Control bg="primary.lighter"/>
+                                    </Checkbox.Root>
+                                </Flex>
+                            );
+                        })
+                    }
                     <Box
                         userSelect="none"
                         display="flex"
@@ -198,6 +203,79 @@ const SubtasksList = () => {
                     >
                         ⋮⋮
                     </Box>
+                    <Box bg="primary" h="2px" w="100%" m="0.3rem 0 0.3rem 0"/>
+                    {newSubtasks
+                        .map((subtask, i) => {
+                            if (!subtask.data.completed) return null;
+                            return (
+                                <Flex
+                                    key={i}
+                                    color="primary.contrast"
+                                    borderRadius="md"
+                                    position="relative"
+                                    justifyContent="space-between"
+                                    bg={draggedIndex === i ? "primary.darker" : "transparent"}
+                                    transition="background-color 0.2s ease"
+                                    pr="0.3rem"
+                                    mb="0.3rem"
+                                >
+                                    <Box
+                                        userSelect="none"
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        fontSize="lg"
+                                        draggable
+                                        onDragStart={(e) => dragStart(e, i)}
+                                        onDragOver={dragOver}
+                                        onDrop={(e) => dragDrop(e, i)}
+                                        onDragEnd={dragEnd}
+                                        cursor="grab"
+                                        p="0.3rem"
+                                    >
+                                        ⋮⋮
+                                    </Box>
+                                    <Editable.Root
+                                        value={subtask.data.name}
+                                        onValueChange={(e) => updateSubtask(i, "name", e.value)}
+                                        ml="0.3rem"
+                                    >
+                                        <Editable.Preview
+                                            w="100%"
+                                            _hover={{
+                                                bg: "primary.lighter",
+                                            }}
+                                        />
+                                        <Editable.Textarea
+                                            maxLength={150}
+                                            w="100%"
+                                            resize="none"
+                                            _selection={{
+                                                bg: "theme.Spruit2",
+                                                color: "black",
+                                            }}
+                                        />
+                                    </Editable.Root>
+                                    <Checkbox.Root
+                                        checked={subtask.data.completed}
+                                        onCheckedChange={() =>
+                                            updateSubtask(i, "completed", !subtask.data.completed)
+                                        }
+                                        variant="subtle"
+                                        draggable={false}
+                                    >
+                                        <Checkbox.HiddenInput/>
+                                        <Checkbox.Control
+                                            bg="primary.lighter"
+                                            _checked={{
+                                                bg: "theme.Spruit1"
+                                            }}
+                                        />
+                                    </Checkbox.Root>
+                                </Flex>
+                            );
+                        })
+                    }
                 </Box>
             </Box>
             <Flex
