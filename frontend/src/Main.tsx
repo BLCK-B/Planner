@@ -24,6 +24,8 @@ if (!rootElement) {
 createRoot(rootElement).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
+            {/* todo: https://chakra-ui.com/docs/get-started/migration */}
+            {/* todo  ColorModeProvider and useColorMode have been removed in favor of next-themes */}
             <ChakraProvider value={system}>
                 <ColorModeProvider>
                     <RouterProvider router={router}/>
