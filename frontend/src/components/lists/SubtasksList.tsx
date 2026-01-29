@@ -42,7 +42,7 @@ const SubtasksList = () => {
             saveWorkItemMutation.mutateAsync(updatedWorkItem);
         },
         {
-            wait: 1000,
+            wait: 850,
             leading: true,
             trailing: true,
         }
@@ -70,7 +70,7 @@ const SubtasksList = () => {
         },
         []
     );
-    
+
     const dragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         setDraggedIndex(index);
         e.dataTransfer.effectAllowed = 'move';

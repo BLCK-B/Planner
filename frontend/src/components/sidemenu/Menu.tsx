@@ -1,24 +1,19 @@
 import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useRouter} from '@tanstack/react-router';
-import {useAtom} from 'jotai';
-import {activePage} from "@/global/atoms.ts";
 import {mainRoute, plansRoute, worklistRoute} from "@/routes/__root.tsx";
 import {Box, Center, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsWorklistPage from "@/components/actions/ActionButtonsWorklistPage.tsx";
-import {getTabs, type Tabs} from "@/types/Tabs.ts";
+import {getTabs, mapPathToName, type Tabs} from "@/types/Tabs.ts";
 
 const Menu = () => {
 
     const router = useRouter();
 
-    const [selectedTab, setSelectedTab] = useAtom(activePage);
-
     const isLargeScreen = useBreakpointValue({base: false, md: true}) as boolean;
 
     const tabSelected = (tab: Tabs) => {
-        setSelectedTab(tab);
         switch (tab) {
             case 'Tasks':
                 router.navigate({to: mainRoute.fullPath});
@@ -61,7 +56,7 @@ const Menu = () => {
 
                 <SelectTabs
                     tabs={getTabs}
-                    selected={selectedTab}
+                    selected={mapPathToName(router.state.location.href)}
                     valueChanged={(e) => tabSelected(e as Tabs)}
                     orientation={"vertical"}
                     responsive={true}

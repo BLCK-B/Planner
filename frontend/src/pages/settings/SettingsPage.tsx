@@ -10,7 +10,11 @@ const SettingsPage = () => {
     const commitId = import.meta.env.VITE_COMMIT_ID || 'commitId'
 
     const goBack = () => {
-        router.navigate({to: mainRoute.fullPath});
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            router.navigate({to: mainRoute.fullPath});
+        }
     };
 
     return (
