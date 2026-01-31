@@ -9,23 +9,28 @@ logging:
 spring:
   main:
     web-application-type: servlet
+
   application:
     name: planner
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   security:
     user:
       name: ${SPRING_USER_NAME}
       password: ${SPRING_USER_PASSWORD}
-  datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+
   liquibase:
     enabled: true
     change-log: classpath:db/changelogs.xml
