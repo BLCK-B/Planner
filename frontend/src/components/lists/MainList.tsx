@@ -54,7 +54,7 @@ const MainList = () => {
     useEffect(() => {
         if (!somedayRef.current || !somedayRef.current.offsetTop) return;
         scrollContainerRef.current?.scrollTo({
-            top: somedayRef.current.offsetTop - 400
+            top: somedayRef.current.offsetTop - 300
         });
     }, []);
 

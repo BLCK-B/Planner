@@ -1,4 +1,4 @@
-import {Box, Checkbox, Field, Flex, SimpleGrid, Text} from "@chakra-ui/react";
+import {Box, Field, Flex, SimpleGrid, Text} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 import {useSetAtom} from "jotai";
@@ -34,7 +34,7 @@ const WorkList = () => {
     return (
         <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
-                <SimpleGrid w={{base: "95%", md: "90%"}} columns={{base: 1, md: 2}}
+                <SimpleGrid w={{base: "95%", md: "90%"}} columns={{base: 1, md: 2}} fontSize="md"
                             mx="auto" gap="1.2rem" position="relative" top="4.8rem" paddingBottom="100px">
                     {workItems?.sort((a, b) => a.data.name.localeCompare(b.data.name))
                         .map((item, i) => (
@@ -59,14 +59,10 @@ const WorkList = () => {
                                             mb="0.6rem"
                                         >
                                             <Field.Root ml="0.3rem">
-                                                {subtask.data.name}
+                                                <Text lineClamp="2">
+                                                    {subtask.data.name}
+                                                </Text>
                                             </Field.Root>
-                                            <Checkbox.Root
-                                                checked={subtask.data.completed}
-                                                variant="subtle"
-                                            >
-                                                <Checkbox.Control bg="primary.lighter" cursor="pointer"/>
-                                            </Checkbox.Root>
                                         </Flex>
                                     ))}
                                 </Box>

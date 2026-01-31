@@ -1,4 +1,4 @@
-import {useDrag, useDrop} from "react-dnd";
+import {type ConnectableElement, useDrag, useDrop} from "react-dnd";
 import type {SubtaskType} from "@/types/SubtaskType.ts";
 import {Box, Checkbox, Editable, Flex} from "@chakra-ui/react";
 import {getEmptyImage} from "react-dnd-html5-backend";
@@ -39,7 +39,6 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
 
     return (
         <Flex
-            ref={node => dragRef(dropRef(node))} // todo type
             color="primary.contrast"
             borderRadius="md"
             justifyContent="space-between"
@@ -49,6 +48,9 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
             mb="0.3rem"
         >
             <Box
+                ref={(node: ConnectableElement) => {
+                    dragRef(dropRef(node))
+                }}
                 userSelect="none"
                 display="flex"
                 alignItems="center"
@@ -71,7 +73,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
                     }}
                 />
                 <Editable.Textarea
-                    maxLength={150}
+                    maxLength={120}
                     w="100%"
                     resize="none"
                     _selection={{
