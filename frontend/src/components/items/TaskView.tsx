@@ -7,7 +7,6 @@ import type {TaskType} from "@/types/TaskType.ts";
 import {useAtomValue} from 'jotai';
 import {showExactDatesAtom} from '@/global/atoms.ts';
 import MyTag from "@/components/items/MyTag.tsx";
-import * as React from "react";
 
 const TaskView = (task: TaskType) => {
 

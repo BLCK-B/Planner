@@ -4,8 +4,8 @@ import com.blck.planner.accounts.AccountRepository;
 import com.blck.planner.accounts.UserAccount;
 import com.blck.planner.security.CredentialsDTO;
 import com.blck.planner.security.SecurityNames;
-import org.junit.jupiter.api.TestClassOrder;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -21,7 +21,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import javax.swing.text.html.Option;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -36,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:/test-application.properties")
+@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:/test-variables.properties")
 class AuthControllerTests {
 
     @Autowired
