@@ -3,7 +3,6 @@ package com.blck.planner.security;
 import com.blck.planner.accounts.AccountService;
 import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.accounts.UserAccount;
-import io.sentry.Sentry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,12 +73,7 @@ public class AuthController {
     }
 
     @GetMapping("/test-sentry")
-    public ResponseEntity<String> testSentry() {
-        try {
-            throw new RuntimeException("SENTRY TEST: GlitchTip integration working!");
-        } catch (Exception e) {
-            Sentry.capture(e);
-            return ResponseEntity.status(500).body("Error sent to GlitchTip: " + e.getMessage());
-        }
+    public void testSentry() throws Exception {
+        throw new Exception("Sentry test.");
     }
 }
