@@ -1,4 +1,4 @@
-import {Popover, Grid, Box, Card} from "@chakra-ui/react";
+import {Popover, Box, Card, Flex} from "@chakra-ui/react";
 import MyTag from "@/components/items/MyTag.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {type TagType} from "@/types/TagType.ts";
@@ -35,25 +35,17 @@ const FilterSelects = () => {
 
     return (
         <Popover.Positioner>
-            <Popover.Content width="350px" bg="primary.darker" boxShadow="none">
-                <Popover.Body p="0.35rem">
-                    <Card.Root variant="elevated" bg="primary.lighter">
-                        <Card.Header color="primary.contrast">
-                            Filter by tags
-                        </Card.Header>
+            <Popover.Content width="350px" boxShadow="xs">
+                <Popover.Body p="0" border="2px solid grey" borderRadius="md">
+                    <Card.Root variant="elevated" bg="primary.lighter" boxShadow="none">
                         <Card.Body color="primary.contrast">
-                            <Grid
-                                templateColumns={`repeat(3, 1fr)`}
-                                columnGap={2}
-                                rowGap={3}
-                                userSelect="none"
-                            >
+                            <Flex wrap="wrap" gap="0.6rem">
                                 {tags.map((tag, i) => (
                                     <Box key={i} onClick={() => applyTagFilter(tag)}>
                                         <MyTag tag={tag} isEditable={false} isInactive={isInactive(tag)}/>
                                     </Box>
                                 ))}
-                            </Grid>
+                            </Flex>
                         </Card.Body>
                     </Card.Root>
                 </Popover.Body>
