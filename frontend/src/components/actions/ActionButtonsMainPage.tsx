@@ -7,9 +7,7 @@ import {getNewTask} from "@/types/TaskType.ts";
 import {MdFilterAlt} from "react-icons/md";
 import FilterSelects from "@/components/sidemenu/FilterSelects.tsx";
 
-const ActionButtonsMainPage = () => {
-
-    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
+const ActionButtonsMainPage = ({isDesktop}: { isDesktop: boolean }) => {
 
     const [showExactDates, setShowExactDates] = useAtom(showExactDatesAtom);
 
@@ -38,7 +36,7 @@ const ActionButtonsMainPage = () => {
         <Box
             display="grid"
             gridTemplateColumns={isDesktop ? "auto auto" : "auto auto auto auto"}
-            gap="0.6rem"
+            gap={isDesktop ? "0.6rem" : "0"}
             m={isDesktop ? "0.6rem" : "0 0 0.3rem 0"}
         >
             <IconButton
@@ -48,7 +46,10 @@ const ActionButtonsMainPage = () => {
             >
                 <IoCalendarNumber color="black" aria-label="Complete"/>
             </IconButton>
-            <MyButton type="add" onClick={createNewItem}/>
+            {/* centering fix */}
+            <Box m={isDesktop ? "0" : "0 0.6rem 0 0.6rem"}>
+                <MyButton type="add" onClick={createNewItem}/>
+            </Box>
             <Popover.Root positioning={{placement: popoverPlacement}}>
                 <Popover.Trigger asChild>
                     <IconButton size="xs" bg={activeFilterColor()}>

@@ -1,18 +1,21 @@
 import {useInfiniteQuery, useQuery} from "@tanstack/react-query"
-import {Box, Flex, Show} from "@chakra-ui/react";
+import {Box, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import {loadCompletedItemsQuery, loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
 import {groupByMonth, sortFutureTasks, sortSomeday} from '@/functions/Sorting.tsx'
 import {isDatePast} from "@/functions/Dates.tsx";
 import GroupMarker from "@/components/lists/GroupMarker.tsx";
-import {useBreakpointValue} from "@chakra-ui/react";
 import {useAtomValue} from "jotai";
 import {filterContentAtom} from "@/global/atoms.ts";
 import {useInView} from 'react-intersection-observer'
 import {useEffect, useRef} from "react";
 
 const MainList = () => {
+    const isDesktop = useBreakpointValue(
+        {base: false, md: true},
+        {ssr: false}
+    );
 
     const {data: uncompletedItems} = useQuery<TaskType[]>(loadUncompletedItemsQuery());
 
@@ -24,8 +27,6 @@ const MainList = () => {
     } = useInfiniteQuery(loadCompletedItemsQuery());
 
     const filterContent = useAtomValue(filterContentAtom);
-
-    const adjacent = useBreakpointValue({base: false, md: true}) as boolean;
 
     const applyContentFilter = (item: TaskType) => {
         if (!filterContent || filterContent.length === 0) return true;
@@ -97,7 +98,7 @@ const MainList = () => {
                 month: "short",
             });
 
-            const groupMarker = <GroupMarker text={dateString} adjacent={adjacent}/>;
+            const groupMarker = <GroupMarker text={dateString} adjacent={isDesktop as boolean}/>;
 
             const groupList = (
                 <>
@@ -109,7 +110,7 @@ const MainList = () => {
                 </>
             );
 
-            return adjacent ? (
+            return isDesktop ? (
                 <Box key={ym} position="relative" mt="2.4rem">
                     {groupMarker}
                     {groupList}

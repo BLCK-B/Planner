@@ -11,7 +11,10 @@ type Props = {
 };
 
 const PageLayout = ({header, content, popover}: Props) => {
-    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
+    const isDesktop = useBreakpointValue(
+        {base: false, md: true},
+        {ssr: false}
+    );
 
     return (
         <Box w="100vw" h="100dvh" bg="primary.darker" textStyle="body">
@@ -43,7 +46,7 @@ const PageLayout = ({header, content, popover}: Props) => {
                     gridRow={{base: 3, sm: 3, md: 2}}
                     marginLeft={isDesktop ? "0.3rem" : "0"}
                 >
-                    <Menu/>
+                    <Menu isDesktop={isDesktop as boolean}/>
                 </GridItem>
 
                 {/* content */}

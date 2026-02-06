@@ -17,8 +17,10 @@ import useDeleteWorkItem from "@/queries/UseDeleteWorkItem.tsx";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 
 const WorkItemCreator = () => {
-
-    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
+    const isDesktop = useBreakpointValue(
+        {base: false, md: true},
+        {ssr: false}
+    );
 
     const queryClient = useQueryClient();
 
