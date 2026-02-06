@@ -19,8 +19,10 @@ import MyTag from "@/components/items/MyTag.tsx";
 import {getNewTag} from "@/types/TagType.ts";
 
 const TagCreator = () => {
-
-    const isDesktop = useBreakpointValue({base: false, md: true}) as boolean;
+    const isDesktop = useBreakpointValue(
+        {base: false, md: true},
+        {ssr: false}
+    );
 
     const queryClient = useQueryClient();
 

@@ -1,17 +1,15 @@
 import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useRouter} from '@tanstack/react-router';
 import {mainRoute, plansRoute, worklistRoute} from "@/routes/__root.tsx";
-import {Box, Center, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
+import {Box, Center, Flex, Show} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsWorklistPage from "@/components/actions/ActionButtonsWorklistPage.tsx";
 import {getTabs, mapPathToName, type Tabs} from "@/types/Tabs.ts";
 
-const Menu = () => {
+const Menu = ({isDesktop}: { isDesktop: boolean }) => {
 
     const router = useRouter();
-
-    const isLargeScreen = useBreakpointValue({base: false, md: true}) as boolean;
 
     const tabSelected = (tab: Tabs) => {
         switch (tab) {
@@ -30,7 +28,7 @@ const Menu = () => {
     const actionButtons = (
         <Flex mt="5px" bg="primary" borderRadius="md" justifyContent="center">
             {
-                router.state.location.pathname === '/app/tasks' ? <ActionButtonsMainPage/> :
+                router.state.location.pathname === '/app/tasks' ? <ActionButtonsMainPage isDesktop={isDesktop}/> :
                     router.state.location.pathname === '/app/worklist' ? <ActionButtonsWorklistPage/> :
                         null
             }
@@ -40,13 +38,13 @@ const Menu = () => {
     return (
         <Box>
             <Box bg="primary" borderRadius="5px" p="0.3rem">
-                {!isLargeScreen &&
+                <Show when={!isDesktop}>
                     <Flex justifyContent="center" paddingBottom="0.3rem">
                         {actionButtons}
                     </Flex>
-                }
+                </Show>
 
-                <Show when={isLargeScreen}>
+                <Show when={isDesktop}>
                     <Box m="0.6rem 0.6rem 1.2rem 0.6rem">
                         <Center>
                             <PlannerLogo/>
@@ -63,7 +61,9 @@ const Menu = () => {
                 />
             </Box>
 
-            {isLargeScreen && actionButtons}
+            <Show when={isDesktop}>
+                {actionButtons}
+            </Show>
         </Box>
     );
 };

@@ -14,15 +14,15 @@ const textStyles = defineTextStyles({
 
 const dark = {
     contrast: "#FFFFFF",
-    darker: "#141414",
-    base: "#202020",
-    lighter: "#4a4a4a",
+    darker: "#101010",
+    base: "#181818",
+    lighter: "#414141",
     lighterer: "#585858"
 };
 
 const light = {
     contrast: "#000000",
-    darker: "#C8C8C8",
+    darker: "#CCCCCC",
     base: "#E1E1E1",
     lighter: "#FFFFFF",
     lighterer: "#FFFFFF",

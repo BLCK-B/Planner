@@ -35,8 +35,8 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
                     <Tabs.Trigger key={index} value={tab} mb="1"
                                   color="grey"
                                   _selected={{
-                                      bg: "theme.Spruit1",
-                                      color: "black",
+                                      bg: "primary.lighter/65",
+                                      color: "primary.contrast",
                                   }}
                     >
                         {getIcon(tab)}

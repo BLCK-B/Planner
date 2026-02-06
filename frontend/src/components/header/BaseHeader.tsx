@@ -16,11 +16,14 @@ const goToSettingsPage = () => {
 };
 
 const BaseHeader = ({leftSide = <></>, rightSide = <></>, menu = false}: Props) => {
-    const isLargeScreen = useBreakpointValue({base: false, md: true}) as boolean;
+    const isDesktop = useBreakpointValue(
+        {base: false, md: true},
+        {ssr: false}
+    );
 
     return (
-        <Flex p="2" align="center" h="2.5rem" position={isLargeScreen ? "absolute" : "relative"} right="0">
-            <Show when={!isLargeScreen}>
+        <Flex p="2" align="center" h="2.5rem" position={isDesktop ? "absolute" : "relative"} right="0">
+            <Show when={!isDesktop}>
                 <PlannerLogo/>
                 {leftSide}
             </Show>
