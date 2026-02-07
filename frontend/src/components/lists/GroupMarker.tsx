@@ -1,4 +1,4 @@
-import {Box, Flex, Text} from "@chakra-ui/react";
+import {Flex, Text} from "@chakra-ui/react";
 
 type Props = {
     text: string;
@@ -15,25 +15,23 @@ const GroupMarker = ({text, adjacent}: Props) => {
                 ml="-120px"
                 top="50%"
                 transform="translateY(-50%)"
-                height="100%"
+                h="100%"
                 borderRadius="0px"
                 w="80px"
                 align="center"
             >
-                <Text color="gray.500" whiteSpace="nowrap">
+                <Text color="primary.contrast/40" whiteSpace="nowrap">
                     {text}
                 </Text>
             </Flex>
         );
     } else {
         return (
-            <Box
-                height="100%"
-            >
-                <Text color="gray.500" whiteSpace="nowrap">
+            <Flex h="100%" alignContent="center">
+                <Text color="primary.contrast/50" whiteSpace="nowrap" fontWeight="bold">
                     {text}
                 </Text>
-            </Box>
+            </Flex>
         );
     }
 }

@@ -1,5 +1,5 @@
 import {useInfiniteQuery, useQuery} from "@tanstack/react-query"
-import {Box, Flex, Show, useBreakpointValue} from "@chakra-ui/react";
+import {Box, Flex, useBreakpointValue} from "@chakra-ui/react";
 import Task from "@/components/items/Task.tsx";
 import {loadCompletedItemsQuery, loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
@@ -29,8 +29,9 @@ const MainList = () => {
     const filterContent = useAtomValue(filterContentAtom);
 
     const applyContentFilter = (item: TaskType) => {
-        if (!filterContent || filterContent.length === 0) return true;
-        return item.data.tags.some(tag => filterContent.includes(tag.tagID));
+        if (filterContent.important && !item.data.important) return false;
+        if (!filterContent.tagIds.length) return true;
+        return item.data.tags.some(tag => filterContent.tagIds.includes(tag.tagID));
     }
 
     const somedayRef = useRef<HTMLDivElement | null>(null);
@@ -116,15 +117,14 @@ const MainList = () => {
                     {groupList}
                 </Box>
             ) : (
-                <Box key={ym} position="relative" mt="1.2rem">
-                    <Box key={ym} bg="primary" position="relative">
-                        <Show when={byCompletedDate}>
-                            {groupMarker}
-                        </Show>
+                <Box key={ym} position="relative" mt="2.4rem">
+                    <Box bg="primary" p="0.3rem 0"
+                         position={groupTasks.length > 3 && !isDesktop ? "sticky" : "relative"}
+                         zIndex="1" top="0">
+                        {groupMarker}
+                    </Box>
+                    <Box bg="primary">
                         {groupList}
-                        <Show when={!byCompletedDate}>
-                            {groupMarker}
-                        </Show>
                     </Box>
                 </Box>
             );
@@ -135,8 +135,12 @@ const MainList = () => {
         if (someday.length === 0) return <Box ref={somedayRef}/>;
         return (
             <Box position="relative" mt="2.4rem" ref={somedayRef}>
-                <Box bg="primary.darker" position="relative" p="0.3rem 0.6rem 0.3rem 0.6rem" borderRadius="5px">
-                    <GroupMarker text={"Someday"} adjacent={false}/>
+                <Box bg="primary.darker" position={someday.length > 3 && !isDesktop ? "sticky" : "relative"}
+                     p="0.3rem 0.6rem 0.3rem 0.6rem" borderRadius="5px 5px 0 0" top="0"
+                     zIndex="1">
+                    <GroupMarker text="Someday" adjacent={false}/>
+                </Box>
+                <Box bg="primary.darker" p="0.3rem 0.6rem 0.3rem 0.6rem" borderRadius="0 0 5px 5px">
                     {someday.map((item) => (
                         <Box key={item.itemID} position="relative" mb="0.9rem">
                             <Task {...item} />

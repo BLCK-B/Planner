@@ -9,7 +9,7 @@ import {
     useBreakpointValue,
     Spacer,
     Textarea,
-    IconButton
+    IconButton,
 } from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
@@ -27,6 +27,7 @@ import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
 import {MdEventRepeat} from "react-icons/md";
+import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 
 const TaskCreator = () => {
 
@@ -128,7 +129,7 @@ const TaskCreator = () => {
     return (
         <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
             <Portal>
-                <Dialog.Backdrop/>
+                <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none"
                                     textStyle="body">

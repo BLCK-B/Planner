@@ -11,7 +11,7 @@ const ActionButtonsMainPage = ({isDesktop}: { isDesktop: boolean }) => {
 
     const [showExactDates, setShowExactDates] = useAtom(showExactDatesAtom);
 
-    const [filterContent] = useAtomValue(filterContentAtom);
+    const filterContent = useAtomValue(filterContentAtom);
 
     const setShowAddDialog = useSetAtom(showAddDialog);
 
@@ -27,7 +27,7 @@ const ActionButtonsMainPage = ({isDesktop}: { isDesktop: boolean }) => {
     };
 
     const activeFilterColor = () => {
-        return filterContent ? "theme.Spruit2" : "primary.lighter";
+        return filterContent.important || filterContent.tagIds.length ? "theme.Spruit2" : "primary.lighter";
     };
 
     const popoverPlacement = useBreakpointValue({base: "top-start", md: "right-start"}) ?? "top-start";
