@@ -17,6 +17,7 @@ import MyButton from "@/components/base/MyButton.tsx";
 import ColorPick from "@/components/base/ColorPick.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 import {getNewTag} from "@/types/TagType.ts";
+import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 
 const TagCreator = () => {
     const isDesktop = useBreakpointValue(
@@ -66,7 +67,7 @@ const TagCreator = () => {
     return (
         <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
             <Portal>
-                <Dialog.Backdrop/>
+                <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" textStyle="body">
                         <Dialog.Header>

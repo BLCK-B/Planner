@@ -2,6 +2,7 @@ import {Dialog, Portal, Flex,} from "@chakra-ui/react";
 import {errorModalContent} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import MyButton from "@/components/base/MyButton.tsx";
+import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 
 const ErrorModal = () => {
 
@@ -10,7 +11,7 @@ const ErrorModal = () => {
     return (
         <Dialog.Root size={"md"} open={!!errorMessage} trapFocus={false}>
             <Portal>
-                <Dialog.Backdrop/>
+                <DialogBackdrop/>
                 <Dialog.Positioner>
                     <Dialog.Content bg="primary" color="primary.contrast" textStyle="body" userSelect="text">
                         <Dialog.Header>

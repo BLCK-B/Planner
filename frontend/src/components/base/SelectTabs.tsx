@@ -33,7 +33,7 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
                        gap={1}>
                 {tabs.map((tab, index) => (
                     <Tabs.Trigger key={index} value={tab} mb="1"
-                                  color="grey"
+                                  color="primary.contrast/40"
                                   _selected={{
                                       bg: "primary.lighter/65",
                                       color: "primary.contrast",
