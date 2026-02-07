@@ -2,11 +2,15 @@ import {atom} from 'jotai';
 import {getNewTask, type TaskType} from "@/types/TaskType.ts";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 import {getNewWorkItem, type WorkItemType} from "@/types/WorkItemType.ts";
+import type {Filter} from "@/types/Filter.ts";
 
 // user-controlled
 export const showExactDatesAtom = atom(false);
 
-export const filterContentAtom = atom<string[]>([]);
+export const filterContentAtom = atom<Filter>({
+    tagIds: [],
+    important: false
+});
 
 // system
 export const errorModalContent = atom<string>('');

@@ -1,10 +1,11 @@
-import {Popover, Box, Card, Flex} from "@chakra-ui/react";
+import {Popover, Box, Card, Flex, IconButton} from "@chakra-ui/react";
 import MyTag from "@/components/items/MyTag.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {type TagType} from "@/types/TagType.ts";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {useAtom} from "jotai";
 import {filterContentAtom} from "@/global/atoms.ts";
+import {FaStar} from "react-icons/fa6";
 
 const FilterSelects = () => {
 
@@ -17,20 +18,32 @@ const FilterSelects = () => {
     }
 
     const applyTagFilter = (tag: TagType) => {
-        const content = filterContent ?? [];
-        const isAssigned = content.some(tagId => tagId === tag.tagID);
+        const isAssigned = filterContent.tagIds.some(tagId => tagId === tag.tagID);
         let updatedTags;
         if (isAssigned) {
-            updatedTags = content.filter(tagId => tagId !== tag.tagID);
+            updatedTags = filterContent.tagIds.filter(tagId => tagId !== tag.tagID);
         } else {
-            updatedTags = [...content, tag.tagID];
+            updatedTags = [...filterContent.tagIds, tag.tagID];
         }
-        setFilterContent(updatedTags);
+        setFilterContent({
+            ...filterContent,
+            tagIds: updatedTags
+        });
+    };
+
+    const applyImportantFilter = () => {
+        setFilterContent({
+            ...filterContent,
+            important: !filterContent.important,
+        });
     };
 
     const isInactive = (tag: TagType) => {
-        const content = filterContent ?? [];
-        return !content.some(tagId => tagId === tag.tagID);
+        return !filterContent.tagIds.some(tagId => tagId === tag.tagID);
+    }
+
+    const importantStyle = () => {
+        return filterContent.important ? "theme.BrightYellow" : "primary.lighterer";
     }
 
     return (
@@ -46,6 +59,17 @@ const FilterSelects = () => {
                                     </Box>
                                 ))}
                             </Flex>
+                            <IconButton
+                                mt="1.2rem"
+                                onClick={() => applyImportantFilter()}
+                                size="xs"
+                                w="1px"
+                                aria-label={"important"}
+                                bg={importantStyle()}
+                                color="black"
+                            >
+                                <FaStar/>
+                            </IconButton>
                         </Card.Body>
                     </Card.Root>
                 </Popover.Body>

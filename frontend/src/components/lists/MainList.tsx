@@ -29,8 +29,9 @@ const MainList = () => {
     const filterContent = useAtomValue(filterContentAtom);
 
     const applyContentFilter = (item: TaskType) => {
-        if (!filterContent || filterContent.length === 0) return true;
-        return item.data.tags.some(tag => filterContent.includes(tag.tagID));
+        if (filterContent.important && !item.data.important) return false;
+        if (!filterContent.tagIds.length) return true;
+        return item.data.tags.some(tag => filterContent.tagIds.includes(tag.tagID));
     }
 
     const somedayRef = useRef<HTMLDivElement | null>(null);
