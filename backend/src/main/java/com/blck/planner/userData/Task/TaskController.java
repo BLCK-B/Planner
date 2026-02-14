@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ROLE_USER')")
+@PreAuthorize("hasRole('ROLE_PLANNER_USER')")
 public class TaskController {
 
     private final UserTaskRepository userTaskRepository;

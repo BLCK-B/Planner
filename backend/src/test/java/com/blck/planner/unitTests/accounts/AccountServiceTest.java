@@ -31,7 +31,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('ROLE_PLANNER_USER')")
 class AccountServiceTest {
 
 	@Mock
