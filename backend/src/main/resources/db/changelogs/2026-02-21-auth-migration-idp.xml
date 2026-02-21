@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="remove-unusedcolumns" author="BLCK">
+        <sql>
+            ALTER TABLE accounts DROP COLUMN password;
+            ALTER TABLE accounts DROP COLUMN roles;
+            ALTER TABLE accounts DROP COLUMN password_auth_salt;
+            ALTER TABLE accounts DROP COLUMN frontend_salt;
+        </sql>
+    </changeSet>
+
+    <changeSet id="change-my-id" author="BLCK">
+        <sql>
+            UPDATE accounts
+            SET username = '360843359004721155'
+            WHERE username = 'test';
+        </sql>
+        <sql>
+            UPDATE user_tasks
+            SET user_id = '360843359004721155'
+            WHERE user_id = 'test';
+        </sql>
+        <sql>
+            UPDATE user_tags
+            SET user_id = '360843359004721155'
+            WHERE user_id = 'test';
+        </sql>
+        <sql>
+            UPDATE user_workitems
+            SET user_id = '360843359004721155'
+            WHERE user_id = 'test';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
