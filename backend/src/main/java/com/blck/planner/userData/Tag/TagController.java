@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ROLE_PLANNER_USER')")
 public class TagController {
 
     private final UserTagRepository userTagRepository;
@@ -30,14 +28,14 @@ public class TagController {
 
     @GetMapping(value = "/userTags")
     public List<TagDTO> getTags(@AuthenticationPrincipal Jwt jwt) {
-        return userTagRepository.findByUserID(jwt.getSubject()).stream()
+        return userTagRepository.findByUserID(jwt.getClaim("sub")).stream()
                 .map(Tag::toDTO)
                 .toList();
     }
 
     @PutMapping(value = "/userTag")
     public TagDTO setTag(@AuthenticationPrincipal Jwt jwt, @RequestBody TagDTO userTag) {
-        return userTagRepository.save(userTag.toTag(jwt.getSubject())).toDTO();
+        return userTagRepository.save(userTag.toTag(jwt.getClaim("sub"))).toDTO();
     }
 
     @Transactional
@@ -47,14 +45,14 @@ public class TagController {
                 .setParameter(1, UUID.fromString(tagID))
                 .executeUpdate();
 
-        userTagRepository.deleteByUserIDAndTagID(jwt.getSubject(), UUID.fromString(tagID));
+        userTagRepository.deleteByUserIDAndTagID(jwt.getClaim("sub"), UUID.fromString(tagID));
         return ("User tag removed successfully.");
     }
 
     @Transactional
     @PutMapping(value = "/updateAllUserTags")
     public ResponseEntity<String> setTags(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TagDTO> userTags) {
-        String userID = jwt.getSubject();
+        String userID = jwt.getClaim("sub");
         try {
             List<Tag> savedTags = userTagRepository.saveAll(userTags.stream()
                     .map(dto -> dto.toTag(userID))

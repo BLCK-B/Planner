@@ -33,16 +33,17 @@ spring:
     oauth2:
       client:
         registration:
-          authentik:
-            client-id: 25kxkPxAIKKBktUACLbLQscSyW3aWH36Zmy6nSNE
-            client-secret: ${AUTHENTIK_CLIENT_SECRET}
+          zitadel:
+            client-id: ${ZITADEL_CLIENT_ID}
+            client-secret: ${ZITADEL_CLIENT_SECRET}
+            client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
             scope: openid,profile,message.read,message.write
         provider:
-          authentik:
-            issuer-uri: https://auth.spruits.eu/application/o/planner/
-#            http://localhost:8081/oauth2/authorization/authentik
-#            http://localhost:8081/login/oauth2/code/authentik
+          zitadel:
+            issuer-uri: https://auth.spruits.eu
+
+#  http://localhost:8081/oauth2/authorization/zitadel
 
   liquibase:
     enabled: true

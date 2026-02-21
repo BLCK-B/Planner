@@ -1,6 +1,5 @@
 package com.blck.planner.security;
 
-import com.blck.planner.accounts.AccountService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,9 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.jwt.*;
@@ -37,7 +31,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
 
@@ -69,10 +62,10 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-//                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, auth) -> {
-                            OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("authentik", auth.getName());
+                        .successHandler((_, response, auth) -> {
+                            OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("zitadel", auth.getName());
                             String jwt = client.getAccessToken().getTokenValue();
                             ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), jwt)
                                     .httpOnly(true) // prevents JS access - against XSS
@@ -82,7 +75,7 @@ public class SecurityConfiguration {
                                     .maxAge(Duration.ofDays(90))
                                     .build();
                             response.addHeader("Set-Cookie", cookie.toString());
-//                            response.sendRedirect("http://localhost:5173/app/tasks");
+                            response.sendRedirect("http://localhost:5173/app/tasks");
                         })
                 )
                 .oauth2Client(Customizer.withDefaults());
@@ -129,27 +122,9 @@ public class SecurityConfiguration {
             }
         };
     }
-
+    // todo: from properties
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu/application/o/planner/");
+        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(AccountService accountService) {
-        return accountService;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider::authenticate;
-    }
-
 }

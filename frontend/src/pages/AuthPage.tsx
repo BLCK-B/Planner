@@ -1,24 +1,19 @@
-import {useParams, useRouter} from '@tanstack/react-router';
-import {Box, Button, Input, GridItem, Grid, Stack, Card, Show, Center, Field, Text} from "@chakra-ui/react";
+import {useRouter} from '@tanstack/react-router';
+import {Box, Button, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import FetchRequest from "@/functions/FetchRequest.tsx";
-import {authRoute, mainRoute} from "@/routes/__root.tsx";
+import {mainRoute} from "@/routes/__root.tsx";
 import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
 import {
     createEncryptionKey,
     decodeFromBase64,
-    deriveAuthHash,
-    encodeToBase64,
-    generateNewSalt,
 } from "@/functions/Crypto.ts";
 import {Alert} from "@chakra-ui/react"
-import type {BackendCredentials, Credentials} from "@/types/Credentials.ts";
+import type {Credentials} from "@/types/Credentials.ts";
 import {useState} from "react";
 
 const AuthPage = () => {
-    const {formType} = useParams({from: authRoute.id});
-
     const router = useRouter();
 
     const [infoAlertMessage, setInfoAlertMessage] = useState<string>('');
@@ -30,66 +25,53 @@ const AuthPage = () => {
     } = useForm<Credentials>();
 
     // not ready for protocol migrations
-    const reencryptAllData = async () => {
-        const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
-        const allPlansReencrypted = await FetchRequest("GET", "/users/userTags");
+    // const reencryptAllData = async () => {
+    //     const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
+    //     const allPlansReencrypted = await FetchRequest("GET", "/users/userTags");
+    //
+    //     if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+    //     if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allPlansReencrypted);
+    // };
 
-        if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
-        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allPlansReencrypted);
-    };
+    // const registerNewAccount = async (credentials: Credentials) => {
+    //     try {
+    //         const newAuthSalt = generateNewSalt();
+    //         const newEncryptionKeySalt = generateNewSalt();
+    //
+    //         const newFrontendAuthHash = await deriveAuthHash(newAuthSalt, credentials.encryptionKey);
+    //
+    //         const backendCredentials = {
+    //             frontendPasswordHash: newFrontendAuthHash,
+    //             passwordAuthSalt: encodeToBase64(newAuthSalt),
+    //             encryptionKeySalt: encodeToBase64(newEncryptionKeySalt),
+    //         };
+    //         await sendAuthRequest("/auth/register", backendCredentials);
+    //
+    //         await router.navigate({
+    //             to: postAuthRoute.fullPath,
+    //             params: {authType: 'log-in'},
+    //         });
+    //     } catch (error: any) {
+    //         if (error?.status === 409) {
+    //             setInfoAlertMessage("This account already exists.");
+    //         } else if (error?.status) {
+    //             setInfoAlertMessage("Invalid credentials.");
+    //         } else {
+    //             alert("Login failed: " + (error?.error || "Unknown error"));
+    //         }
+    //     }
+    // };
 
-    const registerNewAccount = async (credentials: Credentials) => {
-        try {
-            const newAuthSalt = generateNewSalt();
-            const newEncryptionKeySalt = generateNewSalt();
-
-            const newFrontendAuthHash = await deriveAuthHash(newAuthSalt, credentials.password);
-
-            const backendCredentials = {
-                username: credentials.username,
-                frontendPasswordHash: newFrontendAuthHash,
-                passwordAuthSalt: encodeToBase64(newAuthSalt),
-                encryptionKeySalt: encodeToBase64(newEncryptionKeySalt),
-            };
-            await sendAuthRequest("/auth/register", backendCredentials);
-
-            await router.navigate({
-                to: authRoute.fullPath,
-                params: {formType: 'log-in'},
-            });
-        } catch (error: any) {
-            if (error?.status === 409) {
-                setInfoAlertMessage("This account already exists.");
-            } else if (error?.status) {
-                setInfoAlertMessage("Invalid credentials.");
-            } else {
-                alert("Login failed: " + (error?.error || "Unknown error"));
-            }
-        }
-    };
-
-    const login = async (credentials: Credentials) => {
-        if (credentials.username === "testsentry") {
+    const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
+        if (credentials.encryptionKey === "testsentry") {
             await FetchRequest("GET", "/auth/test-sentry");
             return;
         }
         try {
             setInfoAlertMessage("");
-            const frontendAuthSalt = await FetchRequest("GET", `/auth/authSalt/${credentials.username}`);
+            const encryptionKeySalt = await FetchRequest("GET", `/auth/encryptionKeySalt`);
 
-            const authHash = await deriveAuthHash(decodeFromBase64(frontendAuthSalt), credentials.password);
-            const backendCredentials = {
-                username: credentials.username,
-                frontendPasswordHash: authHash,
-                passwordAuthSalt: encodeToBase64(frontendAuthSalt)
-            };
-
-            const encryptionKeySalt = await sendAuthRequest("/auth/login", backendCredentials);
-            if (encryptionKeySalt.error) {
-                alert("Login failed: " + (encryptionKeySalt?.error || "Unknown error"));
-                return;
-            }
-            await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.password);
+            await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.encryptionKey);
 
             // await reencryptAllData();
 
@@ -100,37 +82,6 @@ const AuthPage = () => {
             } else {
                 alert("Login failed: " + (error?.error || "Unknown error"));
             }
-        }
-    };
-
-    const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
-        if (formType === "log-in") {
-            await login(credentials);
-        } else if (formType === "register") {
-            const key = window.prompt("Enter EA key.");
-            if (key !== "letmein") {
-                alert("Incorrect key. Registration cancelled.");
-                return;
-            }
-            await registerNewAccount(credentials);
-        }
-    };
-
-    const sendAuthRequest = async (request: string, credentials: BackendCredentials) => {
-        return await FetchRequest("POST", request, {...credentials});
-    };
-
-    const switchLoginOrRegister = async () => {
-        if (formType === "log-in") {
-            await router.navigate({
-                to: authRoute.fullPath,
-                params: {formType: 'register'},
-            });
-        } else {
-            await router.navigate({
-                to: authRoute.fullPath,
-                params: {formType: 'log-in'},
-            });
         }
     };
 
@@ -150,46 +101,20 @@ const AuthPage = () => {
                                    backdropFilter="blur(100px)" boxShadow="xs">
                             <Card.Header color="white">
                                 <Card.Title>
-                                    <Text as="span">
-                                        {formType === "register" ? "Sign up" : "Log in"}{" "}
-                                    </Text>
-                                    <Text
-                                        as="span"
-                                        cursor="pointer"
-                                        fontWeight="100"
-                                        fontSize="sm"
-                                        color="lightgrey"
-                                        onClick={switchLoginOrRegister}
-                                    >
-                                        {formType === "register" ? "/ Log in" : "/ Sign up"}
-                                    </Text>
+                                    Log in
                                 </Card.Title>
                                 <Card.Description color="white">
-                                    {formType === "register" ? "Create an account." : "Welcome back."}
+                                    Enter your encryption key.
                                 </Card.Description>
                             </Card.Header>
                             <Card.Body gap="2" color="white">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
-
-                                        <Field.Root invalid={!!errors.username}>
-                                            <Field.Label>E-mail</Field.Label>
-                                            <Input
-                                                color="white" _placeholder={{color: "lightgrey"}}
-                                                placeholder="me@example.com" {...register("username", {required: "Username is required"})} />
-                                            <Field.ErrorText>{String(errors.username?.message)}</Field.ErrorText>
+                                        <Field.Root invalid={!!errors.encryptionKey}>
+                                            <PasswordInput {...register("encryptionKey", {required: "Encryption key is required"})} />
+                                            <Field.ErrorText>{String(errors.encryptionKey?.message)}</Field.ErrorText>
                                         </Field.Root>
-
-                                        <Field.Root invalid={!!errors.password}>
-                                            <Field.Label color="white">Password</Field.Label>
-                                            <PasswordInput {...register("password", {required: "Password is required"})} />
-                                            <Field.ErrorText>{String(errors.password?.message)}</Field.ErrorText>
-                                        </Field.Root>
-
-                                        <Button type="submit" alignSelf="center"
-                                                variant="subtle">{formType === "register" ? "Sign up" : "Log in"}</Button>
-                                        {/*<Show when={formType === "log-in"}>Forgot password</Show>*/}
-
+                                        <Button type="submit" alignSelf="center" variant="subtle">Submit</Button>
                                     </Stack>
                                 </form>
                             </Card.Body>

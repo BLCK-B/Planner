@@ -3,16 +3,12 @@ package com.blck.planner.security;
 import com.blck.planner.accounts.AccountService;
 import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.accounts.UserAccount;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,18 +17,15 @@ public class AuthController {
 
     private final AccountService accountService;
 
-    private final AuthenticationManager authenticationManager;
-
     @Autowired
-    public AuthController(AccountService accountService, AuthenticationManager authenticationManager) {
+    public AuthController(AccountService accountService) {
         this.accountService = accountService;
-        this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserAccount> register(@RequestBody CredentialsDTO credentials) {
+    @PostMapping("/registerUserSalt")
+    public ResponseEntity<UserAccount> register(@AuthenticationPrincipal Jwt jwt, @RequestBody String encryptionKeySalt) {
         try {
-            UserAccount user = accountService.registerUser(credentials);
+            UserAccount user = accountService.registerUserSalt(jwt.getClaim("sub"), encryptionKeySalt);
             return ResponseEntity.ok(user);
         } catch (AccountAlreadyExistsException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -41,34 +34,13 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/authSalt/{username}")
-    public ResponseEntity<String> getFrontendHashSalt(@PathVariable String username) {
+    @GetMapping("/encryptionKeySalt")
+    public ResponseEntity<String> getEncryptionKeySalt(@AuthenticationPrincipal Jwt jwt) {
         try {
-            UserAccount user = (UserAccount) accountService.loadUserByUsername(username);
-            return ResponseEntity.ok(user.getPasswordAuthSalt());
+            UserAccount user = (UserAccount) accountService.loadUserByUsername(jwt.getClaim("sub"));
+            return ResponseEntity.ok(user.getEncryptionKeySalt());
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
-
-    /**
-     * @return encryption key salt on success
-     */
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody CredentialsDTO credentials, HttpServletRequest request, HttpServletResponse response) {
-        Authentication authRequest = new UsernamePasswordAuthenticationToken(
-                credentials.username(),
-                credentials.frontendPasswordHash()
-        );
-        try {
-            accountService.loginUser(response, authRequest, authenticationManager);
-            UserAccount user = (UserAccount) accountService.loadUserByUsername(credentials.username());
-            return ResponseEntity.ok(user.getEncryptionKeySalt());
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred: " + e.getMessage());
         }
     }
 

@@ -1,5 +1,5 @@
 import {QueryClient, QueryCache, MutationCache} from '@tanstack/react-query';
-import {authRoute, router} from '@/routes/__root.tsx';
+import {postAuthRoute, router} from '@/routes/__root.tsx';
 import type {FetchError} from '@/types/FetchError.ts';
 
 export const queryClient = new QueryClient({
@@ -13,7 +13,7 @@ export const queryClient = new QueryClient({
             const err = error as FetchError;
             if (err.status === 401) {
                 router.navigate({
-                    to: authRoute.fullPath,
+                    to: postAuthRoute.fullPath,
                     params: {formType: 'log-in'},
                 });
             }
@@ -24,7 +24,7 @@ export const queryClient = new QueryClient({
             const err = error as FetchError;
             if (err.status === 401) {
                 router.navigate({
-                    to: authRoute.fullPath,
+                    to: postAuthRoute.fullPath,
                     params: {formType: 'log-in'},
                 });
             }
