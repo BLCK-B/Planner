@@ -50,21 +50,23 @@ const WorkList = () => {
                                     <MyButton type='edit' onClick={e => openEdit(e, item)}/>
                                 </Flex>
                                 <Box w="100%" mx="auto" position="relative" p="0.6rem">
-                                    {item.data.subtasks?.slice(0, 5).map((subtask, x) => (
-                                        <Flex
-                                            key={x}
-                                            color="primary.contrast"
-                                            position="relative"
-                                            justifyContent="space-between"
-                                            mb="0.6rem"
-                                        >
-                                            <Field.Root ml="0.3rem">
-                                                <Text lineClamp="2">
-                                                    {subtask.data.name}
-                                                </Text>
-                                            </Field.Root>
-                                        </Flex>
-                                    ))}
+                                    {item.data.subtasks?.filter(s => !s.data.completed)
+                                        .slice(-5)
+                                        .map((subtask, x) => (
+                                            <Flex
+                                                key={x}
+                                                color="primary.contrast"
+                                                position="relative"
+                                                justifyContent="space-between"
+                                                mb="0.6rem"
+                                            >
+                                                <Field.Root ml="0.3rem">
+                                                    <Text lineClamp="1" fontSize="sm">
+                                                        {subtask.data.name}
+                                                    </Text>
+                                                </Field.Root>
+                                            </Flex>
+                                        ))}
                                 </Box>
                             </Flex>
 

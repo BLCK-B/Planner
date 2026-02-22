@@ -10,12 +10,13 @@ import {
     Spacer,
     Textarea,
     IconButton,
+    Card,
 } from "@chakra-ui/react";
 import useSaveTask from "@/queries/UseSaveTask.tsx";
 import useDeleteTask from "@/queries/UseDeleteTask.tsx";
 import {showAddDialog, existingItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
-import {getNewTask} from "@/types/TaskType.ts";
+import {getNewTask, type TaskType} from "@/types/TaskType.ts";
 import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import {loadCompletedItemsQuery, loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
@@ -28,6 +29,8 @@ import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
 import {MdEventRepeat} from "react-icons/md";
 import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
+import {useState} from "react";
+import TaskView from "@/components/items/TaskView.tsx";
 
 const TaskCreator = () => {
 
@@ -39,11 +42,15 @@ const TaskCreator = () => {
 
     const [newItem, setNewItem] = useAtom(existingItemForEdit);
 
+    const [tasksNearDate, setTasksNearDate] = useState<TaskType[]>([]);
+
     const saveTaskMutation = useSaveTask();
 
     const deleteTaskMutation = useDeleteTask();
 
     const {data: tags} = useQuery<TagType[]>(loadTagsQuery());
+
+    const {data: uncompletedItems} = useQuery<TaskType[]>(loadUncompletedItemsQuery());
 
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
@@ -87,6 +94,7 @@ const TaskCreator = () => {
             updateItem("repeatEvent", "none");
         }
         updateItem("date", date);
+        displayTasksNearThisDate(date);
     };
 
     const assignTag = (tag: TagType) => {
@@ -126,11 +134,35 @@ const TaskCreator = () => {
         return newItem.data.important ? "theme.BrightYellow" : "primary.lighterer";
     }
 
+    const displayTasksNearThisDate = (date: string) => {
+        if (!uncompletedItems) return;
+        setTasksNearDate(uncompletedItems.filter(item => item.data.date === date));
+    };
+
     return (
         <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
             <Portal>
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
+                    {/* related tasks */}
+                    <Show when={tasksNearDate.length}>
+                        <Card.Root position="fixed" w={isDesktop ? "25%" : "100%"} top="0.6rem"
+                                   right={isDesktop ? "0.6rem" : undefined} bg="primary" pb="0.3rem"
+                                   boxShadow="xs">
+                            <Card.Header color="white" p="0.3rem">
+                                Tasks at the selected day
+                            </Card.Header>
+                            <Card.Body gap="0.3rem" color="white" p="0.3rem" maxH={isDesktop ? "90vh" : "40vh"}
+                                       overflowY="auto">
+                                {tasksNearDate.map((task) => (
+                                    <Box key={task.itemID} position="relative">
+                                        <TaskView {...task} />
+                                    </Box>
+                                ))}
+                            </Card.Body>
+                        </Card.Root>
+                    </Show>
+                    {/* creator */}
                     <Dialog.Content bg="primary" color="primary.contrast" boxShadow="none"
                                     textStyle="body">
                         <Dialog.Body mt="1.2rem" p={isDesktop ? undefined : "0.3rem"}>
@@ -213,7 +245,7 @@ export default TaskCreator;
 
 const styles = {
     dialogMobile: {
-        alignItems: "center",
+        alignItems: "end",
         padding: "0"
     },
     dialogDesktop: {

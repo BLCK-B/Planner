@@ -1,6 +1,8 @@
 import {QueryClient, QueryCache, MutationCache} from '@tanstack/react-query';
-import {postAuthRoute, router} from '@/routes/__root.tsx';
 import type {FetchError} from '@/types/FetchError.ts';
+
+// todo: server - redirect to backend endpoint or just auth
+const URL = (import.meta.env.VITE_API_URL as string | undefined) ? "http://localhost:8081/oauth2/authorization/zitadel" : "https://auth.spruits.eu";
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -12,10 +14,7 @@ export const queryClient = new QueryClient({
         onError: (error: unknown) => {
             const err = error as FetchError;
             if (err.status === 401) {
-                router.navigate({
-                    to: postAuthRoute.fullPath,
-                    params: {formType: 'log-in'},
-                });
+                window.location.href = URL;
             }
         },
     }),
@@ -23,10 +22,7 @@ export const queryClient = new QueryClient({
         onError: (error: unknown) => {
             const err = error as FetchError;
             if (err.status === 401) {
-                router.navigate({
-                    to: postAuthRoute.fullPath,
-                    params: {formType: 'log-in'},
-                });
+                window.location.href = URL;
             }
         },
     }),

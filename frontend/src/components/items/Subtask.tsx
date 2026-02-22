@@ -11,13 +11,13 @@ type Props = {
     updateSubtask: (index: number, key: keyof SubtaskType["data"], value: any) => void;
 }
 
-const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
+const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
     const dndType = "SUBTASK";
 
     const [, dragRef, preview] = useDrag({
         type: dndType,
         item: {index},
-        collect: monitor => ({
+        collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
     });
@@ -34,11 +34,14 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
 
     // to remove HTML ghost image
     useEffect(() => {
-        preview(getEmptyImage(), {captureDraggingState: true});
+        preview && preview(getEmptyImage(), {captureDraggingState: true});
     }, [preview]);
 
     return (
         <Flex
+            ref={(node: ConnectableElement) => {
+                dropRef(node)
+            }}
             color="primary.contrast"
             borderRadius="md"
             justifyContent="space-between"
@@ -48,9 +51,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
             mb="0.3rem"
         >
             <Box
-                ref={(node: ConnectableElement) => {
-                    dragRef(dropRef(node))
-                }}
+                ref={dragRef}
                 userSelect="none"
                 display="flex"
                 alignItems="center"
@@ -64,22 +65,24 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
             <Editable.Root
                 value={subtask.data.name}
                 onValueChange={(e) => updateSubtask(index, "name", e.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Backspace" && subtask.data.name === "") {
+                        e.preventDefault();
+                        updateSubtask(index, "name", "__DELETE__");
+                    }
+                }}
                 ml="0.3rem"
+                flex="1"
             >
                 <Editable.Preview
                     w="100%"
-                    _hover={{
-                        bg: "primary.lighter"
-                    }}
+                    _hover={{bg: "primary.lighter"}}
                 />
                 <Editable.Textarea
                     maxLength={120}
                     w="100%"
                     resize="none"
-                    _selection={{
-                        bg: "theme.Spruit2",
-                        color: "black",
-                    }}
+                    _selection={{bg: "theme.Spruit2", color: "black"}}
                 />
             </Editable.Root>
             <Checkbox.Root
@@ -92,10 +95,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask,}: Props) => {
                 <Checkbox.HiddenInput/>
                 <Checkbox.Control
                     bg="primary.lighter"
-                    _checked={{
-                        bg: "theme.Spruit1",
-                        color: "black"
-                    }}
+                    _checked={{bg: "theme.Spruit1", color: "black"}}
                 />
             </Checkbox.Root>
         </Flex>

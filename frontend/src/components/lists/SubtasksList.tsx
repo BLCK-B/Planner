@@ -32,7 +32,6 @@ const SubtasksList = () => {
         }
     }, [workItem]);
 
-    // todo: reliable save on copy paste
     const throttledSave = useThrottledCallback(
         () => {
             if (!workItem) return;
@@ -46,16 +45,29 @@ const SubtasksList = () => {
             saveWorkItemMutation.mutateAsync(updatedWorkItem);
         },
         {
-            wait: 1000,
+            wait: 800,
             leading: true,
             trailing: true,
         }
     );
 
+    const immediateSave = () => {
+        if (!workItem) return;
+        const updatedWorkItem: WorkItemType = {
+            itemID: workItem.itemID,
+            data: {
+                name: workItem.data.name,
+                subtasks: newSubtasks,
+            },
+        };
+        saveWorkItemMutation.mutateAsync(updatedWorkItem);
+    };
+
     const updateSubtask = useCallback(
         (index: number, key: keyof typeof newSubtasks[number]["data"], value: any) => {
             setNewSubtasks(prev => {
-                if (value === '') {
+                // todo: test mobile (otherwise button)
+                if (value === '__DELETE__') {
                     return prev.filter((_, i) => i !== index);
                 }
                 return prev.map((subtask, i) =>
@@ -90,14 +102,19 @@ const SubtasksList = () => {
     }, []);
 
     const returnToWorkItems = () => {
-        throttledSave();
+        immediateSave();
         router.navigate({to: worklistRoute.fullPath});
     };
 
     if (isLoading) return <></>;
 
     return (
-        <DndProvider backend={isTouch ? TouchBackend : HTML5Backend}>
+        <DndProvider
+            backend={isTouch ? TouchBackend : HTML5Backend}
+            options={
+                isTouch ? {enableMouseEvents: true, delayTouchStart: 0} : undefined
+            }
+        >
             <Flex
                 direction="column"
                 height="100%"
