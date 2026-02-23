@@ -123,13 +123,9 @@ public class SecurityConfiguration {
         };
     }
     // todo: from properties
-//    @Bean
-//    public JwtDecoder jwtDecoder() {
-//        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
-//    }
-
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri("https://auth.spruits.eu/.well-known/jwks.json").build();
+        return JwtDecoders.fromIssuerLocation("http://127.0.0.1:8080");
+//        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
     }
 }
