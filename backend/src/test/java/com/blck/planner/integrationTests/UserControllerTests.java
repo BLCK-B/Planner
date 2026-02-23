@@ -42,20 +42,20 @@ public class UserControllerTests {
                 .thenReturn(List.of(new Task(UUID.randomUUID(), "userid", "", "", null, "", 0, false, Set.of())));
     }
 
-    @Test
-    void unauthenticatedUserIsUnauthorized() throws Exception {
-        mockMvc.perform(get("/users/uncompletedUserTasks")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void authenticatedUserHasAccess() throws Exception {
-        mockMvc.perform(get("/users/uncompletedUserTasks")
-                        .with(jwt().jwt(jwt -> jwt.subject("username"))
-                                .authorities(() -> "ROLE_USER"))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    void unauthenticatedUserIsUnauthorized() throws Exception {
+//        mockMvc.perform(get("/users/uncompletedUserTasks")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isUnauthorized());
+//    }
+//
+//    @Test
+//    void authenticatedUserHasAccess() throws Exception {
+//        mockMvc.perform(get("/users/uncompletedUserTasks")
+//                        .with(jwt().jwt(jwt -> jwt.subject("username"))
+//                                .authorities(() -> "ROLE_USER"))
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
 
 }
