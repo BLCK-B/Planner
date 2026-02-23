@@ -66,7 +66,7 @@ const FetchRequest: FetchRequestFunction = async (method, request, body) => {
     };
 
     if (body) {
-        body = await encryptBody(body);
+        // body = await encryptBody(body);
         options.body = JSON.stringify(body);
     }
 

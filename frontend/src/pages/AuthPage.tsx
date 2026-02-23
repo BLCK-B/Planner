@@ -25,13 +25,15 @@ const AuthPage = () => {
     } = useForm<Credentials>();
 
     // not ready for protocol migrations
-    // const reencryptAllData = async () => {
-    //     const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
-    //     const allPlansReencrypted = await FetchRequest("GET", "/users/userTags");
-    //
-    //     if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
-    //     if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allPlansReencrypted);
-    // };
+    const reencryptAllData = async () => {
+        const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
+        const allPlansReencrypted = await FetchRequest("GET", "/users/userTags");
+        const allWorkItemsReencrypted = await FetchRequest("GET", "/users/userWorkItems");
+
+        if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allPlansReencrypted);
+        if (allWorkItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserWorkItems", allWorkItemsReencrypted);
+    };
 
     // const registerNewAccount = async (credentials: Credentials) => {
     //     try {
@@ -69,11 +71,11 @@ const AuthPage = () => {
         }
         try {
             setInfoAlertMessage("");
-            const encryptionKeySalt = await FetchRequest("GET", `/auth/encryptionKeySalt`);
+            // const encryptionKeySalt = await FetchRequest("GET", `/auth/encryptionKeySalt`);
 
-            await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.encryptionKey);
+            // await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.encryptionKey);
 
-            // await reencryptAllData();
+            await reencryptAllData();
 
             await router.navigate({to: mainRoute.fullPath});
         } catch (error: any) {
