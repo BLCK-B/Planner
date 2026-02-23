@@ -1,6 +1,6 @@
 import {Button} from "@chakra-ui/react";
 import {useRouter} from '@tanstack/react-router';
-import {authRoute} from "@/routes/__root.tsx";
+import {postAuthRoute} from "@/routes/__root.tsx";
 import BaseHeader from "@/components/header/BaseHeader.tsx";
 
 const HeaderLandingPage = () => {
@@ -8,14 +8,14 @@ const HeaderLandingPage = () => {
 
     const login = () => {
         router.navigate({
-            to: authRoute.fullPath,
+            to: postAuthRoute.fullPath,
             params: {formType: 'log-in'},
         });
     };
 
     const signup = () => {
         router.navigate({
-            to: authRoute.fullPath,
+            to: postAuthRoute.fullPath,
             params: {formType: 'register'},
         });
     };

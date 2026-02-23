@@ -30,6 +30,20 @@ spring:
     user:
       name: ${SPRING_USER_NAME}
       password: ${SPRING_USER_PASSWORD}
+    oauth2:
+      client:
+        registration:
+          zitadel:
+            client-id: ${ZITADEL_CLIENT_ID}
+            client-secret: ${ZITADEL_CLIENT_SECRET}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            scope: openid,profile,message.read,message.write
+        provider:
+          zitadel:
+            issuer-uri: https://auth.spruits.eu
+
+#  http://localhost:8081/oauth2/authorization/zitadel
 
   liquibase:
     enabled: true

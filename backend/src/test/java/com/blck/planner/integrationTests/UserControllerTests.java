@@ -50,14 +50,6 @@ public class UserControllerTests {
     }
 
     @Test
-    void authenticatedUserWithoutUserRoleIsForbidden() throws Exception {
-        mockMvc.perform(get("/users/uncompletedUserTasks")
-                        .with(jwt().jwt(jwt -> jwt.subject("username")))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
     void authenticatedUserHasAccess() throws Exception {
         mockMvc.perform(get("/users/uncompletedUserTasks")
                         .with(jwt().jwt(jwt -> jwt.subject("username"))

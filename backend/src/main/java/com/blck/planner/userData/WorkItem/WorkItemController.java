@@ -2,7 +2,6 @@ package com.blck.planner.userData.WorkItem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ROLE_USER')")
 public class WorkItemController {
 
     private final UserWorkItemRepository userWorkItemRepository;
@@ -25,33 +23,33 @@ public class WorkItemController {
 
     @GetMapping("/userWorkItems")
     public List<WorkItemDTO> getWorkItems(@AuthenticationPrincipal Jwt jwt) {
-        return userWorkItemRepository.findByUserID(jwt.getSubject()).stream()
+        return userWorkItemRepository.findByUserID(jwt.getClaim("sub")).stream()
                 .map(WorkItem::toDTO)
                 .toList();
     }
 
     @GetMapping("/userWorkItem/{workItemId}")
     public WorkItemDTO getWorkItem(@AuthenticationPrincipal Jwt jwt, @PathVariable String workItemId) {
-        return userWorkItemRepository.findByUserIDAndItemID(jwt.getSubject(), UUID.fromString(workItemId)).toDTO();
+        return userWorkItemRepository.findByUserIDAndItemID(jwt.getClaim("sub"), UUID.fromString(workItemId)).toDTO();
     }
 
     @PutMapping("/userWorkItem")
     public WorkItemDTO setWorkItem(@AuthenticationPrincipal Jwt jwt, @RequestBody WorkItemDTO userItem) {
         WorkItemDTO dto = new WorkItemDTO(userItem.itemID(), userItem.data());
-        return userWorkItemRepository.save(dto.toWorkItem(jwt.getSubject())).toDTO();
+        return userWorkItemRepository.save(dto.toWorkItem(jwt.getClaim("sub"))).toDTO();
     }
 
     @Transactional
     @DeleteMapping("/userWorkItem/{workItemID}")
     public String deleteWorkItem(@AuthenticationPrincipal Jwt jwt, @PathVariable String workItemID) {
-        userWorkItemRepository.deleteByUserIDAndItemID(jwt.getSubject(), UUID.fromString(workItemID));
+        userWorkItemRepository.deleteByUserIDAndItemID(jwt.getClaim("sub"), UUID.fromString(workItemID));
         return "User work item removed successfully.";
     }
 
     @Transactional
     @PutMapping("/updateAllUserWorkItems")
     public ResponseEntity<String> setWorkItems(@AuthenticationPrincipal Jwt jwt, @RequestBody List<WorkItemDTO> userItems) {
-        String userID = jwt.getSubject();
+        String userID = jwt.getClaim("sub");
         try {
             List<WorkItem> savedWorkItems = userWorkItemRepository.saveAll(userItems.stream()
                     .map(dto -> dto.toWorkItem(userID))

@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum Roles {
-	ROLE_USER,
-	ROLE_ADMIN;
+	ROLE_PLANNER_USER,
+	ROLE_PLANNER_ADMIN;
 
 	private static final Set<String> values =
 			Arrays.stream(Roles.values())

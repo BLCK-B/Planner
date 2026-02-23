@@ -2,7 +2,6 @@ package com.blck.planner.userData.Task;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ROLE_USER')")
 public class TaskController {
 
     private final UserTaskRepository userTaskRepository;
@@ -25,33 +23,33 @@ public class TaskController {
 
     @GetMapping(value = "/userAccountInfo")
     public String getUserAccountInfo(@AuthenticationPrincipal Jwt jwt) {
-        return jwt.getSubject();
+        return jwt.getClaim("sub");
     }
 
     @GetMapping("/uncompletedUserTasks")
     public List<TaskDTO> getUncompletedTasks(@AuthenticationPrincipal Jwt jwt) {
-        return userTaskRepository.getUncompletedUserTasks(jwt.getSubject()).stream()
+        return userTaskRepository.getUncompletedUserTasks(jwt.getClaim("sub")).stream()
                 .map(Task::toDTO)
                 .toList();
     }
 
     @GetMapping("/completedUserTasks/{offset}-{size}")
     public List<TaskDTO> getCompletedTasks(@AuthenticationPrincipal Jwt jwt, @PathVariable int offset, @PathVariable int size) {
-        return userTaskRepository.getCompletedUserTasksBetween(jwt.getSubject(), offset, size).stream()
+        return userTaskRepository.getCompletedUserTasksBetween(jwt.getClaim("sub"), offset, size).stream()
                 .map(Task::toDTO)
                 .toList();
     }
 
     @GetMapping("/allUserTasks")
     public List<TaskDTO> getAllTasks(@AuthenticationPrincipal Jwt jwt) {
-        return userTaskRepository.findByUserID(jwt.getSubject()).stream()
+        return userTaskRepository.findByUserID(jwt.getClaim("sub")).stream()
                 .map(Task::toDTO)
                 .toList();
     }
 
     @GetMapping("/allUserTasksOfThisTag/{tagID}")
     public List<TaskDTO> getAllTasksOfThisTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
-        return userTaskRepository.getAllUserTasksWithTag(jwt.getSubject(), UUID.fromString(tagID)).stream()
+        return userTaskRepository.getAllUserTasksWithTag(jwt.getClaim("sub"), UUID.fromString(tagID)).stream()
                 .map(Task::toDTO)
                 .toList();
     }
@@ -59,20 +57,20 @@ public class TaskController {
     @PutMapping("/userTask")
     public TaskDTO setTask(@AuthenticationPrincipal Jwt jwt, @RequestBody TaskDTO userItem) {
         TaskDTO dto = new TaskDTO(userItem.itemID(), userItem.data());
-        return userTaskRepository.save(dto.toTask(jwt.getSubject())).toDTO();
+        return userTaskRepository.save(dto.toTask(jwt.getClaim("sub"))).toDTO();
     }
 
     @Transactional
     @DeleteMapping("/userTask/{taskID}")
     public String deleteTask(@AuthenticationPrincipal Jwt jwt, @PathVariable String taskID) {
-        userTaskRepository.deleteByUserIDAndItemID(jwt.getSubject(), UUID.fromString(taskID));
+        userTaskRepository.deleteByUserIDAndItemID(jwt.getClaim("sub"), UUID.fromString(taskID));
         return "User task removed successfully.";
     }
 
     @Transactional
     @PutMapping("/updateAllUserTasks")
     public ResponseEntity<String> setTasks(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TaskDTO> userItems) {
-        String userID = jwt.getSubject();
+        String userID = jwt.getClaim("sub");
         try {
             List<Task> savedTasks = userTaskRepository.saveAll(userItems.stream()
                     .map(dto -> dto.toTask(userID))

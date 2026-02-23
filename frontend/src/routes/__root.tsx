@@ -20,9 +20,9 @@ export const landingRoute = createRoute({
     component: LandingPage,
 });
 
-export const authRoute = createRoute({
+export const postAuthRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: 'app/auth/$formType',
+    path: 'app/postauth',
     component: AuthPage,
 })
 
@@ -65,7 +65,7 @@ export const settingsRoute = createRoute({
 export const routeTree = rootRoute.addChildren(
     [
         landingRoute,
-        authRoute,
+        postAuthRoute,
         mainRoute,
         plansRoute,
         worklistRoute,

@@ -17,7 +17,6 @@ const TaskView = (task: TaskType) => {
               color="primary.contrast"
               mb="0.9rem"
               borderRadius="md"
-              cursor="button"
               position="relative"
               justifyContent="space-between"
               boxShadow="xs"
