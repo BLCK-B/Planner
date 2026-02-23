@@ -44,6 +44,7 @@ spring:
             issuer-uri: https://auth.spruits.eu
 
 #  http://localhost:8081/oauth2/authorization/zitadel
+#  https://planner-api.spruits.eu/oauth2/authorization/zitadel
 
   liquibase:
     enabled: true
