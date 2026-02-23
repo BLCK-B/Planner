@@ -55,7 +55,7 @@ public class SecurityConfiguration {
                     return configuration;
                 }))
                 .authorizeHttpRequests(exchanges -> exchanges
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(  "/auth/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(cookieAuthenticationWebFilter(jwtDecoder, cookieAuthenticationConverter), UsernamePasswordAuthenticationFilter.class)
@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                             ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), jwt)
                                     .httpOnly(true) // prevents JS access - against XSS
                                     .secure(true) // HTTPS only
-                                    .sameSite("Strict") // only send cookie when request originates from our site - prevents cross-site requests
+                                    .sameSite("None") // only send cookie when request originates from our site - prevents cross-site requests
                                     .path("/")
                                     .maxAge(Duration.ofDays(90))
                                     .build();
