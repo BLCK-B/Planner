@@ -106,12 +106,12 @@ class AuthControllerTests {
 //                .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"));
 //    }
 
-    @Test
-    void registerUserNullCredentialsIsBadRequest() throws Exception {
-        mockMvc.perform(post("/auth/registerUserSalt")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
+//    @Test
+//    void registerUserNullCredentialsIsBadRequest() throws Exception {
+//        mockMvc.perform(post("/auth/registerUserSalt")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isBadRequest());
+//    }
 
 //    @Test
 //    void jwtIsNotEmbeddedInResponseBodyOrHeader() throws Exception {

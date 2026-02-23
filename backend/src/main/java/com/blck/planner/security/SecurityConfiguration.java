@@ -125,6 +125,7 @@ public class SecurityConfiguration {
     // todo: from properties
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
+        return JwtDecoders.fromIssuerLocation("http://127.0.0.1:8080");
+//        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
     }
 }
