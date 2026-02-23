@@ -123,8 +123,13 @@ public class SecurityConfiguration {
         };
     }
     // todo: from properties
+//    @Bean
+//    public JwtDecoder jwtDecoder() {
+//        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
+//    }
+
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
+        return NimbusJwtDecoder.withJwkSetUri("https://auth.spruits.eu/.well-known/jwks.json").build();
     }
 }
