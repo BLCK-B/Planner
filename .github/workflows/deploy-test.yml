@@ -44,6 +44,7 @@ jobs:
         run: |
           docker push ghcr.io/blck-b/test-planner:latest
       - name: Trigger backend deploy
+        # https://github.com/Dokploy/dokploy/issues/164#issuecomment-2190980695
         run: |
           curl -X POST \
             "https://dokploy.spruits.eu/api/application.deploy" \
