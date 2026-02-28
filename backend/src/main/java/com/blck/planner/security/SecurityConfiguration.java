@@ -70,11 +70,12 @@ public class SecurityConfiguration {
                             ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), jwt)
                                     .httpOnly(true) // prevents JS access - against XSS
                                     .secure(true) // HTTPS only
-                                    .sameSite("None") // ~~only send cookie when request originates from our site - prevents cross-site requests~~
+                                    .sameSite("Strict") // ~~only send cookie when request originates from our site - prevents cross-site requests~~
                                     .path("/")
                                     .maxAge(Duration.ofDays(90))
                                     .build();
                             response.addHeader("Set-Cookie", cookie.toString());
+                            response.sendRedirect(frontendUrl + "/app/tasks");
                         })
                 )
                 .oauth2Client(Customizer.withDefaults());
