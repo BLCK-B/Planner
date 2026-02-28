@@ -1,7 +1,7 @@
 import {QueryClient, QueryCache, MutationCache} from '@tanstack/react-query';
 import type {FetchError} from '@/types/FetchError.ts';
 
-const URL = (import.meta.env.VITE_API_URL as string | undefined) ? "https://test-planner-api.spruits.eu/oauth2/code/zitadel" : "http://localhost:8081/oauth2/authorization/zitadel";
+const OAUTH_URL = `${window.location.origin}/oauth2/authorization/zitadel`;
 
 export const queryClient = new QueryClient({
     defaultOptions: {
@@ -13,7 +13,7 @@ export const queryClient = new QueryClient({
         onError: (error: unknown) => {
             const err = error as FetchError;
             if (err.status === 401) {
-                window.location.href = URL;
+                window.location.href = OAUTH_URL;
             }
         },
     }),
@@ -21,7 +21,7 @@ export const queryClient = new QueryClient({
         onError: (error: unknown) => {
             const err = error as FetchError;
             if (err.status === 401) {
-                window.location.href = URL;
+                window.location.href = OAUTH_URL;
             }
         },
     }),
