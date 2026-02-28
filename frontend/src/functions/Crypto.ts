@@ -224,6 +224,7 @@ export async function decrypt(item: TagType): Promise<TagType>;
 export async function decrypt(item: WorkItemType): Promise<WorkItemType>;
 export async function decrypt(item: SubtaskType): Promise<SubtaskType>;
 export async function decrypt(item: Encryptable): Promise<Encryptable> {
+    if (!localStorage.getItem("encryptionKey")) return item;
     if ("data" in item) {
         const cryptoKey = await getCryptoKey();
         let spec;
