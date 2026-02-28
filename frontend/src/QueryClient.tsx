@@ -1,7 +1,7 @@
 import {QueryClient, QueryCache, MutationCache} from '@tanstack/react-query';
 import type {FetchError} from '@/types/FetchError.ts';
 
-const OAUTH_URL = `${window.location.origin}/oauth2/authorization/zitadel`;
+const OAUTH_URL = `https://planner-api.spruits.eu/oauth2/authorization/zitadel`;
 
 export const queryClient = new QueryClient({
     defaultOptions: {
