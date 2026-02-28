@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                             ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), jwt)
                                     .httpOnly(true) // prevents JS access - against XSS
                                     .secure(true) // HTTPS only
-                                    .sameSite("None") // only send cookie when request originates from our site - prevents cross-site requests
+                                    .sameSite("Strict") // only send cookie when request originates from our site - prevents cross-site requests
                                     .path("/")
                                     .maxAge(Duration.ofDays(90))
                                     .build();
@@ -125,7 +125,6 @@ public class SecurityConfiguration {
     // todo: from properties
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("http://127.0.0.1:8080");
-//        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
+        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
     }
 }
