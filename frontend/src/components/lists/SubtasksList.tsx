@@ -66,7 +66,6 @@ const SubtasksList = () => {
     const updateSubtask = useCallback(
         (index: number, key: keyof typeof newSubtasks[number]["data"], value: any) => {
             setNewSubtasks(prev => {
-                // todo: test mobile (otherwise button)
                 if (value === '__DELETE__') {
                     return prev.filter((_, i) => i !== index);
                 }

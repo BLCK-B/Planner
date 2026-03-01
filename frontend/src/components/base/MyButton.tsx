@@ -11,9 +11,10 @@ type Props = {
     type: 'confirm' | 'add' | 'cancel' | 'delete' | 'exit' | 'tagedit' | 'edit'
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
     disabled?: boolean;
+    extraSmall?: boolean;
 }
 
-const MyButton = ({type, onClick, disabled = false}: Props) => {
+const MyButton = ({type, onClick, disabled = false, extraSmall = false}: Props) => {
 
     const backgroundColors: Record<string, string> = {
         delete: "theme.Reddish",
@@ -41,7 +42,7 @@ const MyButton = ({type, onClick, disabled = false}: Props) => {
         <IconButton
             onClick={onClick}
             disabled={disabled}
-            size="xs"
+            size={extraSmall ? "2xs" : "xs"}
             aria-label={type}
             bg={bgColor}
             color="black"
