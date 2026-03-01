@@ -58,7 +58,7 @@ const MainList = () => {
         scrollContainerRef.current?.scrollTo({
             top: somedayRef.current.offsetTop - 300
         });
-    }, []);
+    }, [somedayRef.current]);
 
     if (!uncompletedItems || !completedPaginatedItems) return <></>;
 
@@ -120,7 +120,7 @@ const MainList = () => {
                 <Box key={ym} position="relative" mt="2.4rem">
                     <Box bg="primary" p="0.3rem 0"
                          position={groupTasks.length > 3 && !isDesktop ? "sticky" : "relative"}
-                         zIndex="1" top="0">
+                         zIndex="1" top="-2px">
                         {groupMarker}
                     </Box>
                     <Box bg="primary">
