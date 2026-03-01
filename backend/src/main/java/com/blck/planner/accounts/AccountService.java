@@ -1,6 +1,5 @@
 package com.blck.planner.accounts;
 
-import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -19,12 +18,8 @@ public class AccountService {
 		this.accountRepository = accountRepository;
 	}
 
-    public UserAccount registerUserSalt(String userId, String encryptionKeySalt) throws AccountAlreadyExistsException {
-        if (accountRepository.findByUsername(userId).isPresent()) {
-            throw new AccountAlreadyExistsException("Account with username " + userId + " already exists");
-        }
-
-        UserAccount userAccount = new UserAccount(null, userId, encryptionKeySalt, true);
+    public UserAccount registerAccount(String userId) {
+        UserAccount userAccount = new UserAccount(null, userId, null, true);
 
         return accountRepository.save(userAccount);
     }

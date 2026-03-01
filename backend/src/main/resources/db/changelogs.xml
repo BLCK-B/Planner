@@ -21,5 +21,6 @@
     <include file="/db/changelogs/2026-01-25-internal-task-creation-date.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2026-01-26-trigger-only-on-create.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2026-02-21-auth-migration-idp.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2026-03-01-drop-notnull-salt-constraint.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

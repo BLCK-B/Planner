@@ -68,12 +68,12 @@ class AccountServiceTest {
     void registerExceptionWhenUserAlreadyExists() {
         when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(existingUserAccount));
 
-        assertThrows(AccountAlreadyExistsException.class, () -> accountService.registerUserSalt("username", "encryptionSalt"));
+        assertThrows(AccountAlreadyExistsException.class, () -> accountService.registerAccount("username", "encryptionSalt"));
     }
 
     @Test
     void registerAccountHasCorrectData() throws AccountAlreadyExistsException {
-        UserAccount user = accountService.registerUserSalt("username", "encryptionSalt");
+        UserAccount user = accountService.registerAccount("username", "encryptionSalt");
 
         assertAll(
                 () -> assertEquals(existingUserAccount.getUsername(), user.getUsername()),

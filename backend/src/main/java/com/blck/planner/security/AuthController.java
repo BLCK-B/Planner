@@ -1,7 +1,6 @@
 package com.blck.planner.security;
 
 import com.blck.planner.accounts.AccountService;
-import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.accounts.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,18 +19,6 @@ public class AuthController {
     @Autowired
     public AuthController(AccountService accountService) {
         this.accountService = accountService;
-    }
-
-    @PostMapping("/registerUserSalt")
-    public ResponseEntity<UserAccount> register(@AuthenticationPrincipal Jwt jwt, @RequestBody String encryptionKeySalt) {
-        try {
-            UserAccount user = accountService.registerUserSalt(jwt.getClaim("sub"), encryptionKeySalt);
-            return ResponseEntity.ok(user);
-        } catch (AccountAlreadyExistsException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().build();
-        }
     }
 
     @GetMapping("/encryptionKeySalt")
