@@ -48,7 +48,7 @@ const MainList = () => {
         if (inView && hasNextPage && !isFetchingNextPage) {
             const timer = setTimeout(() => {
                 fetchNextPage();
-            }, 100); // todo: to avoid rendering two pages at once - temporary fix
+            }, 100); // to avoid rendering two pages at once
             return () => clearTimeout(timer);
         }
     }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -58,7 +58,7 @@ const MainList = () => {
         scrollContainerRef.current?.scrollTo({
             top: somedayRef.current.offsetTop - 300
         });
-    }, []);
+    }, [somedayRef.current]);
 
     if (!uncompletedItems || !completedPaginatedItems) return <></>;
 
@@ -120,7 +120,7 @@ const MainList = () => {
                 <Box key={ym} position="relative" mt="2.4rem">
                     <Box bg="primary" p="0.3rem 0"
                          position={groupTasks.length > 3 && !isDesktop ? "sticky" : "relative"}
-                         zIndex="1" top="0">
+                         zIndex="1" top="-2px">
                         {groupMarker}
                     </Box>
                     <Box bg="primary">

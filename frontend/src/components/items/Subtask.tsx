@@ -1,8 +1,9 @@
 import {type ConnectableElement, useDrag, useDrop} from "react-dnd";
 import type {SubtaskType} from "@/types/SubtaskType.ts";
-import {Box, Checkbox, Editable, Flex} from "@chakra-ui/react";
+import {Box, Checkbox, Editable, Flex, Show} from "@chakra-ui/react";
 import {getEmptyImage} from "react-dnd-html5-backend";
 import {useEffect} from "react";
+import MyButton from "@/components/base/MyButton.tsx";
 
 type Props = {
     subtask: SubtaskType;
@@ -65,12 +66,6 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
             <Editable.Root
                 value={subtask.data.name}
                 onValueChange={(e) => updateSubtask(index, "name", e.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Backspace" && subtask.data.name === "") {
-                        e.preventDefault();
-                        updateSubtask(index, "name", "__DELETE__");
-                    }
-                }}
                 ml="0.3rem"
                 flex="1"
             >
@@ -85,19 +80,27 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
                     _selection={{bg: "theme.Spruit2", color: "black"}}
                 />
             </Editable.Root>
-            <Checkbox.Root
-                checked={subtask.data.completed}
-                onCheckedChange={() =>
-                    updateSubtask(index, "completed", !subtask.data.completed)
-                }
-                variant="subtle"
-            >
-                <Checkbox.HiddenInput/>
-                <Checkbox.Control
-                    bg="primary.lighter"
-                    _checked={{bg: "theme.Spruit1", color: "black"}}
-                />
-            </Checkbox.Root>
+            <Show when={subtask.data.name}>
+                <Checkbox.Root
+                    checked={subtask.data.completed}
+                    onCheckedChange={() =>
+                        updateSubtask(index, "completed", !subtask.data.completed)
+                    }
+                    variant="subtle"
+                >
+                    <Checkbox.HiddenInput/>
+                    <Checkbox.Control
+                        bg="primary.lighter"
+                        _checked={{bg: "theme.Spruit1", color: "black"}}
+                    />
+                </Checkbox.Root>
+            </Show>
+            <Show when={!subtask.data.name}>
+                <Flex align="center">
+                    <MyButton type="delete" onClick={() => updateSubtask(index, "name", "__DELETE__")}
+                              extraSmall={true}/>
+                </Flex>
+            </Show>
         </Flex>
     );
 };

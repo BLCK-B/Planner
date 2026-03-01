@@ -6,7 +6,7 @@ import {RouterProvider} from '@tanstack/react-router'
 import {router} from '@/routes/__root';
 import {queryClient} from "@/QueryClient.tsx";
 import {styles} from "@/globalStyles.ts";
-import {ColorModeProvider} from "@/components/ui/color-mode.tsx";
+import {ThemeProvider} from 'next-themes';
 
 declare module '@tanstack/react-router' {
     interface Register {
@@ -17,20 +17,16 @@ declare module '@tanstack/react-router' {
 const system = createSystem(defaultConfig, styles);
 
 const rootElement = document.getElementById("root");
-if (!rootElement) {
-    throw new Error("Root element not found");
-}
+if (!rootElement) throw new Error("Root element not found");
 
 createRoot(rootElement).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
-            {/* todo: https://chakra-ui.com/docs/get-started/migration */}
-            {/* todo  ColorModeProvider and useColorMode have been removed in favor of next-themes */}
-            <ChakraProvider value={system}>
-                <ColorModeProvider>
+            <ThemeProvider attribute="class" defaultTheme="system">
+                <ChakraProvider value={system}>
                     <RouterProvider router={router}/>
-                </ColorModeProvider>
-            </ChakraProvider>
+                </ChakraProvider>
+            </ThemeProvider>
         </QueryClientProvider>
     </StrictMode>
 );

@@ -16,7 +16,6 @@ import {useQueryClient} from "@tanstack/react-query";
 import MyButton from "@/components/base/MyButton.tsx";
 import ColorPick from "@/components/base/ColorPick.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
-import {getNewTag} from "@/types/TagType.ts";
 import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 
 const TagCreator = () => {
@@ -48,7 +47,7 @@ const TagCreator = () => {
     const saveTag = async () => {
         await saveTagMutation.mutateAsync(newTag);
         setNewTag(newTag);
-        setShowDialog(false);
+        setShowDialog({show: false, isNew: false});
 
         const queryKey = loadTagsQuery().queryKey;
         await queryClient.invalidateQueries({queryKey});
@@ -57,15 +56,15 @@ const TagCreator = () => {
     const deleteTag = async () => {
         await deleteTagMutation.mutateAsync(newTag);
         setNewTag(newTag);
-        setShowDialog(false);
+        setShowDialog({show: false, isNew: false});
     };
 
     const disableSaveRules = () => {
-        return !newTag.data.tagName || newTag.data.tagName.length >= 15 || newTag.data.description.length >= 120;
+        return !newTag.data.tagName || newTag.data.tagName.length >= 15 || newTag.data.description?.length >= 120;
     };
 
     return (
-        <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
+        <Dialog.Root size={"sm"} open={showDialog.show} trapFocus={false}>
             <Portal>
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
@@ -78,11 +77,7 @@ const TagCreator = () => {
                                 <Show when={!newTag.data.tagName}>
                                     New tag
                                 </Show>
-                                {/*TODO: detect new vs not new, or via param, for all creators*/}
-                                <Show when={newTag !== newTag}>
-                                    <MyButton type="delete" onClick={deleteTag}/>
-                                </Show>
-                                <Show when={newTag !== getNewTag()}>
+                                <Show when={!showDialog.isNew}>
                                     <MyButton type="delete" onClick={deleteTag}/>
                                 </Show>
                             </Flex>
@@ -121,7 +116,7 @@ const TagCreator = () => {
                         </Dialog.Body>
                         <Dialog.Footer>
                             <MyButton type="confirm" onClick={saveTag} disabled={disableSaveRules()}/>
-                            <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
+                            <MyButton type="cancel" onClick={() => setShowDialog({show: false, isNew: false})}/>
                         </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>

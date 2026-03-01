@@ -1,5 +1,4 @@
-import {createRootRoute, createRoute, createRouter, Outlet} from '@tanstack/react-router'
-import LandingPage from '@/pages/LandingPage.tsx'
+import {createRootRoute, createRoute, createRouter, Navigate, Outlet} from '@tanstack/react-router'
 import MainPage from '@/pages/main/MainPage.tsx'
 import AuthPage from '@/pages/AuthPage.tsx'
 import PlansPage from '@/pages/main/PlansPage.tsx'
@@ -17,7 +16,7 @@ export const rootRoute = createRootRoute({
 export const landingRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/',
-    component: LandingPage,
+    component: () => <Navigate to={mainRoute.to} params/>,
 });
 
 export const postAuthRoute = createRoute({

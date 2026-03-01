@@ -1,10 +1,13 @@
 package com.blck.planner.security;
 
+import com.blck.planner.accounts.AccountRepository;
+import com.blck.planner.accounts.AccountService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +23,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.*;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,6 +35,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static com.blck.planner.security.SecurityNames.JWT_COOKIE_NAME;
 
@@ -41,6 +46,19 @@ public class SecurityConfiguration {
 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
+
+    @Value("${spring.security.oauth2.client.provider.zitadel.issuer-uri}")
+    private String issuerUri;
+
+    private final AccountService accountService;
+
+    private final AccountRepository accountRepository;
+
+    @Autowired
+    public SecurityConfiguration(AccountService accountService, AccountRepository accountRepository) {
+        this.accountService = accountService;
+        this.accountRepository = accountRepository;
+    }
 
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http, JwtDecoder jwtDecoder, CookieAuthenticationConverter cookieAuthenticationConverter, OAuth2AuthorizedClientService authorizedClientService) {
@@ -55,7 +73,7 @@ public class SecurityConfiguration {
                     return configuration;
                 }))
                 .authorizeHttpRequests(exchanges -> exchanges
-                        .requestMatchers(  "/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(cookieAuthenticationWebFilter(jwtDecoder, cookieAuthenticationConverter), UsernamePasswordAuthenticationFilter.class)
@@ -64,22 +82,30 @@ public class SecurityConfiguration {
                 )
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((_, response, auth) -> {
+                        .successHandler((request, response, auth) -> {
                             OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("zitadel", auth.getName());
                             String jwt = client.getAccessToken().getTokenValue();
                             ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), jwt)
                                     .httpOnly(true) // prevents JS access - against XSS
                                     .secure(true) // HTTPS only
-                                    .sameSite("Strict") // ~~only send cookie when request originates from our site - prevents cross-site requests~~
+                                    .sameSite("Strict") // only send cookie when request originates from our site - prevents cross-site requests
                                     .path("/")
                                     .maxAge(Duration.ofDays(90))
                                     .build();
                             response.addHeader("Set-Cookie", cookie.toString());
+                            registerAccountIfNotExists(((OidcUser) Objects.requireNonNull(auth.getPrincipal())).getSubject());
                             response.sendRedirect(frontendUrl + "/app/tasks");
                         })
                 )
-                .oauth2Client(Customizer.withDefaults());
+                .oauth2Client(Customizer.withDefaults())
+                .logout(logout -> logout.logoutUrl("/auth/logout"));
         return http.build();
+    }
+
+    public void registerAccountIfNotExists(String userId) {
+        if (accountRepository.findByUsername(userId).isEmpty()) {
+            accountService.registerAccount(userId);
+        }
     }
 
     @Bean
@@ -122,9 +148,9 @@ public class SecurityConfiguration {
             }
         };
     }
-    // todo: from properties
+
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
+        return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 }

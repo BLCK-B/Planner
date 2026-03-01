@@ -18,7 +18,7 @@ const Plan = (tag: TagType) => {
 
     const clicked = () => {
         setEditTag(tag);
-        setShowAddTagDialog(true);
+        setShowAddTagDialog({show: true, isNew: false});
     };
 
     const {data: itemList} = useQuery(loadTasksOfTagQuery(tag));

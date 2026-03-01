@@ -19,7 +19,7 @@ const ActionButtonsMainPage = ({isDesktop}: { isDesktop: boolean }) => {
 
     const createNewItem = () => {
         setEditItem(getNewTask());
-        setShowAddDialog(true);
+        setShowAddDialog({show: true, isNew: true});
     };
 
     const activeDateIconColor = (active: boolean) => {

@@ -11,7 +11,6 @@ import {showWorkItemCreator, existingWorkItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
 import {useQueryClient} from "@tanstack/react-query";
 import MyButton from "@/components/base/MyButton.tsx";
-import {getNewWorkItem} from "@/types/WorkItemType.ts";
 import useSaveWorkItem from "@/queries/UseSaveWorkItem.tsx";
 import useDeleteWorkItem from "@/queries/UseDeleteWorkItem.tsx";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
@@ -46,7 +45,7 @@ const WorkItemCreator = () => {
     const saveWorkItem = async () => {
         await saveWorkItemMutation.mutateAsync(newWorkItem);
         setNewWorkItem(newWorkItem);
-        setShowDialog(false);
+        setShowDialog({show: false, isNew: false});
 
         const queryKey = loadWorkItemsQuery().queryKey;
         await queryClient.invalidateQueries({queryKey});
@@ -55,7 +54,7 @@ const WorkItemCreator = () => {
     const deleteWorkItem = async () => {
         await deleteWorkItemMutation.mutateAsync(newWorkItem);
         setNewWorkItem(newWorkItem);
-        setShowDialog(false);
+        setShowDialog({show: false, isNew: false});
     };
 
     const disableSaveRules = () => {
@@ -63,7 +62,7 @@ const WorkItemCreator = () => {
     };
 
     return (
-        <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
+        <Dialog.Root size={"sm"} open={showDialog.show} trapFocus={false}>
             <Portal>
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
@@ -71,8 +70,7 @@ const WorkItemCreator = () => {
                         <Dialog.Header>
                             <Flex justifyContent="space-between" w="100%">
                                 New worklist
-                                {/*TODO: detect new vs not new, or via param, for all creators*/}
-                                <Show when={newWorkItem !== getNewWorkItem()}>
+                                <Show when={!showDialog.isNew}>
                                     <MyButton type="delete" onClick={deleteWorkItem}/>
                                 </Show>
                             </Flex>
@@ -87,7 +85,7 @@ const WorkItemCreator = () => {
                         </Dialog.Body>
                         <Dialog.Footer>
                             <MyButton type="confirm" onClick={saveWorkItem} disabled={disableSaveRules()}/>
-                            <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
+                            <MyButton type="cancel" onClick={() => setShowDialog({show: false, isNew: false})}/>
                         </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>
