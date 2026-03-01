@@ -48,7 +48,7 @@ const MainList = () => {
         if (inView && hasNextPage && !isFetchingNextPage) {
             const timer = setTimeout(() => {
                 fetchNextPage();
-            }, 100); // todo: to avoid rendering two pages at once - temporary fix
+            }, 100); // to avoid rendering two pages at once
             return () => clearTimeout(timer);
         }
     }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
