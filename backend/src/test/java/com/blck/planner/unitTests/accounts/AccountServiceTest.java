@@ -1,6 +1,5 @@
 package com.blck.planner.unitTests.accounts;
 
-import com.blck.planner.accounts.Exceptions.AccountAlreadyExistsException;
 import com.blck.planner.accounts.AccountRepository;
 import com.blck.planner.accounts.AccountService;
 import com.blck.planner.accounts.UserAccount;
@@ -65,19 +64,11 @@ class AccountServiceTest {
 	}
 
     @Test
-    void registerExceptionWhenUserAlreadyExists() {
-        when(accountRepository.findByUsername(anyString())).thenReturn(Optional.of(existingUserAccount));
-
-        assertThrows(AccountAlreadyExistsException.class, () -> accountService.registerAccount("username", "encryptionSalt"));
-    }
-
-    @Test
-    void registerAccountHasCorrectData() throws AccountAlreadyExistsException {
-        UserAccount user = accountService.registerAccount("username", "encryptionSalt");
+    void registerAccountHasCorrectData() {
+        UserAccount user = accountService.registerAccount("username");
 
         assertAll(
-                () -> assertEquals(existingUserAccount.getUsername(), user.getUsername()),
-                () -> assertEquals(existingUserAccount.getEncryptionKeySalt(), user.getEncryptionKeySalt())
+                () -> assertEquals(existingUserAccount.getUsername(), user.getUsername())
         );
     }
 

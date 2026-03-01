@@ -28,7 +28,7 @@ const WorkList = () => {
     const openEdit = (e: React.MouseEvent<HTMLButtonElement>, workItem: WorkItemType) => {
         e.stopPropagation();
         setEditItem(workItem);
-        setShowAddDialog(true);
+        setShowAddDialog({show: true, isNew: false});
     };
 
     return (

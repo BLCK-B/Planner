@@ -29,7 +29,7 @@ const Task = (task: TaskType) => {
 
     const handleClick = () => {
         setEditItem(task);
-        setShowDialog(true);
+        setShowDialog({show: true, isNew: false});
     };
 
     const toggleCompleted = async (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -22,7 +22,7 @@ const TagsEditList = () => {
 
     const createNewTag = () => {
         setEditTag(getNewTag());
-        setShowAddDialog(true);
+        setShowAddDialog({show: true, isNew: true});
     };
 
     if (!tagList) return <></>;

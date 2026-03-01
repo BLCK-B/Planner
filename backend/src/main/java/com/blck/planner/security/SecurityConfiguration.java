@@ -47,6 +47,9 @@ public class SecurityConfiguration {
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
 
+    @Value("${spring.security.oauth2.client.provider.zitadel.issuer-uri}")
+    private String issuerUri;
+
     private final AccountService accountService;
 
     private final AccountRepository accountRepository;
@@ -90,8 +93,7 @@ public class SecurityConfiguration {
                                     .maxAge(Duration.ofDays(90))
                                     .build();
                             response.addHeader("Set-Cookie", cookie.toString());
-                            String userId = ((OidcUser) Objects.requireNonNull(auth.getPrincipal())).getSubject();
-                            registerAccountIfNotExists(userId);
+                            registerAccountIfNotExists(((OidcUser) Objects.requireNonNull(auth.getPrincipal())).getSubject());
                             response.sendRedirect(frontendUrl + "/app/tasks");
                         })
                 )
@@ -147,9 +149,8 @@ public class SecurityConfiguration {
         };
     }
 
-    // todo: from properties
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromIssuerLocation("https://auth.spruits.eu");
+        return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 }

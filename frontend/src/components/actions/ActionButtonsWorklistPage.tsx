@@ -14,7 +14,7 @@ const ActionButtonsWorklistPage = () => {
 
     const createNewItem = () => {
         setEditItem(getNewWorkItem());
-        setShowAddDialog(true);
+        setShowAddDialog({show: true, isNew: true});
     };
 
     return (

@@ -65,7 +65,7 @@ const TaskCreator = () => {
     const saveItem = async () => {
         await saveTaskMutation.mutateAsync(newItem);
         setNewItem(getNewTask());
-        setShowDialog(false);
+        setShowDialog({show: false, isNew: false});
 
         await queryClient.invalidateQueries({queryKey: loadCompletedItemsQuery().queryKey});
         await queryClient.invalidateQueries({queryKey: loadUncompletedItemsQuery().queryKey});
@@ -74,7 +74,7 @@ const TaskCreator = () => {
     const deleteItem = async () => {
         await deleteTaskMutation.mutateAsync(newItem);
         setNewItem(getNewTask());
-        setShowDialog(false);
+        setShowDialog({show: false, isNew: false});
     };
 
     const inactiveDateStyle = () => {
@@ -140,7 +140,7 @@ const TaskCreator = () => {
     };
 
     return (
-        <Dialog.Root size={"sm"} open={showDialog} trapFocus={false}>
+        <Dialog.Root size={"sm"} open={showDialog.show} trapFocus={false}>
             <Portal>
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
@@ -227,12 +227,12 @@ const TaskCreator = () => {
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Show when={newItem !== getNewTask()}>
+                            <Show when={!showDialog.isNew}>
                                 <MyButton type="delete" onClick={deleteItem}/>
                                 <Spacer/>
                             </Show>
                             <MyButton type="confirm" onClick={saveItem} disabled={disableSave()}/>
-                            <MyButton type="cancel" onClick={() => setShowDialog(false)}/>
+                            <MyButton type="cancel" onClick={() => setShowDialog({show: false, isNew: false})}/>
                         </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>

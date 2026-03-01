@@ -18,7 +18,7 @@ const MyTag = ({tag, isEditable = false, isInactive = false}: Props) => {
     const clicked = () => {
         if (isEditable) {
             setEditTag(tag);
-            setShowAddTagDialog(true);
+            setShowAddTagDialog({show: true, isNew: false});
         }
     };
 
