@@ -4,8 +4,9 @@ import {
     Flex,
     Input,
     Show,
-    Field, Box, Textarea,
-    Checkbox, useBreakpointValue,
+    Field,
+    Box,
+    useBreakpointValue,
 } from "@chakra-ui/react";
 import useSaveTag from "@/queries/UseSaveTag.tsx";
 import useDeleteTag from "@/queries/UseDeleteTag.tsx";
@@ -60,7 +61,7 @@ const TagCreator = () => {
     };
 
     const disableSaveRules = () => {
-        return !newTag.data.tagName || newTag.data.tagName.length >= 15 || newTag.data.description?.length >= 120;
+        return !newTag.data.tagName || newTag.data.tagName.length >= 15;
     };
 
     return (
@@ -99,19 +100,7 @@ const TagCreator = () => {
                                             updateTag("color", selected)
                                         }}
                                     />
-                                    <Checkbox.Root variant="solid" size="sm" checked={newTag.data.isTracked}
-                                                   onCheckedChange={() => updateTag("isTracked", !newTag.data.isTracked)}>
-                                        <Checkbox.HiddenInput/>
-                                        <Checkbox.Control/>
-                                        <Checkbox.Label>Show in Plans</Checkbox.Label>
-                                    </Checkbox.Root>
                                 </Flex>
-                                <Field.Root>
-                                    <Textarea p="2px" h="100px" variant="subtle" value={newTag.data.description}
-                                              placeholder="Description"
-                                              onChange={(e) => updateTag("description", e.target.value)}
-                                              bg="primary.lighter"/>
-                                </Field.Root>
                             </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>

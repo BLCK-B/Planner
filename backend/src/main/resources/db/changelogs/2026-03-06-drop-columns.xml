@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="remove-unusedcolumns-again" author="BLCK">
+        <sql>
+            ALTER TABLE accounts DROP COLUMN password;
+            ALTER TABLE accounts DROP COLUMN roles;
+            ALTER TABLE accounts DROP COLUMN password_auth_salt;
+        </sql>
+    </changeSet>
+
+    <changeSet id="remove-tag-columns" author="BLCK">
+        <sql>
+            ALTER TABLE user_tags DROP COLUMN is_tracked;
+            ALTER TABLE user_tags DROP COLUMN description;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

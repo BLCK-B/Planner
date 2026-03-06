@@ -1,6 +1,6 @@
 import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useRouter} from '@tanstack/react-router';
-import {mainRoute, plansRoute, worklistRoute} from "@/routes/__root.tsx";
+import {mainRoute, worklistRoute} from "@/routes/__root.tsx";
 import {Box, Center, Flex, Show} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
@@ -15,9 +15,6 @@ const Menu = ({isDesktop}: { isDesktop: boolean }) => {
         switch (tab) {
             case 'Tasks':
                 router.navigate({to: mainRoute.fullPath});
-                break;
-            case 'Plans':
-                router.navigate({to: plansRoute.fullPath});
                 break;
             case 'Worklist':
                 router.navigate({to: worklistRoute.fullPath});

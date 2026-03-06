@@ -1,6 +1,5 @@
 import {Tabs} from "@chakra-ui/react";
 import {MdOutlineChecklist} from "react-icons/md";
-import {LuGoal} from "react-icons/lu";
 import {FaRegCheckCircle} from "react-icons/fa";
 
 type Props = {
@@ -17,8 +16,6 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
         switch (tabName) {
             case "Tasks":
                 return <FaRegCheckCircle/>;
-            case "Plans":
-                return <LuGoal/>;
             case "Worklist":
                 return <MdOutlineChecklist/>;
             default:

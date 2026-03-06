@@ -6,7 +6,7 @@ import BaseHeader from "@/components/header/BaseHeader.tsx";
 const MainPage = () => {
     return (
         <PageLayout
-            header={<BaseHeader menu={true}/>}
+            header={<BaseHeader/>}
             content={<MainList/>}
             popover={<TaskCreator/>}
         />
