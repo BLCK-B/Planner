@@ -7,7 +7,7 @@ const WorklistPage = () => {
 
     return (
         <PageLayout
-            header={<BaseHeader menu={true}/>}
+            header={<BaseHeader/>}
             content={<WorkList/>}
             popover={<WorkItemCreator/>}
         />

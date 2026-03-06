@@ -31,7 +31,7 @@ const TagsEditList = () => {
         <Center>
             <Card.Root w="320px" h="70dvh" variant="elevated" bg="primary.lighter" top="50px">
                 <Card.Header color="primary.contrast">
-                    Tags edit
+                    Tags
                 </Card.Header>
                 <Card.Body gap="2" color="primary.contrast" h="50%">
                     <Flex direction="column" gap={3} overflow="scroll">

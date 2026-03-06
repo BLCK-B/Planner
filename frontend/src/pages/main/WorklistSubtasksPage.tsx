@@ -7,7 +7,7 @@ const WorklistSubtasksPage = () => {
 
     return (
         <PageLayout
-            header={<BaseHeader menu={true}/>}
+            header={<BaseHeader/>}
             content={<SubtasksList/>}
             popover={<WorkItemCreator/>}
         />

@@ -8,9 +8,7 @@ public record TagDTO(
 ) {
     public record Data(
             String tagName,
-            String color,
-            boolean isTracked,
-            String description
+            String color
     ) {
     }
 
@@ -19,9 +17,7 @@ public record TagDTO(
                 tagID,
                 userID,
                 data.tagName,
-                data.color,
-                data.isTracked,
-                data.description
+                data.color
         );
     }
 }

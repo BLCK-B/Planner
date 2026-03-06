@@ -26,29 +26,21 @@ public class Tag {
     @Column(name = "color")
     private String color;
 
-    @Column(name = "is_tracked")
-    private boolean isTracked;
-
-    @Column(name = "description")
-    private String description;
-
     @ManyToMany(mappedBy = "tags")
     private Set<Task> tasks;
 
     public Tag() {
     }
 
-    public Tag(UUID tagID, String userID, String tagName, String color, boolean isTracked, String description) {
+    public Tag(UUID tagID, String userID, String tagName, String color) {
         this.tagID = tagID;
         this.userID = userID;
         this.tagName = tagName;
         this.color = color;
-        this.isTracked = isTracked;
-        this.description = description;
     }
 
     public TagDTO toDTO() {
-        var data = new TagDTO.Data(tagName, color, isTracked, description);
+        var data = new TagDTO.Data(tagName, color);
         return new TagDTO(tagID, data);
     }
 
@@ -86,21 +78,5 @@ public class Tag {
 
     public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
-    }
-
-    public boolean isTracked() {
-        return isTracked;
-    }
-
-    public void setTracked(boolean tracked) {
-        isTracked = tracked;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

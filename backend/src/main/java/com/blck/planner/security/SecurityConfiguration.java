@@ -82,7 +82,7 @@ public class SecurityConfiguration {
                 )
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, auth) -> {
+                        .successHandler((_, response, auth) -> {
                             OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("zitadel", auth.getName());
                             String jwt = client.getAccessToken().getTokenValue();
                             ResponseCookie cookie = ResponseCookie.from(String.valueOf(JWT_COOKIE_NAME), jwt)
