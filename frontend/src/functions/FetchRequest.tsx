@@ -1,6 +1,5 @@
 import type {FetchError} from "@/types/FetchError.ts";
 import type {TaskType} from "@/types/TaskType.ts";
-import type {PlanType} from "@/types/PlanType.ts";
 import {encrypt, decrypt} from "@/functions/Crypto.ts";
 import type {TagType} from "@/types/TagType.ts";
 import {getDefaultStore} from 'jotai';
@@ -11,7 +10,7 @@ import type {SubtaskType} from "@/types/SubtaskType.ts";
 const URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8081"; // VITE_API_URL= (only at build time)
 
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
-export type Encryptable = TaskType | PlanType | TagType | WorkItemType | SubtaskType;
+export type Encryptable = TaskType | TagType | WorkItemType | SubtaskType;
 
 export const encryptBody = async (body: any): Promise<any> => {
     if (Array.isArray(body)) {

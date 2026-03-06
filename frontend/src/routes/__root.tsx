@@ -1,7 +1,6 @@
 import {createRootRoute, createRoute, createRouter, Navigate, Outlet} from '@tanstack/react-router'
 import MainPage from '@/pages/main/MainPage.tsx'
 import AuthPage from '@/pages/AuthPage.tsx'
-import PlansPage from '@/pages/main/PlansPage.tsx'
 import TagsEditPage from "@/pages/main/TagsEditPage.tsx";
 import SettingsPage from "@/pages/settings/SettingsPage.tsx";
 import WorklistPage from "@/pages/main/WorklistPage.tsx";
@@ -29,12 +28,6 @@ export const mainRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: 'app/tasks',
     component: MainPage,
-})
-
-export const plansRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: 'app/plans',
-    component: PlansPage,
 })
 
 export const worklistRoute = createRoute({
@@ -66,7 +59,6 @@ export const routeTree = rootRoute.addChildren(
         landingRoute,
         postAuthRoute,
         mainRoute,
-        plansRoute,
         worklistRoute,
         worklistSubtasksRoute,
         tagsEditRoute,
