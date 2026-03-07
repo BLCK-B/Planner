@@ -35,7 +35,8 @@ const WorkList = () => {
         <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
                 <SimpleGrid w={{base: "95%", md: "90%"}} columns={{base: 1, md: 2}} fontSize="md"
-                            mx="auto" gap="1.2rem" position="relative" top="4.8rem" paddingBottom="100px">
+                            mx="auto" gap="1.2rem" position="relative" top="4.8rem" paddingBottom="100px"
+                            minHeight="15rem">
                     {workItems?.sort((a, b) => a.data.name.localeCompare(b.data.name))
                         .map((item, i) => (
                             <Flex key={i} cursor="pointer" position="relative" boxShadow="xs" p="0.5rem"

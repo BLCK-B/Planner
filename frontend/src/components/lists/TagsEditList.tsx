@@ -34,7 +34,7 @@ const TagsEditList = () => {
                     Tags
                 </Card.Header>
                 <Card.Body gap="2" color="primary.contrast" h="50%">
-                    <Flex direction="column" gap={3} overflow="scroll">
+                    <Flex direction="column" gap={3} overflowY="auto">
                         {tagList
                             .sort((a, b) => a.data.tagName.localeCompare(b.data.tagName))
                             .map((tag) => (

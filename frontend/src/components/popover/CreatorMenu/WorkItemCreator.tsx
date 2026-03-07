@@ -78,7 +78,7 @@ const WorkItemCreator = () => {
                         <Dialog.Body>
                             <Field.Root invalid={!newWorkItem.data.name}>
                                 <Input p="2px" variant="subtle" value={newWorkItem.data.name}
-                                       placeholder="Work item name"
+                                       placeholder="Name"
                                        onChange={(e) => updateWorkItem("name", e.target.value)}
                                        bg="primary.lighter"/>
                             </Field.Root>
