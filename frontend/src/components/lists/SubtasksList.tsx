@@ -141,6 +141,7 @@ const SubtasksList = () => {
                                 );
                             })
                         }
+                        
                         <Box
                             userSelect="none"
                             display="flex"
@@ -153,7 +154,9 @@ const SubtasksList = () => {
                         >
                             ⋮⋮
                         </Box>
+
                         <Box bg="primary" h="2px" w="100%" m="0.3rem 0 0.3rem 0"/>
+
                         {newSubtasks
                             .map((subtask, i) => {
                                 if (!subtask.data.completed) return null;
