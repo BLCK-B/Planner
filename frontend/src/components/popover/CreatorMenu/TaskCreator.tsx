@@ -21,7 +21,7 @@ import MyButton from "@/components/base/MyButton.tsx";
 import DropSelection from "@/components/base/DropSelection.tsx";
 import {loadCompletedItemsQuery, loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {getDayNumber} from "@/functions/Dates.tsx";
+import {dateToReadableDDMM, getDayNumber} from "@/functions/Dates.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 import type {TagType} from "@/types/TagType.ts";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
@@ -146,11 +146,11 @@ const TaskCreator = () => {
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     {/* related tasks */}
                     <Show when={tasksNearDate.length}>
-                        <Card.Root position="fixed" w={isDesktop ? "25%" : "100%"} top="0.6rem"
+                        <Card.Root textStyle="body" position="fixed" w={isDesktop ? "25%" : "100%"} top="0.6rem"
                                    right={isDesktop ? "0.6rem" : undefined} bg="primary" pb="0.3rem"
                                    boxShadow="xs">
-                            <Card.Header color="white" p="0.3rem">
-                                Tasks at the selected day
+                            <Card.Header color="primary.contrast" p="0.3rem">
+                                Tasks on {dateToReadableDDMM(newItem.data.date)}
                             </Card.Header>
                             <Card.Body gap="0.3rem" color="white" p="0.3rem" maxH={isDesktop ? "90vh" : "40vh"}
                                        overflowY="auto">
