@@ -69,7 +69,7 @@ const SubtasksList = () => {
                 if (value === '__DELETE__') {
                     return prev.filter((_, i) => i !== index);
                 }
-                return prev.map((subtask, i) =>
+                let updated = prev.map((subtask, i) =>
                     i === index
                         ? {
                             ...subtask,
@@ -80,6 +80,18 @@ const SubtasksList = () => {
                         }
                         : subtask
                 );
+                // on completed/uncompleted, move subtask order closest to the line
+                if (key === "completed") {
+                    const item = updated[index];
+                    updated = updated.filter((_, i) => i !== index);
+                    const firstCompletedIndex = updated.findIndex(s => s.data.completed);
+                    if (firstCompletedIndex === -1) {
+                        updated.push(item);
+                    } else {
+                        updated.splice(firstCompletedIndex, 0, item);
+                    }
+                }
+                return updated;
             });
             throttledSave();
         },
@@ -141,7 +153,7 @@ const SubtasksList = () => {
                                 );
                             })
                         }
-                        
+
                         <Box
                             userSelect="none"
                             display="flex"
