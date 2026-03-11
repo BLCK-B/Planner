@@ -80,7 +80,6 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((_, response, auth) -> {
                             OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("zitadel", auth.getName());
@@ -94,7 +93,8 @@ public class SecurityConfiguration {
                                     .build();
                             response.addHeader("Set-Cookie", cookie.toString());
                             registerAccountIfNotExists(((OidcUser) Objects.requireNonNull(auth.getPrincipal())).getSubject());
-                            response.sendRedirect(frontendUrl + "/app/tasks");
+//                            response.sendRedirect(frontendUrl + "/app/tasks");
+                            response.sendRedirect("https://test-planner.spruits.eu/app/tasks");
                         })
                 )
                 .oauth2Client(Customizer.withDefaults())
