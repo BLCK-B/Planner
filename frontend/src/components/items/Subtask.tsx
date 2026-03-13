@@ -9,10 +9,12 @@ type Props = {
     subtask: SubtaskType;
     index: number;
     moveSubtask: (from: number, to: number) => void;
-    updateSubtask: (index: number, key: keyof SubtaskType["data"], value: any) => void;
+    updateSubtaskText: (index: number, value: string) => void;
+    toggleSubtaskCompleted: (index: number) => void;
+    removeSubtask: (index: number) => void;
 }
 
-const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
+const Subtask = ({subtask, index, moveSubtask, updateSubtaskText, removeSubtask, toggleSubtaskCompleted}: Props) => {
     const dndType = "SUBTASK";
 
     const [, dragRef, preview] = useDrag({
@@ -65,7 +67,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
             </Box>
             <Editable.Root
                 value={subtask.data.name}
-                onValueChange={(e) => updateSubtask(index, "name", e.value)}
+                onValueChange={(e) => updateSubtaskText(index, e.value)}
                 ml="0.3rem"
                 flex="1"
             >
@@ -84,7 +86,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
                 <Checkbox.Root
                     checked={subtask.data.completed}
                     onCheckedChange={() =>
-                        updateSubtask(index, "completed", !subtask.data.completed)
+                        toggleSubtaskCompleted(index)
                     }
                     variant="subtle"
                 >
@@ -97,7 +99,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtask}: Props) => {
             </Show>
             <Show when={!subtask.data.name}>
                 <Flex align="center">
-                    <MyButton type="delete" onClick={() => updateSubtask(index, "name", "__DELETE__")}
+                    <MyButton type="delete" onClick={() => removeSubtask(index)}
                               extraSmall={true}/>
                 </Flex>
             </Show>
