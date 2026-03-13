@@ -93,7 +93,7 @@ public class SecurityConfiguration {
                                     .build();
                             response.addHeader("Set-Cookie", cookie.toString());
                             registerAccountIfNotExists(((OidcUser) Objects.requireNonNull(auth.getPrincipal())).getSubject());
-                            response.sendRedirect(frontendUrl + "/app/tasks");
+//                            response.sendRedirect(frontendUrl + "/app/tasks");
                         })
                 )
                 .oauth2Client(Customizer.withDefaults())
