@@ -1,6 +1,6 @@
 import {Box, Flex, Spacer, Text} from "@chakra-ui/react";
 import MyButton from "@/components/base/MyButton.tsx";
-import {useState, useCallback, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {getNewSubtask, type SubtaskType} from "@/types/SubtaskType.ts";
 import {router, worklistRoute, worklistSubtasksRoute} from "@/routes/__root.tsx";
 import useSaveWorkItem from "@/queries/UseSaveWorkItem.tsx";
@@ -33,87 +33,110 @@ const SubtasksList = () => {
     }, [workItem]);
 
     const throttledSave = useThrottledCallback(
-        () => {
+        (subtasks: SubtaskType[]) => {
             if (!workItem) return;
             const updatedWorkItem: WorkItemType = {
                 itemID: workItem.itemID,
                 data: {
                     name: workItem.data.name,
-                    subtasks: newSubtasks,
+                    subtasks: subtasks,
                 },
             };
-            saveWorkItemMutation.mutateAsync(updatedWorkItem);
+            saveWorkItemMutation.mutate(updatedWorkItem);
         },
         {
-            wait: 800,
+            wait: 1500,
             leading: true,
             trailing: true,
         }
     );
 
-    const immediateSave = () => {
+    const immediateSave = (subtasks: SubtaskType[]) => {
         if (!workItem) return;
         const updatedWorkItem: WorkItemType = {
             itemID: workItem.itemID,
             data: {
                 name: workItem.data.name,
-                subtasks: newSubtasks,
+                subtasks: subtasks,
             },
         };
-        saveWorkItemMutation.mutateAsync(updatedWorkItem);
+        saveWorkItemMutation.mutate(updatedWorkItem);
     };
 
-    const updateSubtask = useCallback(
-        (index: number, key: keyof typeof newSubtasks[number]["data"], value: any) => {
-            setNewSubtasks(prev => {
-                if (value === '__DELETE__') {
-                    return prev.filter((_, i) => i !== index);
-                }
-                let updated = prev.map((subtask, i) =>
-                    i === index
-                        ? {
-                            ...subtask,
-                            data: {
-                                ...subtask.data,
-                                [key]: value,
-                            },
-                        }
-                        : subtask
-                );
-                // on completed/uncompleted, move subtask order closest to the line
-                if (key === "completed") {
-                    const item = updated[index];
-                    updated = updated.filter((_, i) => i !== index);
-                    const firstCompletedIndex = updated.findIndex(s => s.data.completed);
-                    if (firstCompletedIndex === -1) {
-                        updated.push(item);
-                    } else {
-                        updated.splice(firstCompletedIndex, 0, item);
+    const toggleSubtaskCompleted = (index: number) => {
+        const updated = (() => {
+            let next = newSubtasks.map((subtask, i) =>
+                i === index
+                    ? {
+                        ...subtask,
+                        data: {
+                            ...subtask.data,
+                            completed: !subtask.data.completed,
+                        },
                     }
-                }
-                return updated;
-            });
-            throttledSave();
+                    : subtask
+            );
+
+            const item = next[index];
+            next = next.filter((_, i) => i !== index);
+
+            const firstCompletedIndex = next.findIndex(s => s.data.completed);
+
+            if (firstCompletedIndex === -1) {
+                next.push(item);
+            } else {
+                next.splice(firstCompletedIndex, 0, item);
+            }
+
+            return next;
+        })();
+
+        setNewSubtasks(updated);
+        immediateSave(updated);
+    };
+
+    const removeSubtask = (index: number) => {
+        const updated = newSubtasks.filter((_, i) => i !== index);
+
+        setNewSubtasks(updated);
+        immediateSave(updated);
+    };
+
+    const updateSubtaskText = useCallback((index: number, value: string) => {
+            const updated = newSubtasks.map((subtask, i) =>
+                i === index
+                    ? {
+                        ...subtask,
+                        data: {
+                            ...subtask.data,
+                            name: value,
+                        },
+                    }
+                    : subtask
+            );
+            setNewSubtasks(updated);
+            throttledSave(updated);
         },
-        []
+        [newSubtasks, throttledSave]
     );
 
     const addSubTask = () => {
-        setNewSubtasks(prev => [...prev, getNewSubtask()]);
+        const updated = [...newSubtasks, getNewSubtask()];
+        setNewSubtasks(updated);
+        immediateSave(updated);
     };
 
     const moveSubtask = useCallback((from: number, to: number) => {
-        setNewSubtasks(prev => {
-            const next = [...prev];
-            const [item] = next.splice(from, 1);
-            next.splice(to, 0, item);
-            return next;
-        });
-        throttledSave();
-    }, []);
+        const next = [...newSubtasks];
+        const [item] = next.splice(from, 1);
+        next.splice(to, 0, item);
+
+        setNewSubtasks(next);
+        throttledSave(next);
+    }, [newSubtasks, throttledSave]);
 
     const returnToWorkItems = () => {
-        immediateSave();
+        immediateSave(newSubtasks);
         router.navigate({to: worklistRoute.fullPath});
     };
 
@@ -148,7 +171,9 @@ const SubtasksList = () => {
                                         subtask={subtask}
                                         index={i}
                                         moveSubtask={moveSubtask}
-                                        updateSubtask={updateSubtask}
+                                        updateSubtaskText={updateSubtaskText}
+                                        removeSubtask={removeSubtask}
+                                        toggleSubtaskCompleted={toggleSubtaskCompleted}
                                     />
                                 );
                             })
@@ -178,7 +203,9 @@ const SubtasksList = () => {
                                         subtask={subtask}
                                         index={i}
                                         moveSubtask={moveSubtask}
-                                        updateSubtask={updateSubtask}
+                                        updateSubtaskText={updateSubtaskText}
+                                        removeSubtask={removeSubtask}
+                                        toggleSubtaskCompleted={toggleSubtaskCompleted}
                                     />
                                 );
                             })

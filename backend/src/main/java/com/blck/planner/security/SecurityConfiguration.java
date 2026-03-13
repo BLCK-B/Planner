@@ -80,7 +80,6 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((_, response, auth) -> {
                             OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient("zitadel", auth.getName());
