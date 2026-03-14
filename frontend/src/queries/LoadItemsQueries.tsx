@@ -1,23 +1,8 @@
 import FetchRequest from "@/functions/FetchRequest.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
-import {createStore} from "jotai";
-import {isDemoMode} from "@/global/atoms.ts";
-import {scramble} from "@/functions/Crypto.ts";
-
-export const store = createStore();
 
 const fetchUncompleted = async (): Promise<TaskType[]> => {
-    if (!store.get(isDemoMode)) {
-        return await FetchRequest("GET", "/users/uncompletedUserTasks");
-    }
-    const tasks: TaskType[] = await FetchRequest("GET", "/users/uncompletedUserTasks");
-    return tasks.map(task => ({
-        ...task,
-        data: {
-            ...task.data,
-            name: scramble(task.data.name),
-        },
-    }));
+    return await FetchRequest("GET", "/users/uncompletedUserTasks");
 };
 
 const PAGE_SIZE = 50;
@@ -27,17 +12,7 @@ const fetchCompleted = async (pageParam: number): Promise<TaskType[]> => {
 };
 
 const fetchAll = async (): Promise<TaskType[]> => {
-    if (!store.get(isDemoMode)) {
-        return await FetchRequest("GET", "/users/allUserTasks");
-    }
-    const tasks: TaskType[] = await FetchRequest("GET", "/users/allUserTasks");
-    return tasks.map(task => ({
-        ...task,
-        data: {
-            ...task.data,
-            name: scramble(task.data.name),
-        },
-    }));
+    return await FetchRequest("GET", "/users/allUserTasks");
 };
 
 export const loadUncompletedItemsQuery = () => ({

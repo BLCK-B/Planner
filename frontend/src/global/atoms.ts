@@ -20,8 +20,6 @@ export const filterContentAtom = atom<Filter>({
 // system
 export const errorModalContent = atom<string>('');
 
-export const isDemoMode = atom(false);
-
 
 export const showAddDialog = atom<showCreatorType>({show: false, isNew: false,});
 

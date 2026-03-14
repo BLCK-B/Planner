@@ -7,15 +7,10 @@ export const sortSomeday = (a: TaskType, b: TaskType) => {
 export const sortFutureTasks = (a: TaskType, b: TaskType): number => {
     const aDate = new Date(a.data?.date).getTime();
     const bDate = new Date(b.data?.date).getTime();
-
-    return bDate - aDate;
-};
-
-export const sortCompletedTasks = (a: TaskType, b: TaskType): number => {
-    const aDate = new Date(a.data?.completed).getTime();
-    const bDate = new Date(b.data?.completed).getTime();
-
-    return bDate - aDate;
+    if (bDate !== aDate) {
+        return bDate - aDate;
+    }
+    return a.data.name.localeCompare(b.data.name, undefined, {sensitivity: "base"});
 };
 
 export const groupByMonth = (tasks: TaskType[], byCompleted: boolean) => {
