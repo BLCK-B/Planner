@@ -66,6 +66,7 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtaskText, removeSubtask,
                 ⋮⋮
             </Box>
             <Editable.Root
+                defaultEdit={!subtask.data.name}
                 value={subtask.data.name}
                 onValueChange={(e) => updateSubtaskText(index, e.value)}
                 ml="0.3rem"

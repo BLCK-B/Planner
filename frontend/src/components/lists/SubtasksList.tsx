@@ -1,4 +1,4 @@
-import {Box, Flex, Spacer, Text} from "@chakra-ui/react";
+import {Box, Flex, Show, Spacer, Text} from "@chakra-ui/react";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useCallback, useEffect, useState} from "react";
 import {getNewSubtask, type SubtaskType} from "@/types/SubtaskType.ts";
@@ -179,18 +179,20 @@ const SubtasksList = () => {
                             })
                         }
 
-                        <Box
-                            userSelect="none"
-                            display="flex"
-                            alignItems="center"
-                            fontSize="lg"
-                            cursor="text"
-                            p="0.3rem"
-                            onClick={addSubTask}
-                            color="primary.contrast/40"
-                        >
-                            ⋮⋮
-                        </Box>
+                        <Show when={newSubtasks.every(s => s.data.name.trim() !== "")}>
+                            <Box
+                                userSelect="none"
+                                display="flex"
+                                alignItems="center"
+                                fontSize="lg"
+                                cursor="text"
+                                p="0.3rem"
+                                onClick={addSubTask}
+                                color="primary.contrast/40"
+                            >
+                                ⋮⋮
+                            </Box>
+                        </Show>
 
                         <Box bg="primary" h="2px" w="100%" m="0.3rem 0 0.3rem 0"/>
 
