@@ -6,11 +6,13 @@ import {getDefaultStore} from 'jotai';
 import {errorModalContent} from "@/global/atoms.ts";
 import type {WorkItemType} from "@/types/WorkItemType.ts";
 import type {SubtaskType} from "@/types/SubtaskType.ts";
+import type {InitiativeType} from "@/types/InitiativeType.ts";
+import type {InitiativeRecordType} from "@/types/InitiativeRecordType.ts";
 
 const URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8081"; // VITE_API_URL= (only at build time)
 
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
-export type Encryptable = TaskType | TagType | WorkItemType | SubtaskType;
+export type Encryptable = TaskType | TagType | WorkItemType | SubtaskType | InitiativeType | InitiativeRecordType;
 
 export const encryptBody = async (body: any): Promise<any> => {
     if (Array.isArray(body)) {

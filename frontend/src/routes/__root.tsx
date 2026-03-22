@@ -5,6 +5,7 @@ import TagsEditPage from "@/pages/main/TagsEditPage.tsx";
 import SettingsPage from "@/pages/settings/SettingsPage.tsx";
 import WorklistPage from "@/pages/main/WorklistPage.tsx";
 import WorklistSubtasksPage from "@/pages/main/WorklistSubtasksPage.tsx";
+import InitiativesPage from "@/pages/main/InitiativesPage.tsx";
 
 export const rootRoute = createRootRoute({
     component: () => (
@@ -54,6 +55,12 @@ export const settingsRoute = createRoute({
     component: SettingsPage,
 })
 
+export const initiativesRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: 'app/initiatives',
+    component: InitiativesPage,
+})
+
 export const routeTree = rootRoute.addChildren(
     [
         landingRoute,
@@ -63,6 +70,7 @@ export const routeTree = rootRoute.addChildren(
         worklistSubtasksRoute,
         tagsEditRoute,
         settingsRoute,
+        initiativesRoute,
     ])
 
 export const router = createRouter({routeTree});

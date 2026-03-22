@@ -21,7 +21,7 @@ public class TaskController {
         this.userTaskRepository = userTaskRepository;
     }
 
-    @GetMapping(value = "/userAccountInfo")
+    @GetMapping("/userAccountInfo")
     public String getUserAccountInfo(@AuthenticationPrincipal Jwt jwt) {
         return jwt.getClaim("sub");
     }

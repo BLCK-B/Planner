@@ -26,20 +26,20 @@ public class TagController {
         this.userTagRepository = userTagRepository;
     }
 
-    @GetMapping(value = "/userTags")
+    @GetMapping("/userTags")
     public List<TagDTO> getTags(@AuthenticationPrincipal Jwt jwt) {
         return userTagRepository.findByUserID(jwt.getClaim("sub")).stream()
                 .map(Tag::toDTO)
                 .toList();
     }
 
-    @PutMapping(value = "/userTag")
+    @PutMapping("/userTag")
     public TagDTO setTag(@AuthenticationPrincipal Jwt jwt, @RequestBody TagDTO userTag) {
         return userTagRepository.save(userTag.toTag(jwt.getClaim("sub"))).toDTO();
     }
 
     @Transactional
-    @DeleteMapping(value = "/userTag/{tagID}")
+    @DeleteMapping("/userTag/{tagID}")
     public String deleteTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
         em.createNativeQuery("DELETE FROM user_task_tag WHERE tag_id = ?1")
                 .setParameter(1, UUID.fromString(tagID))
@@ -50,7 +50,7 @@ public class TagController {
     }
 
     @Transactional
-    @PutMapping(value = "/updateAllUserTags")
+    @PutMapping("/updateAllUserTags")
     public ResponseEntity<String> setTags(@AuthenticationPrincipal Jwt jwt, @RequestBody List<TagDTO> userTags) {
         String userID = jwt.getClaim("sub");
         try {
