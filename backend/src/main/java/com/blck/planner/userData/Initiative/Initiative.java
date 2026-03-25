@@ -22,6 +22,9 @@ public class Initiative {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "remind_days")
+    private int remindDays;
+
     @Column(name = "records", columnDefinition = "TEXT")
     @Convert(converter = InitiativeListConverter.class)
     private List<InitiativeRecord> records;
@@ -29,15 +32,16 @@ public class Initiative {
     public Initiative() {
     }
 
-    public Initiative(UUID itemID, String userID, String name, List<InitiativeRecord> records) {
+    public Initiative(UUID itemID, String userID, String name, int remindDays, List<InitiativeRecord> records) {
         this.itemID = itemID;
         this.userID = userID;
         this.name = name;
+        this.remindDays = remindDays;
         this.records = records;
     }
 
     public InitiativeDTO toDTO() {
-        var data = new InitiativeDTO.Data(name, records);
+        var data = new InitiativeDTO.Data(name, remindDays, records);
         return new InitiativeDTO(itemID, data);
     }
 
@@ -67,5 +71,13 @@ public class Initiative {
 
     public void setRecords(List<InitiativeRecord> records) {
         this.records = records;
+    }
+
+    public int getRemindDays() {
+        return remindDays;
+    }
+
+    public void setRemindDays(int remindDays) {
+        this.remindDays = remindDays;
     }
 }

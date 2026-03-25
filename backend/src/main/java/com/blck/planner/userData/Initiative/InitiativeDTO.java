@@ -9,6 +9,7 @@ public record InitiativeDTO(
 ) {
     public record Data(
             String name,
+            int remindDays,
             List<InitiativeRecord> records
     ) {
     }
@@ -18,6 +19,7 @@ public record InitiativeDTO(
                 itemID,
                 userID,
                 data.name,
+                data.remindDays,
                 data.records
         );
     }

@@ -6,6 +6,7 @@ import {
     Show,
     Field,
     useBreakpointValue,
+    NumberInput, HStack, IconButton,
 } from "@chakra-ui/react";
 import {showInitiativeCreator, existingInitiativeForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
@@ -15,6 +16,7 @@ import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 import loadInitiativesQuery from "@/queries/LoadloadInitiativesQuery.tsx";
 import useSaveInitiative from "@/queries/UseSaveInitiative.tsx";
 import useDeleteInitiative from "@/queries/UseDeleteInitiative.tsx";
+import {LuMinus, LuPlus} from "react-icons/lu";
 
 const InitiativeCreator = () => {
     const isDesktop = useBreakpointValue(
@@ -82,6 +84,23 @@ const InitiativeCreator = () => {
                                        onChange={(e) => updateInitiative("name", e.target.value)}
                                        bg="primary.lighter"/>
                             </Field.Root>
+                            Require input every X days
+                            <NumberInput.Root defaultValue="3" unstyled spinOnPress={false} min={0} max={30}
+                                              onValueChange={(e) => updateInitiative("remindDays", e.valueAsNumber)}>
+                                <HStack gap="2">
+                                    <NumberInput.DecrementTrigger asChild>
+                                        <IconButton variant="outline" size="sm">
+                                            <LuMinus/>
+                                        </IconButton>
+                                    </NumberInput.DecrementTrigger>
+                                    <NumberInput.ValueText textAlign="center" fontSize="lg" minW="3ch"/>
+                                    <NumberInput.IncrementTrigger asChild>
+                                        <IconButton variant="outline" size="sm">
+                                            <LuPlus/>
+                                        </IconButton>
+                                    </NumberInput.IncrementTrigger>
+                                </HStack>
+                            </NumberInput.Root>
                         </Dialog.Body>
                         <Dialog.Footer>
                             <MyButton type="confirm" onClick={saveInitiative} disabled={disableSaveRules()}/>

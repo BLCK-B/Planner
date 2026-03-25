@@ -5,6 +5,7 @@ export type InitiativeType = {
     data: {
         name: string;
         records: InitiativeRecordType[];
+        remindDays: number;
     };
 };
 
@@ -15,6 +16,7 @@ type EncryptSpec = {
 export const InitiativeEncryptSpec: EncryptSpec = {
     name: true,
     records: false,
+    remindDays: false,
 };
 
 const newInitiative: InitiativeType = {
@@ -22,6 +24,7 @@ const newInitiative: InitiativeType = {
     data: {
         name: '',
         records: [],
+        remindDays: 0
     },
 } as const;
 

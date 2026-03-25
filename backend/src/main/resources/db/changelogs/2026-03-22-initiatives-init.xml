@@ -12,6 +12,7 @@
             </column>
             <column name="user_id" type="TEXT"/>
             <column name="name" type="TEXT"/>
+            <column name="remind_days" type="INT"/>
             <column name="records" type="TEXT"/>
         </createTable>
     </changeSet>

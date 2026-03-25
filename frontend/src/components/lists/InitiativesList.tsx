@@ -1,4 +1,4 @@
-import {Box, Editable, Flex, RatingGroup, Show, Text} from "@chakra-ui/react";
+import {Box, Editable, Flex, RatingGroup, Show, Spacer, Text} from "@chakra-ui/react";
 import {useSetAtom} from "jotai";
 import {
     existingInitiativeForEdit,
@@ -12,6 +12,7 @@ import loadInitiativesQuery from "@/queries/LoadloadInitiativesQuery.tsx";
 import {useState} from "react";
 import useSaveInitiative from "@/queries/UseSaveInitiative.tsx";
 import {getNewInitiativeRecord, type InitiativeRecordType} from "@/types/InitiativeRecordType.ts";
+import {MdEventRepeat} from "react-icons/md";
 
 const InitiativesList = () => {
 
@@ -89,35 +90,21 @@ const InitiativesList = () => {
                       paddingBottom="100px" minHeight="15rem">
                     {initiatives?.sort((a, b) => a.data.name.localeCompare(b.data.name))
                         .map((initiative, i) => (
-                            <Flex key={i} position="relative" boxShadow="xs" p="0.5rem"
-                                  borderRadius="md"
-                                  flexDirection="column" w="100%" bg="primary.lighter/30"
+                            <Flex key={i} position="relative" boxShadow="xs" p="0.5rem" borderRadius="md"
+                                  flexDirection="column" w="100%" bg="primary.lighter/30" cursor="pointer"
                                   onClick={() => setSelectedInitiative(initiative)}
                             >
-                                <Flex justifyContent="space-between" align="center">
+                                <Flex align="center" gap="1.2rem">
                                     <Text fontWeight="bold">{initiative.data.name}</Text>
+                                    <Flex gap="0.3rem">
+                                        <MdEventRepeat color="primary.contrast" aria-label="Complete"/>
+                                        <Text>{initiative.data.remindDays} d</Text>
+                                    </Flex>
+                                    <Spacer/>
                                     <MyButton type='edit' onClick={e => openEdit(e, initiative)}/>
                                 </Flex>
                                 <Show when={selectedInitiative === initiative}>
-                                    {initiative.data.records?.length > 0 && initiative.data.records.map((record, x) => (
-                                        <Flex
-                                            key={x}
-                                            color="primary.contrast"
-                                            position="relative"
-                                            justifyContent="space-between"
-                                            m="0.3rem"
-                                            p='0.3rem'
-                                            bg="primary.lighter"
-                                            borderRadius="md"
-                                        >
-                                            {record.data.comment}
-                                            {emojiMap[record.data.rating]}
-                                            <MyButton type="delete" onClick={() => deleteRecord(initiative, record)}
-                                                      extraSmall={true}/>
-                                        </Flex>
-                                    ))}
-
-                                    <Flex>
+                                    <Flex bg="primary.lighter" borderRadius="md" m="0.3rem">
                                         <Editable.Root
                                             value={newRecord.data.comment}
                                             onValueChange={(e) => updateRecordComment(e.value)}
@@ -168,6 +155,24 @@ const InitiativesList = () => {
                                                   disabled={!newRecord.data.comment || newRecord.data.rating === 6}
                                                   onClick={() => saveRecord(initiative)}/>
                                     </Flex>
+
+                                    {initiative.data.records?.length > 0 && initiative.data.records.map((record, x) => (
+                                        <Flex
+                                            key={x}
+                                            color="primary.contrast"
+                                            position="relative"
+                                            justifyContent="space-between"
+                                            m="0.3rem"
+                                            p='0.3rem'
+                                            bg="primary.lighter"
+                                            borderRadius="md"
+                                        >
+                                            {record.data.comment}
+                                            {emojiMap[record.data.rating]}
+                                            <MyButton type="delete" onClick={() => deleteRecord(initiative, record)}
+                                                      extraSmall={true}/>
+                                        </Flex>
+                                    ))}
                                 </Show>
                             </Flex>
                         ))}
