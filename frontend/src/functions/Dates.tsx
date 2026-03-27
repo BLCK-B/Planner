@@ -77,6 +77,14 @@ export const dateToReadableDDMM = (date: string) => {
     return `${day}. ${month}.`;
 }
 
+export const dateToReadableDDMMYY = (date: string) => {
+    const asDate = new Date(date);
+    const day = String(asDate.getDate());
+    const month = String(asDate.getMonth() + 1);
+    const year = asDate.getFullYear();
+    return `${day}. ${month}. ${year}`;
+};
+
 export const getNextDate = (previousDate: string, repeat: string, originDay: number): string => {
     const date = new Date(previousDate);
     // avoid hour offset changing date

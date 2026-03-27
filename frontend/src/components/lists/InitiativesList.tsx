@@ -9,10 +9,11 @@ import * as React from "react";
 import type {InitiativeType} from "@/types/InitiativeType.ts";
 import {useQuery} from "@tanstack/react-query";
 import loadInitiativesQuery from "@/queries/LoadloadInitiativesQuery.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import useSaveInitiative from "@/queries/UseSaveInitiative.tsx";
 import {getNewInitiativeRecord, type InitiativeRecordType} from "@/types/InitiativeRecordType.ts";
 import {MdEventRepeat} from "react-icons/md";
+import {dateToReadableDDMMYY, getTodaysDate} from "@/functions/Dates.tsx";
 
 const InitiativesList = () => {
 
@@ -24,7 +25,9 @@ const InitiativesList = () => {
 
     const saveInitiative = useSaveInitiative();
 
-    const [selectedInitiative, setSelectedInitiative] = useState<InitiativeType | null>(null);
+    const [selectedInitiativeId, setSelectedInitiativeId] = useState<string | null>(null);
+
+    const [pendingInitiativeIds, setPendingInitiativeIds] = useState<string[]>([]);
 
     const [newRecord, setNewRecord] = useState<InitiativeRecordType>(getNewInitiativeRecord);
 
@@ -35,10 +38,17 @@ const InitiativesList = () => {
     };
 
     const saveRecord = async (initiative: InitiativeType) => {
+        const updatedRecord = {
+            ...newRecord,
+            data: {
+                ...newRecord.data,
+                date: getTodaysDate(),
+            },
+        };
         const updatedInitiative = structuredClone(initiative);
         updatedInitiative.data.records = [
             ...(updatedInitiative.data.records ?? []),
-            newRecord
+            updatedRecord
         ];
         await saveInitiative.mutateAsync(updatedInitiative);
         setNewRecord(getNewInitiativeRecord);
@@ -80,31 +90,65 @@ const InitiativesList = () => {
         5: "😍",
     }
 
+    // todo test, extract to one function
+    const getPendingInitiatives = (): InitiativeType[] => {
+        if (!initiatives) return [];
+
+        const pendingInitiatives: InitiativeType[] = [];
+
+        for (const initiative of initiatives) {
+            if (!initiative.data.records.length) continue;
+            const lastRecordDate = new Date(Math.max(
+                ...initiative.data.records.map(r => new Date(r.data.date).getTime())
+            ));
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const lastDate = new Date(lastRecordDate);
+            lastDate.setHours(0, 0, 0, 0);
+            lastDate.setDate(lastDate.getDate() + initiative.data.remindDays);
+            if (today >= lastRecordDate) {
+                pendingInitiatives.push(initiative);
+            }
+        }
+        return pendingInitiatives;
+    };
+
+    useEffect(() => {
+        const pending = getPendingInitiatives();
+        if (pending.length > 0) {
+            setPendingInitiativeIds(pending.map(i => i.itemID));
+        }
+    }, [initiatives]);
+
     if (!initiatives) return <></>;
 
     return (
-        <Flex direction="column" height="100%" justifyContent="flex-end" m="0 auto">
+        <Flex direction="column" height="100%" m="0 auto">
             <Box overflowY="scroll" scrollbarWidth="none">
                 <Flex w={{base: "95%", md: "90%"}} direction="column" fontSize="md" mx="auto" gap="1.2rem"
                       position="relative" top="4.8rem"
-                      paddingBottom="100px" minHeight="15rem">
+                      paddingBottom="100px" minHeight="15rem"
+                >
                     {initiatives?.sort((a, b) => a.data.name.localeCompare(b.data.name))
                         .map((initiative, i) => (
                             <Flex key={i} position="relative" boxShadow="xs" p="0.5rem" borderRadius="md"
                                   flexDirection="column" w="100%" bg="primary.lighter/30" cursor="pointer"
-                                  onClick={() => setSelectedInitiative(initiative)}
+                                  onClick={() => setSelectedInitiativeId(initiative.itemID)}
+                                  {...(pendingInitiativeIds.some(id => initiative.itemID === id) && styles.pending)}
                             >
                                 <Flex align="center" gap="1.2rem">
-                                    <Text fontWeight="bold">{initiative.data.name}</Text>
                                     <Flex gap="0.3rem">
                                         <MdEventRepeat color="primary.contrast" aria-label="Complete"/>
                                         <Text>{initiative.data.remindDays} d</Text>
                                     </Flex>
+                                    <Text fontWeight="bold">{initiative.data.name}</Text>
                                     <Spacer/>
-                                    <MyButton type='edit' onClick={e => openEdit(e, initiative)}/>
+                                    <MyButton type='edit' onClick={e => openEdit(e, initiative)} extraSmall={true}/>
                                 </Flex>
-                                <Show when={selectedInitiative === initiative}>
-                                    <Flex bg="primary.lighter" borderRadius="md" m="0.3rem">
+                                <Show when={selectedInitiativeId === initiative.itemID}>
+                                    <Flex bg="primary.lighter" borderRadius="md"
+                                          m="0.6rem 0 0.6rem 0"
+                                    >
                                         <Editable.Root
                                             value={newRecord.data.comment}
                                             onValueChange={(e) => updateRecordComment(e.value)}
@@ -114,11 +158,11 @@ const InitiativesList = () => {
                                             <Editable.Preview
                                                 w="100%"
                                                 _hover={{bg: "primary.lighter"}}
+                                                maxHeight="1.2rem"
                                             />
-                                            <Editable.Textarea
-                                                maxLength={120}
+                                            <Editable.Input
+                                                maxLength={100}
                                                 w="100%"
-                                                resize="none"
                                                 _selection={{bg: "theme.Spruit2", color: "black"}}
                                             />
                                         </Editable.Root>
@@ -152,23 +196,24 @@ const InitiativesList = () => {
                                             </RatingGroup.Control>
                                         </RatingGroup.Root>
                                         <MyButton type="confirm"
-                                                  disabled={!newRecord.data.comment || newRecord.data.rating === 6}
+                                                  disabled={!newRecord.data.comment}
                                                   onClick={() => saveRecord(initiative)}/>
                                     </Flex>
-
+                                    {/* todo sort via reusable function */}
                                     {initiative.data.records?.length > 0 && initiative.data.records.map((record, x) => (
                                         <Flex
                                             key={x}
                                             color="primary.contrast"
                                             position="relative"
                                             justifyContent="space-between"
-                                            m="0.3rem"
-                                            p='0.3rem'
-                                            bg="primary.lighter"
+                                            mb='0.6rem'
+                                            gap="0.6rem"
                                             borderRadius="md"
                                         >
-                                            {record.data.comment}
-                                            {emojiMap[record.data.rating]}
+                                            <Text>{dateToReadableDDMMYY(record.data.date)}</Text>
+                                            <Text>{emojiMap[record.data.rating]}</Text>
+                                            <Text>{record.data.comment}</Text>
+                                            <Spacer/>
                                             <MyButton type="delete" onClick={() => deleteRecord(initiative, record)}
                                                       extraSmall={true}/>
                                         </Flex>
@@ -183,3 +228,11 @@ const InitiativesList = () => {
 };
 
 export default InitiativesList;
+
+const styles = {
+    pending: {
+        borderWidth: "2px",
+        borderStyle: "solid",
+        borderColor: "theme.BrightYellow",
+    },
+};

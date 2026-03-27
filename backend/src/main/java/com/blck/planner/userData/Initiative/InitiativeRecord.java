@@ -6,7 +6,8 @@ public record InitiativeRecord(
     public record Data(
             String recordID,
             String comment,
-            int rating
+            int rating,
+            String date
     ) {
     }
 }

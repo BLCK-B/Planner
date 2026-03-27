@@ -3,6 +3,7 @@ export type InitiativeRecordType = {
         recordID: string;
         comment: string;
         rating: number;
+        date: string;
     }
 };
 
@@ -14,6 +15,7 @@ export const InitiativeRecordEncryptSpec: EncryptSpec = {
     recordID: false,
     comment: true,
     rating: false,
+    date: false,
 };
 
 const newInitiativeRecordType: InitiativeRecordType = {
@@ -21,6 +23,7 @@ const newInitiativeRecordType: InitiativeRecordType = {
         recordID: '',
         comment: '',
         rating: 6,
+        date: '',
     },
 } as const;
 

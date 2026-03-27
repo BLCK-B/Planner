@@ -48,7 +48,7 @@ const WorkList = () => {
                             >
                                 <Flex justifyContent="space-between" align="center">
                                     <Text fontWeight="bold">{item.data.name}</Text>
-                                    <MyButton type='edit' onClick={e => openEdit(e, item)}/>
+                                    <MyButton type='edit' onClick={e => openEdit(e, item)} extraSmall={true}/>
                                 </Flex>
                                 <Box w="100%" mx="auto" position="relative" p="0.6rem">
                                     {item.data.subtasks?.filter(s => !s.data.completed)
