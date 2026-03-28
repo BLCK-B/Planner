@@ -1,20 +1,15 @@
-import {useRouter} from '@tanstack/react-router';
+import {createFileRoute, useNavigate} from '@tanstack/react-router';
 import {Box, Button, GridItem, Grid, Stack, Card, Show, Center, Field} from "@chakra-ui/react";
 import {PasswordInput} from "@/components/ui/password-input";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import FetchRequest from "@/functions/FetchRequest.tsx";
-import {mainRoute} from "@/routes/__root.tsx";
 import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
-import {
-    createEncryptionKey,
-    decodeFromBase64,
-} from "@/functions/Crypto.ts";
 import {Alert} from "@chakra-ui/react"
 import type {Credentials} from "@/types/Credentials.ts";
 import {useState} from "react";
 
-const AuthPage = () => {
-    const router = useRouter();
+const Postauth = () => {
+    const navigate = useNavigate();
 
     const [infoAlertMessage, setInfoAlertMessage] = useState<string>('');
 
@@ -77,7 +72,8 @@ const AuthPage = () => {
 
             await reencryptAllData();
 
-            await router.navigate({to: mainRoute.fullPath});
+            await navigate({to: '/app/tasks'});
+            // eslint-disable-next-line
         } catch (error: any) {
             if (error?.status) {
                 setInfoAlertMessage("Invalid credentials.");
@@ -138,4 +134,6 @@ const AuthPage = () => {
     );
 };
 
-export default AuthPage;
+export const Route = createFileRoute('/app/postauth')({
+    component: Postauth,
+})

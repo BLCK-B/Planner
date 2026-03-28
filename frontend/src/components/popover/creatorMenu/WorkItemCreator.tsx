@@ -32,7 +32,7 @@ const WorkItemCreator = () => {
 
     const deleteWorkItemMutation = useDeleteWorkItem();
 
-    const updateWorkItem = (key: keyof typeof newWorkItem.data, value: any) => {
+    const updateWorkItem = (key: keyof typeof newWorkItem.data, value: string) => {
         setNewWorkItem(prev => ({
             ...prev,
             data: {

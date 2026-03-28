@@ -2,11 +2,13 @@ import {StrictMode} from "react";
 import {createRoot} from "react-dom/client";
 import {ChakraProvider, createSystem, defaultConfig} from "@chakra-ui/react";
 import {QueryClientProvider} from '@tanstack/react-query';
-import {RouterProvider} from '@tanstack/react-router'
-import {router} from '@/routes/__root';
+import {RouterProvider, createRouter} from '@tanstack/react-router'
+import {routeTree} from './routeTree.gen'
 import {queryClient} from "@/QueryClient.tsx";
 import {styles} from "@/globalStyles.ts";
 import {ThemeProvider} from 'next-themes';
+
+const router = createRouter({routeTree})
 
 declare module '@tanstack/react-router' {
     interface Register {

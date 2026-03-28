@@ -14,11 +14,13 @@ const URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://loca
 type Methods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 export type Encryptable = TaskType | TagType | WorkItemType | SubtaskType | InitiativeType | InitiativeRecordType;
 
+// eslint-disable-next-line
 export const encryptBody = async (body: any): Promise<any> => {
     if (Array.isArray(body)) {
         return await Promise.all(body.map(encryptBody));
     }
     if (body && typeof body === "object") {
+        // eslint-disable-next-line
         const objectKeys: any = {};
         for (const [key, value] of Object.entries(body)) {
             objectKeys[key] = await encryptBody(value);
@@ -31,11 +33,13 @@ export const encryptBody = async (body: any): Promise<any> => {
     return body;
 };
 
+// eslint-disable-next-line
 export const decryptBody = async (body: any): Promise<any> => {
     if (Array.isArray(body)) {
         return await Promise.all(body.map(decryptBody));
     }
     if (body && typeof body === "object") {
+        // eslint-disable-next-line
         const objectKeys: any = {};
         for (const [key, value] of Object.entries(body)) {
             objectKeys[key] = await decryptBody(value);
@@ -49,6 +53,7 @@ export const decryptBody = async (body: any): Promise<any> => {
 };
 
 type FetchRequestFunction = {
+    // eslint-disable-next-line
     (method: Methods, request: string, body?: object | null): Promise<any>;
     (method: Methods, request: string, body?: Encryptable): Promise<Encryptable>;
     (method: Methods, request: string, body?: Encryptable[]): Promise<Encryptable[]>;

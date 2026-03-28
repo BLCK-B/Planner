@@ -11,7 +11,7 @@ import {filterContentAtom} from "@/global/atoms.ts";
 import {useInView} from 'react-intersection-observer'
 import {useEffect, useRef} from "react";
 
-const MainList = () => {
+const TasksList = () => {
     const isDesktop = useBreakpointValue(
         {base: false, md: true},
         {ssr: false}
@@ -58,7 +58,7 @@ const MainList = () => {
         scrollContainerRef.current?.scrollTo({
             top: somedayRef.current.offsetTop - 300
         });
-    }, [somedayRef.current]);
+    }, []);
 
     if (!uncompletedItems || !completedPaginatedItems) return <></>;
 
@@ -174,4 +174,4 @@ const MainList = () => {
     );
 };
 
-export default MainList;
+export default TasksList;

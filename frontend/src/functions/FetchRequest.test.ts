@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {describe, expect, vi, beforeEach, test} from "vitest";
 import FetchRequest, {decryptBody, encryptBody} from "@/functions/FetchRequest";
 import {encrypt, decrypt} from "@/functions/Crypto";

@@ -37,7 +37,9 @@ const Subtask = ({subtask, index, moveSubtask, updateSubtaskText, removeSubtask,
 
     // to remove HTML ghost image
     useEffect(() => {
-        preview && preview(getEmptyImage(), {captureDraggingState: true});
+        if (preview) {
+            preview(getEmptyImage(), {captureDraggingState: true});
+        }
     }, [preview]);
 
     return (

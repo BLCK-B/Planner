@@ -25,14 +25,16 @@ import {dateToReadableDDMM, getDayNumber} from "@/functions/Dates.tsx";
 import MyTag from "@/components/items/MyTag.tsx";
 import type {TagType} from "@/types/TagType.ts";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
-import {router, tagsEditRoute} from "@/routes/__root.tsx";
 import {FaStar} from "react-icons/fa6";
 import {MdEventRepeat} from "react-icons/md";
 import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 import {useState} from "react";
 import TaskView from "@/components/items/TaskView.tsx";
+import {useNavigate} from "@tanstack/react-router";
 
 const TaskCreator = () => {
+
+    const navigate = useNavigate();
 
     const isDesktop = useBreakpointValue({base: false, sm: true, md: true}) as boolean;
 
@@ -52,6 +54,7 @@ const TaskCreator = () => {
 
     const {data: uncompletedItems} = useQuery<TaskType[]>(loadUncompletedItemsQuery());
 
+    // eslint-disable-next-line
     const updateItem = (key: keyof typeof newItem.data, value: any) => {
         setNewItem(prev => ({
             ...prev,
@@ -127,7 +130,7 @@ const TaskCreator = () => {
     }
 
     const goToTagEditPage = () => {
-        router.navigate({to: tagsEditRoute.fullPath});
+        navigate({to: '/app/tagsEdit'})
     };
 
     const importantStyle = () => {

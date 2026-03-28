@@ -2,13 +2,12 @@ import {Box, Flex, Show, Spacer, Text} from "@chakra-ui/react";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useCallback, useEffect, useState} from "react";
 import {getNewSubtask, type SubtaskType} from "@/types/SubtaskType.ts";
-import {router, worklistRoute, worklistSubtasksRoute} from "@/routes/__root.tsx";
 import useSaveWorkItem from "@/queries/UseSaveWorkItem.tsx";
 import {useThrottledCallback} from "@tanstack/react-pacer";
 import type {WorkItemType} from "@/types/WorkItemType.ts";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemQuery from "@/queries/LoadWorkItemQuery.tsx";
-import {useParams} from "@tanstack/react-router";
+import {useNavigate, useParams} from "@tanstack/react-router";
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import {TouchBackend} from "react-dnd-touch-backend";
@@ -16,9 +15,11 @@ import Subtask from "@/components/items/Subtask.tsx";
 
 const SubtasksList = () => {
 
+    const navigate = useNavigate();
+
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-    const {workItemId} = useParams({from: worklistSubtasksRoute.id});
+    const {workItemId} = useParams({from: '/app/worklist/subtasks/$workItemId'});
 
     const saveWorkItemMutation = useSaveWorkItem();
 
@@ -137,7 +138,7 @@ const SubtasksList = () => {
 
     const returnToWorkItems = () => {
         immediateSave(newSubtasks);
-        router.navigate({to: worklistRoute.fullPath});
+        navigate({to: '/app/worklist'});
     };
 
     if (isLoading) return <></>;

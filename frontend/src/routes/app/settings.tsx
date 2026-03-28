@@ -3,8 +3,9 @@ import ErrorModal from "@/components/popover/ErrorModal.tsx";
 import HeaderSettingsPage from "@/components/header/HeaderSettingsPage.tsx";
 import {ColorModeButton} from "@/components/ui/color-mode.tsx";
 import FetchRequest from "@/functions/FetchRequest.tsx";
+import {createFileRoute} from "@tanstack/react-router";
 
-const SettingsPage = () => {
+const Settings = () => {
 
     const commitId = import.meta.env.VITE_COMMIT_ID || 'commitId'
 
@@ -42,4 +43,6 @@ const SettingsPage = () => {
     );
 };
 
-export default SettingsPage;
+export const Route = createFileRoute('/app/settings')({
+    component: Settings,
+})

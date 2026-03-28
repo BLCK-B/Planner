@@ -1,9 +1,10 @@
 import PageLayout from "@/components/base/PageLayout.tsx";
 import BaseHeader from "@/components/header/BaseHeader.tsx";
 import SubtasksList from "@/components/lists/SubtasksList.tsx";
-import WorkItemCreator from "@/components/popover/CreatorMenu/WorkItemCreator.tsx";
+import WorkItemCreator from "@/components/popover/creatorMenu/WorkItemCreator.tsx";
+import {createFileRoute} from "@tanstack/react-router";
 
-const WorklistSubtasksPage = () => {
+const WorkItemId = () => {
 
     return (
         <PageLayout
@@ -14,4 +15,6 @@ const WorklistSubtasksPage = () => {
     );
 };
 
-export default WorklistSubtasksPage;
+export const Route = createFileRoute('/app/worklist/subtasks/$workItemId')({
+    component: WorkItemId,
+})

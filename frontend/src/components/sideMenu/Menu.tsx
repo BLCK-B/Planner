@@ -1,27 +1,28 @@
 import SelectTabs from "@/components/base/SelectTabs.tsx";
-import {useRouter} from '@tanstack/react-router';
-import {initiativesRoute, mainRoute, worklistRoute} from "@/routes/__root.tsx";
+import {useNavigate, useRouter} from '@tanstack/react-router';
 import {Box, Center, Flex, Show} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
-import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
-import ActionButtonsWorklistPage from "@/components/actions/ActionButtonsWorklistPage.tsx";
+import ActionButtonsMainPage from "@/components/actionButtons/ActionButtonsMainPage.tsx";
+import ActionButtonsWorklistPage from "@/components/actionButtons/ActionButtonsWorklistPage.tsx";
 import {getTabs, mapPathToName, type Tabs} from "@/types/Tabs.ts";
-import ActionButtonsInitiativesPage from "@/components/actions/ActionButtonsInitiativesPage.tsx";
+import ActionButtonsInitiativesPage from "@/components/actionButtons/ActionButtonsInitiativesPage.tsx";
 
 const Menu = ({isDesktop}: { isDesktop: boolean }) => {
 
     const router = useRouter();
 
+    const navigate = useNavigate();
+
     const tabSelected = (tab: Tabs) => {
         switch (tab) {
             case 'Tasks':
-                router.navigate({to: mainRoute.fullPath});
+                navigate({to: '/app/tasks'})
                 break;
             case 'Worklist':
-                router.navigate({to: worklistRoute.fullPath});
+                navigate({to: '/app/worklist'})
                 break;
             case 'Initiatives':
-                router.navigate({to: initiativesRoute.fullPath});
+                navigate({to: '/app/initiatives'})
                 break;
         }
     };

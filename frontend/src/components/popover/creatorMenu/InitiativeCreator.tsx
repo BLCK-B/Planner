@@ -34,7 +34,7 @@ const InitiativeCreator = () => {
 
     const deleteInitiativeMutation = useDeleteInitiative();
 
-    const updateInitiative = (key: keyof typeof newInitiative.data, value: any) => {
+    const updateInitiative = (key: keyof typeof newInitiative.data, value: string | number) => {
         setNewInitiative(prev => ({
             ...prev,
             data: {
