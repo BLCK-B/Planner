@@ -7,7 +7,7 @@ import loadInitiativesQuery from "@/queries/LoadloadInitiativesQuery.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
 import {loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import {isDatePast} from "@/functions/Dates.tsx";
-import type {InitiativeType} from "@/types/InitiativeType.ts";
+import {getPendingInitiatives} from "@/functions/Reusable.ts";
 
 type Props = {
     tabs: string[];
@@ -44,27 +44,8 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
             .filter((task) => isDatePast(task.data.date)).length > 0;
     };
 
-    // todo test, extract to one function
     const isInitiativesPending = (): boolean => {
-        if (!initiatives) return false;
-
-        const pendingInitiatives: InitiativeType[] = [];
-
-        for (const initiative of initiatives) {
-            if (!initiative.data.records.length) continue;
-            const lastRecordDate = new Date(Math.max(
-                ...initiative.data.records.map(r => new Date(r.data.date).getTime())
-            ));
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const lastDate = new Date(lastRecordDate);
-            lastDate.setHours(0, 0, 0, 0);
-            lastDate.setDate(lastDate.getDate() + initiative.data.remindDays);
-            if (today >= lastRecordDate) {
-                pendingInitiatives.push(initiative);
-            }
-        }
-        return pendingInitiatives.length > 0
+        return getPendingInitiatives(initiatives).length > 0
     };
 
     return (

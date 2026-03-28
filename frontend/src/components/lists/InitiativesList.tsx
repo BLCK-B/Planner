@@ -14,6 +14,7 @@ import useSaveInitiative from "@/queries/UseSaveInitiative.tsx";
 import {getNewInitiativeRecord, type InitiativeRecordType} from "@/types/InitiativeRecordType.ts";
 import {MdEventRepeat} from "react-icons/md";
 import {dateToReadableDDMMYY, getTodaysDate} from "@/functions/Dates.tsx";
+import {getPendingInitiatives} from "@/functions/Reusable.ts";
 
 const InitiativesList = () => {
 
@@ -90,34 +91,9 @@ const InitiativesList = () => {
         5: "😍",
     }
 
-    // todo test, extract to one function
-    const getPendingInitiatives = (): InitiativeType[] => {
-        if (!initiatives) return [];
-
-        const pendingInitiatives: InitiativeType[] = [];
-
-        for (const initiative of initiatives) {
-            if (!initiative.data.records.length) continue;
-            const lastRecordDate = new Date(Math.max(
-                ...initiative.data.records.map(r => new Date(r.data.date).getTime())
-            ));
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const lastDate = new Date(lastRecordDate);
-            lastDate.setHours(0, 0, 0, 0);
-            lastDate.setDate(lastDate.getDate() + initiative.data.remindDays);
-            if (today >= lastRecordDate) {
-                pendingInitiatives.push(initiative);
-            }
-        }
-        return pendingInitiatives;
-    };
-
     useEffect(() => {
-        const pending = getPendingInitiatives();
-        if (pending.length > 0) {
-            setPendingInitiativeIds(pending.map(i => i.itemID));
-        }
+        const pending = getPendingInitiatives(initiatives);
+        setPendingInitiativeIds(pending.map(i => i.itemID));
     }, [initiatives]);
 
     if (!initiatives) return <></>;
@@ -199,25 +175,27 @@ const InitiativesList = () => {
                                                   disabled={!newRecord.data.comment}
                                                   onClick={() => saveRecord(initiative)}/>
                                     </Flex>
-                                    {/* todo sort via reusable function */}
-                                    {initiative.data.records?.length > 0 && initiative.data.records.map((record, x) => (
-                                        <Flex
-                                            key={x}
-                                            color="primary.contrast"
-                                            position="relative"
-                                            justifyContent="space-between"
-                                            mb='0.6rem'
-                                            gap="0.6rem"
-                                            borderRadius="md"
-                                        >
-                                            <Text>{dateToReadableDDMMYY(record.data.date)}</Text>
-                                            <Text>{emojiMap[record.data.rating]}</Text>
-                                            <Text>{record.data.comment}</Text>
-                                            <Spacer/>
-                                            <MyButton type="delete" onClick={() => deleteRecord(initiative, record)}
-                                                      extraSmall={true}/>
-                                        </Flex>
-                                    ))}
+                                    {initiative.data.records?.length > 0 && initiative.data.records
+                                        .slice()
+                                        .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+                                        .map((record, x) => (
+                                            <Flex
+                                                key={x}
+                                                color="primary.contrast"
+                                                position="relative"
+                                                justifyContent="space-between"
+                                                mb='0.6rem'
+                                                gap="0.6rem"
+                                                borderRadius="md"
+                                            >
+                                                <Text>{dateToReadableDDMMYY(record.data.date)}</Text>
+                                                <Text>{emojiMap[record.data.rating]}</Text>
+                                                <Text>{record.data.comment}</Text>
+                                                <Spacer/>
+                                                <MyButton type="delete" onClick={() => deleteRecord(initiative, record)}
+                                                          extraSmall={true}/>
+                                            </Flex>
+                                        ))}
                                 </Show>
                             </Flex>
                         ))}
