@@ -1,11 +1,12 @@
 import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useRouter} from '@tanstack/react-router';
-import {mainRoute, worklistRoute} from "@/routes/__root.tsx";
+import {initiativesRoute, mainRoute, worklistRoute} from "@/routes/__root.tsx";
 import {Box, Center, Flex, Show} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import ActionButtonsMainPage from "@/components/actions/ActionButtonsMainPage.tsx";
 import ActionButtonsWorklistPage from "@/components/actions/ActionButtonsWorklistPage.tsx";
 import {getTabs, mapPathToName, type Tabs} from "@/types/Tabs.ts";
+import ActionButtonsInitiativesPage from "@/components/actions/ActionButtonsInitiativesPage.tsx";
 
 const Menu = ({isDesktop}: { isDesktop: boolean }) => {
 
@@ -19,6 +20,9 @@ const Menu = ({isDesktop}: { isDesktop: boolean }) => {
             case 'Worklist':
                 router.navigate({to: worklistRoute.fullPath});
                 break;
+            case 'Initiatives':
+                router.navigate({to: initiativesRoute.fullPath});
+                break;
         }
     };
 
@@ -27,7 +31,8 @@ const Menu = ({isDesktop}: { isDesktop: boolean }) => {
             {
                 router.state.location.pathname === '/app/tasks' ? <ActionButtonsMainPage isDesktop={isDesktop}/> :
                     router.state.location.pathname === '/app/worklist' ? <ActionButtonsWorklistPage/> :
-                        null
+                        router.state.location.pathname === '/app/initiatives' ? <ActionButtonsInitiativesPage/> :
+                            null
             }
         </Flex>
     );
