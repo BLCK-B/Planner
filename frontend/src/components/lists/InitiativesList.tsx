@@ -113,10 +113,12 @@ const InitiativesList = () => {
                                   {...(pendingInitiativeIds.some(id => initiative.itemID === id) && styles.pending)}
                             >
                                 <Flex align="center" gap="1.2rem">
-                                    <Flex gap="0.3rem">
-                                        <MdEventRepeat color="primary.contrast" aria-label="Complete"/>
-                                        <Text>{initiative.data.remindDays} d</Text>
-                                    </Flex>
+                                    <Show when={initiative.data.remindDays > 0}>
+                                        <Flex gap="0.3rem">
+                                            <MdEventRepeat color="primary.contrast" aria-label="Complete"/>
+                                            <Text>{initiative.data.remindDays} d</Text>
+                                        </Flex>
+                                    </Show>
                                     <Text fontWeight="bold">{initiative.data.name}</Text>
                                     <Spacer/>
                                     <MyButton type='edit' onClick={e => openEdit(e, initiative)} extraSmall={true}/>

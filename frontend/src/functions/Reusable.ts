@@ -6,7 +6,7 @@ export const getPendingInitiatives = (initiatives: InitiativeType[] | undefined)
     const pendingInitiatives: InitiativeType[] = [];
 
     for (const initiative of initiatives) {
-        if (!initiative.data.records.length) continue;
+        if (!initiative.data.records.length || initiative.data.remindDays === 0) continue;
         const lastRecordDate = new Date(Math.max(
             ...initiative.data.records.map(r => new Date(r.data.date).getTime())
         ));

@@ -36,4 +36,7 @@ test('getPendingInitiatives', () => {
     vi.setSystemTime(new Date('2026-01-13T00:00:00Z'))
 
     expect(getPendingInitiatives(initiatives)).toStrictEqual(initiatives)
+
+    initiatives[0].data.remindDays = 0;
+    expect(getPendingInitiatives(initiatives)).toEqual([])
 })
