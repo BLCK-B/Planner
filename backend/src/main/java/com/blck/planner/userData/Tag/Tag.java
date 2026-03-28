@@ -13,9 +13,9 @@ public class Tag {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @Column(name = "tag_id")
-    @JsonProperty("tagID")
-    private UUID tagID;
+    @Column(name = "item_id")
+    @JsonProperty("itemID")
+    private UUID itemID;
 
     @Column(name = "user_id")
     private String userID;
@@ -32,8 +32,8 @@ public class Tag {
     public Tag() {
     }
 
-    public Tag(UUID tagID, String userID, String tagName, String color) {
-        this.tagID = tagID;
+    public Tag(UUID itemID, String userID, String tagName, String color) {
+        this.itemID = itemID;
         this.userID = userID;
         this.tagName = tagName;
         this.color = color;
@@ -41,11 +41,11 @@ public class Tag {
 
     public TagDTO toDTO() {
         var data = new TagDTO.Data(tagName, color);
-        return new TagDTO(tagID, data);
+        return new TagDTO(itemID, data);
     }
 
-    public UUID getTagID() {
-        return tagID;
+    public UUID getItemID() {
+        return itemID;
     }
 
     public String getUserID() {

@@ -4,7 +4,7 @@ import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import type {TagType} from "@/types/TagType.ts";
 
 const deleteRequest = async (tag: TagType): Promise<TagType[]> => {
-    return await FetchRequest("DELETE", `/users/userTag/${tag.tagID}`);
+    return await FetchRequest("DELETE", `/users/userTag/${tag.itemID}`);
 };
 
 const useDeleteTag = () => {

@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface UserTagRepository extends JpaRepository<Tag, UUID> {
     List<Tag> findByUserID(String userId);
 
-    Tag findByUserIDAndTagID(String userId, UUID tagId);
+    Tag findByUserIDAndItemID(String userId, UUID itemID);
 
-    void deleteByUserIDAndTagID(String userId, UUID tagId);
+    void deleteByUserIDAndItemID(String userId, UUID itemID);
 }

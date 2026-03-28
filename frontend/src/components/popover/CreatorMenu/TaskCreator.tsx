@@ -99,10 +99,10 @@ const TaskCreator = () => {
 
     const assignTag = (tag: TagType) => {
         const existingTags = newItem.data.tags ?? [];
-        const isAssigned = existingTags.some(t => t.tagID === tag.tagID);
+        const isAssigned = existingTags.some(t => t.itemID === tag.itemID);
         let updatedTags;
         if (isAssigned) {
-            updatedTags = existingTags.filter(t => t.tagID !== tag.tagID);
+            updatedTags = existingTags.filter(t => t.itemID !== tag.itemID);
         } else {
             updatedTags = [...existingTags, tag];
         }
@@ -123,7 +123,7 @@ const TaskCreator = () => {
 
     const isTagInactive = (tag: TagType) => {
         const assigned = newItem.data.tags ?? [];
-        return !assigned.some(t => t.tagID === tag.tagID);
+        return !assigned.some(t => t.itemID === tag.itemID);
     }
 
     const goToTagEditPage = () => {

@@ -38,7 +38,7 @@ const TagsEditList = () => {
                         {tagList
                             .sort((a, b) => a.data.tagName.localeCompare(b.data.tagName))
                             .map((tag) => (
-                                <Box key={tag.tagID}>
+                                <Box key={tag.itemID}>
                                     <MyTag tag={tag} isEditable={true}/>
                                 </Box>
                             ))}
