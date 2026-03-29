@@ -1,5 +1,4 @@
 import {Select, createListCollection} from "@chakra-ui/react";
-import {MdEventRepeat} from "react-icons/md";
 import * as React from "react";
 
 type SelectItem = {

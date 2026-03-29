@@ -168,6 +168,7 @@ export const decryptFields = async (
                 const ciphertext = combined.slice(AES_NONCE_LENGTH);
                 const decryptedBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv}, cryptoKey, ciphertext);
                 result[key] = JSON.parse(decoder.decode(decryptedBuffer));
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 // unencrypted data passes unchanged
                 result[key] = value[key];

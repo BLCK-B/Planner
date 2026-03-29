@@ -4,11 +4,13 @@ import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 import {useSetAtom} from "jotai";
 import {existingWorkItemForEdit, showWorkItemCreator} from "@/global/atoms.ts";
 import type {WorkItemType} from "@/types/WorkItemType.ts";
-import {router, worklistSubtasksRoute} from "@/routes/__root.tsx";
 import MyButton from "@/components/base/MyButton.tsx";
 import * as React from "react";
+import {useNavigate} from "@tanstack/react-router";
 
-const WorkList = () => {
+const WorkItemsList = () => {
+
+    const navigate = useNavigate();
 
     const setShowAddDialog = useSetAtom(showWorkItemCreator);
 
@@ -19,10 +21,10 @@ const WorkList = () => {
     if (!workItems) return <></>;
 
     const openSubtasks = (workItem: WorkItemType) => {
-        router.navigate({
-            to: worklistSubtasksRoute.fullPath,
+        navigate({
+            to: '/app/worklist/subtasks/$workItemId',
             params: {workItemId: workItem.itemID},
-        });
+        })
     };
 
     const openEdit = (e: React.MouseEvent<HTMLButtonElement>, workItem: WorkItemType) => {
@@ -78,4 +80,4 @@ const WorkList = () => {
     );
 };
 
-export default WorkList;
+export default WorkItemsList;

@@ -5,7 +5,7 @@ import {useAtom, useAtomValue, useSetAtom} from "jotai";
 import {existingItemForEdit, filterContentAtom, showAddDialog, showExactDatesAtom} from "@/global/atoms.ts";
 import {getNewTask} from "@/types/TaskType.ts";
 import {MdFilterAlt} from "react-icons/md";
-import FilterSelects from "@/components/sidemenu/FilterSelects.tsx";
+import FilterSelects from "@/components/sideMenu/FilterSelects.tsx";
 
 const ActionButtonsMainPage = ({isDesktop}: { isDesktop: boolean }) => {
 

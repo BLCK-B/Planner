@@ -1,5 +1,5 @@
 export type TagType = {
-    tagID: string;
+    itemID: string;
     data: {
         tagName: string;
         color: string;
@@ -16,7 +16,7 @@ export const TagEncryptSpec: EncryptSpec = {
 };
 
 const newTag: TagType = {
-    tagID: '',
+    itemID: '',
     data: {
         tagName: '',
         color: 'rgb(128, 128, 128)',

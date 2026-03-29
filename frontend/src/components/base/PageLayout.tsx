@@ -1,7 +1,7 @@
 import {Box, GridItem, Grid, useBreakpointValue} from "@chakra-ui/react";
-import Menu from "@/components/sidemenu/Menu.tsx";
+import Menu from "@/components/sideMenu/Menu.tsx";
 import * as React from "react";
-import TagCreator from "@/components/popover/CreatorMenu/TagCreator.tsx";
+import TagCreator from "@/components/popover/creatorMenu/TagCreator.tsx";
 import ErrorModal from "@/components/popover/ErrorModal.tsx";
 
 type Props = {

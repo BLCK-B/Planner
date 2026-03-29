@@ -18,12 +18,12 @@ const FilterSelects = () => {
     }
 
     const applyTagFilter = (tag: TagType) => {
-        const isAssigned = filterContent.tagIds.some(tagId => tagId === tag.tagID);
+        const isAssigned = filterContent.tagIds.some(tagId => tagId === tag.itemID);
         let updatedTags;
         if (isAssigned) {
-            updatedTags = filterContent.tagIds.filter(tagId => tagId !== tag.tagID);
+            updatedTags = filterContent.tagIds.filter(tagId => tagId !== tag.itemID);
         } else {
-            updatedTags = [...filterContent.tagIds, tag.tagID];
+            updatedTags = [...filterContent.tagIds, tag.itemID];
         }
         setFilterContent({
             ...filterContent,
@@ -39,7 +39,7 @@ const FilterSelects = () => {
     };
 
     const isInactive = (tag: TagType) => {
-        return !filterContent.tagIds.some(tagId => tagId === tag.tagID);
+        return !filterContent.tagIds.some(tagId => tagId === tag.itemID);
     }
 
     const importantStyle = () => {

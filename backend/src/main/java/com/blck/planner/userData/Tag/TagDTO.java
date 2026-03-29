@@ -3,7 +3,7 @@ package com.blck.planner.userData.Tag;
 import java.util.UUID;
 
 public record TagDTO(
-        UUID tagID,
+        UUID itemID,
         Data data
 ) {
     public record Data(
@@ -14,7 +14,7 @@ public record TagDTO(
 
     public Tag toTag(String userID) {
         return new Tag(
-                tagID,
+                itemID,
                 userID,
                 data.tagName,
                 data.color

@@ -6,7 +6,7 @@ import {
     Show,
     Field,
     useBreakpointValue,
-    NumberInput, HStack, IconButton,
+    NumberInput, HStack, IconButton, Text,
 } from "@chakra-ui/react";
 import {showInitiativeCreator, existingInitiativeForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
@@ -34,7 +34,7 @@ const InitiativeCreator = () => {
 
     const deleteInitiativeMutation = useDeleteInitiative();
 
-    const updateInitiative = (key: keyof typeof newInitiative.data, value: any) => {
+    const updateInitiative = (key: keyof typeof newInitiative.data, value: string | number) => {
         setNewInitiative(prev => ({
             ...prev,
             data: {
@@ -84,21 +84,30 @@ const InitiativeCreator = () => {
                                        onChange={(e) => updateInitiative("name", e.target.value)}
                                        bg="primary.lighter"/>
                             </Field.Root>
-                            Require input every X days
-                            <NumberInput.Root defaultValue="3" unstyled spinOnPress={false} min={0} max={30}
-                                              onValueChange={(e) => updateInitiative("remindDays", e.valueAsNumber)}>
-                                <HStack gap="2">
+                            <NumberInput.Root defaultValue={String(newInitiative.data.remindDays)} unstyled
+                                              spinOnPress={false}
+                                              min={0} max={30}
+                                              onValueChange={(e) => updateInitiative("remindDays", e.valueAsNumber)}
+                                              opacity={newInitiative.data.remindDays === 0 ? 0.65 : 1}
+                                              marginTop="1.2rem">
+                                <HStack gap="0">
+                                    <Text marginRight="0.6rem">
+                                        Require input every
+                                    </Text>
                                     <NumberInput.DecrementTrigger asChild>
-                                        <IconButton variant="outline" size="sm">
+                                        <IconButton variant="outline" bg="primary.lighter" size="2xs">
                                             <LuMinus/>
                                         </IconButton>
                                     </NumberInput.DecrementTrigger>
                                     <NumberInput.ValueText textAlign="center" fontSize="lg" minW="3ch"/>
                                     <NumberInput.IncrementTrigger asChild>
-                                        <IconButton variant="outline" size="sm">
+                                        <IconButton variant="outline" bg="primary.lighter" size="2xs">
                                             <LuPlus/>
                                         </IconButton>
                                     </NumberInput.IncrementTrigger>
+                                    <Text marginLeft="0.6rem">
+                                        days
+                                    </Text>
                                 </HStack>
                             </NumberInput.Root>
                         </Dialog.Body>

@@ -39,13 +39,13 @@ public class TagController {
     }
 
     @Transactional
-    @DeleteMapping("/userTag/{tagID}")
-    public String deleteTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
+    @DeleteMapping("/userTag/{itemID}")
+    public String deleteTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String itemID) {
         em.createNativeQuery("DELETE FROM user_task_tag WHERE tag_id = ?1")
-                .setParameter(1, UUID.fromString(tagID))
+                .setParameter(1, UUID.fromString(itemID))
                 .executeUpdate();
 
-        userTagRepository.deleteByUserIDAndTagID(jwt.getClaim("sub"), UUID.fromString(tagID));
+        userTagRepository.deleteByUserIDAndItemID(jwt.getClaim("sub"), UUID.fromString(itemID));
         return ("User tag removed successfully.");
     }
 

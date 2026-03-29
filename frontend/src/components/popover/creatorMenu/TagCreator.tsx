@@ -35,7 +35,7 @@ const TagCreator = () => {
 
     const deleteTagMutation = useDeleteTag();
 
-    const updateTag = (key: keyof typeof newTag.data, value: any) => {
+    const updateTag = (key: keyof typeof newTag.data, value: string) => {
         setNewTag(prev => ({
             ...prev,
             data: {

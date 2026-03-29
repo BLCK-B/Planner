@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {describe, expect, vi, beforeEach, test} from "vitest";
 import FetchRequest, {decryptBody, encryptBody} from "@/functions/FetchRequest";
 import {encrypt, decrypt} from "@/functions/Crypto";
@@ -17,13 +18,13 @@ const nestedTask = {
         date: "2020-05-01",
         tags: {
             tag1: {
-                tagID: "12",
+                itemID: "12",
                 data: {
                     tagName: "tag1",
                 },
             },
             tag2: {
-                tagID: "34",
+                itemID: "34",
                 data: {
                     tagName: "tag2",
                 },
@@ -77,8 +78,8 @@ describe("FetchRequest", () => {
 
         expect(encrypt).toHaveBeenCalledTimes(3);
         expect(result.data.tags).toEqual({
-            tag1: {tagID: '12', data: {tagName: 'tag1'}, encrypted: true},
-            tag2: {tagID: '34', data: {tagName: 'tag2'}, encrypted: true}
+            tag1: {itemID: '12', data: {tagName: 'tag1'}, encrypted: true},
+            tag2: {itemID: '34', data: {tagName: 'tag2'}, encrypted: true}
         });
     })
 
@@ -94,11 +95,11 @@ describe("FetchRequest", () => {
 
         expect(decrypt).toHaveBeenCalledTimes(3);
         expect(result.data.tags).toEqual({
-            tag1: {tagID: '12', data: {tagName: 'tag1'}, decrypted: true},
-            tag2: {tagID: '34', data: {tagName: 'tag2'}, decrypted: true}
+            tag1: {itemID: '12', data: {tagName: 'tag1'}, decrypted: true},
+            tag2: {itemID: '34', data: {tagName: 'tag2'}, decrypted: true}
         });
     })
-    
+
     test("throws FetchError on error response", async () => {
         (fetch as any).mockReset();
         (fetch as any).mockResolvedValueOnce({

@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface InitiativeRepository extends JpaRepository<Initiative, UUID> {
     List<Initiative> findByUserID(String userId);
 
-    Initiative findByUserIDAndItemID(String userId, UUID tagId);
+    Initiative findByUserIDAndItemID(String userId, UUID itemID);
 
-    void deleteByUserIDAndItemID(String userId, UUID tagId);
+    void deleteByUserIDAndItemID(String userId, UUID itemID);
 }

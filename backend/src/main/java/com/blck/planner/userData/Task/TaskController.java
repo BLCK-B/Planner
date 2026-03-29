@@ -47,9 +47,9 @@ public class TaskController {
                 .toList();
     }
 
-    @GetMapping("/allUserTasksOfThisTag/{tagID}")
-    public List<TaskDTO> getAllTasksOfThisTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String tagID) {
-        return userTaskRepository.getAllUserTasksWithTag(jwt.getClaim("sub"), UUID.fromString(tagID)).stream()
+    @GetMapping("/allUserTasksOfThisTag/{itemID}")
+    public List<TaskDTO> getAllTasksOfThisTag(@AuthenticationPrincipal Jwt jwt, @PathVariable String itemID) {
+        return userTaskRepository.getAllUserTasksWithTag(jwt.getClaim("sub"), UUID.fromString(itemID)).stream()
                 .map(Task::toDTO)
                 .toList();
     }

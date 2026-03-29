@@ -3,17 +3,19 @@ import {Box, Card, Center, Flex} from "@chakra-ui/react";
 import loadTagsQuery from "@/queries/LoadTagsQuery.tsx";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 import MyTag from "@/components/items/MyTag.tsx";
-import {mainRoute, router} from "@/routes/__root.tsx";
 import MyButton from "@/components/base/MyButton.tsx";
 import {useSetAtom} from "jotai";
 import {existingTagForEdit, showTagCreator} from "@/global/atoms.ts";
+import {useNavigate} from "@tanstack/react-router";
 
 const TagsEditList = () => {
+
+    const navigate = useNavigate();
 
     const {data: tagList} = useQuery<TagType[]>(loadTagsQuery());
 
     const goBack = () => {
-        router.navigate({to: mainRoute.fullPath});
+        navigate({to: '/app/tasks'});
     };
 
     const setShowAddDialog = useSetAtom(showTagCreator);
@@ -38,7 +40,7 @@ const TagsEditList = () => {
                         {tagList
                             .sort((a, b) => a.data.tagName.localeCompare(b.data.tagName))
                             .map((tag) => (
-                                <Box key={tag.tagID}>
+                                <Box key={tag.itemID}>
                                     <MyTag tag={tag} isEditable={true}/>
                                 </Box>
                             ))}

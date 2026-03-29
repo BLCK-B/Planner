@@ -38,7 +38,7 @@ public interface UserTaskRepository extends JpaRepository<Task, UUID> {
         SELECT t
         FROM Task t
         JOIN t.tags tag
-        WHERE t.userID = :userId AND tag.tagID = :tagId
+        WHERE t.userID = :userId AND tag.itemID = :itemID
     """)
-    List<Task> getAllUserTasksWithTag(String userId, UUID tagId);
+    List<Task> getAllUserTasksWithTag(String userId, UUID itemID);
 }
