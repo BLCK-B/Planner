@@ -114,24 +114,28 @@ const InitiativesList = () => {
                             >
                                 <Flex align="center" gap="1.2rem">
                                     <Show when={initiative.data.remindDays > 0}>
-                                        <Flex gap="0.3rem">
+                                        <Flex gap="0.3rem" align="center">
                                             <MdEventRepeat color="primary.contrast" aria-label="Complete"/>
                                             <Text>{initiative.data.remindDays} d</Text>
                                         </Flex>
                                     </Show>
                                     <Text fontWeight="bold">{initiative.data.name}</Text>
                                     <Spacer/>
-                                    <MyButton type='edit' onClick={e => openEdit(e, initiative)} extraSmall={true}/>
+                                    <Box marginRight="0.3rem">
+                                        <MyButton type='edit' onClick={e => openEdit(e, initiative)} extraSmall={true}/>
+                                    </Box>
                                 </Flex>
                                 <Show when={selectedInitiativeId === initiative.itemID}>
                                     <Flex bg="primary.lighter" borderRadius="md"
-                                          m="0.6rem 0 0.6rem 0"
+                                          m="0.6rem 0 0 0" p="0 0.3rem 0 0" align="center" wrap="wrap"
+                                          justifyContent="flex-end"
                                     >
                                         <Editable.Root
                                             value={newRecord.data.comment}
                                             onValueChange={(e) => updateRecordComment(e.value)}
                                             ml="0.3rem"
                                             flex="1"
+                                            minWidth="calc(min(20rem, 60%))"
                                         >
                                             <Editable.Preview
                                                 w="100%"
@@ -144,38 +148,41 @@ const InitiativesList = () => {
                                                 _selection={{bg: "theme.Spruit2", color: "black"}}
                                             />
                                         </Editable.Root>
-                                        <RatingGroup.Root
-                                            count={5}
-                                            value={newRecord.data.rating}
-                                            onValueChange={(e) => updateRecordRating(e.value)}
-                                            cursor="pointer"
-                                        >
-                                            <RatingGroup.Control>
-                                                {Array.from({length: 5}).map((_, index) => (
-                                                    <RatingGroup.Item
-                                                        key={index}
-                                                        index={index + 1}
-                                                        minW="9"
-                                                        filter="grayscale(1)"
-                                                        transform="scale(1)"
-                                                        _checked={{
-                                                            filter: "grayscale(0)",
-                                                            transform: "scale(1.1)",
-                                                        }}
-                                                        _focus={{
-                                                            boxShadow: "none",
-                                                            outline: "none",
-                                                        }}
-                                                        transition="all 0.06s ease"
-                                                    >
-                                                        {emojiMap[index + 1]}
-                                                    </RatingGroup.Item>
-                                                ))}
-                                            </RatingGroup.Control>
-                                        </RatingGroup.Root>
-                                        <MyButton type="confirm"
-                                                  disabled={!newRecord.data.comment}
-                                                  onClick={() => saveRecord(initiative)}/>
+                                        <Box display="flex" alignItems="center">
+                                            <RatingGroup.Root
+                                                count={5}
+                                                value={newRecord.data.rating}
+                                                onValueChange={(e) => updateRecordRating(e.value)}
+                                                cursor="pointer"
+                                                mr="0.6rem"
+                                            >
+                                                <RatingGroup.Control>
+                                                    {Array.from({length: 5}).map((_, index) => (
+                                                        <RatingGroup.Item
+                                                            key={index}
+                                                            index={index + 1}
+                                                            minW="9"
+                                                            filter="grayscale(1)"
+                                                            transform="scale(1)"
+                                                            _checked={{
+                                                                filter: "grayscale(0)",
+                                                                transform: "scale(1.1)",
+                                                            }}
+                                                            _focus={{
+                                                                boxShadow: "none",
+                                                                outline: "none",
+                                                            }}
+                                                            transition="all 0.06s ease"
+                                                        >
+                                                            {emojiMap[index + 1]}
+                                                        </RatingGroup.Item>
+                                                    ))}
+                                                </RatingGroup.Control>
+                                            </RatingGroup.Root>
+                                            <MyButton type="confirm"
+                                                      disabled={!newRecord.data.comment}
+                                                      onClick={() => saveRecord(initiative)} extraSmall={true}/>
+                                        </Box>
                                     </Flex>
                                     {initiative.data.records?.length > 0 && initiative.data.records
                                         .slice()
@@ -186,16 +193,21 @@ const InitiativesList = () => {
                                                 color="primary.contrast"
                                                 position="relative"
                                                 justifyContent="space-between"
-                                                mb='0.6rem'
+                                                mt='0.6rem'
                                                 gap="0.6rem"
                                                 borderRadius="md"
                                             >
                                                 <Text>{dateToReadableDDMMYY(record.data.date)}</Text>
-                                                <Text>{emojiMap[record.data.rating]}</Text>
-                                                <Text>{record.data.comment}</Text>
+                                                <Show when={record.data.rating !== 6}>
+                                                    <Text>{emojiMap[record.data.rating]}</Text>
+                                                </Show>
+                                                <Text flex="5">{record.data.comment}</Text>
                                                 <Spacer/>
-                                                <MyButton type="delete" onClick={() => deleteRecord(initiative, record)}
-                                                          extraSmall={true}/>
+                                                <Box marginRight="0.3rem">
+                                                    <MyButton type="delete"
+                                                              onClick={() => deleteRecord(initiative, record)}
+                                                              extraSmall={true}/>
+                                                </Box>
                                             </Flex>
                                         ))}
                                 </Show>
