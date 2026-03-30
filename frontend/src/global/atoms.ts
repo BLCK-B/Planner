@@ -4,6 +4,7 @@ import {getNewTag, type TagType} from "@/types/TagType.ts";
 import {getNewWorkItem, type WorkItemType} from "@/types/WorkItemType.ts";
 import type {Filter} from "@/types/Filter.ts";
 import {getNewInitiative, type InitiativeType} from "@/types/InitiativeType.ts";
+import {atomWithStorage} from 'jotai/utils'
 
 export type showCreatorType = {
     show: boolean;
@@ -11,7 +12,7 @@ export type showCreatorType = {
 };
 
 // user-controlled
-export const showExactDatesAtom = atom(false);
+export const showExactDatesAtom = atomWithStorage<boolean>('showExactDates', false);
 
 export const filterContentAtom = atom<Filter>({
     tagIds: [],
