@@ -52,10 +52,11 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
         <Tabs.Root variant="subtle" orientation={orientation} value={selected}
                    onValueChange={(e) => valueChanged(e.value)}>
             <Tabs.List p="0.5" w="100%" flexDirection={responsive ? {base: "row", sm: "row", md: "column"} : undefined}
-                       gap={1}>
+                       gap={1} overflowX="scroll">
                 {tabs.map((tab, index) => (
                     <Tabs.Trigger key={index} value={tab} mb="1"
                                   color="primary.contrast/40"
+                                  flexShrink={0}
                                   _selected={{
                                       bg: "primary.lighter/65",
                                       color: "primary.contrast",

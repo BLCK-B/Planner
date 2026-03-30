@@ -58,7 +58,8 @@ const TasksList = () => {
         scrollContainerRef.current?.scrollTo({
             top: somedayRef.current.offsetTop - 300
         });
-    }, []);
+        // eslint-disable-next-line
+    }, [somedayRef.current]);
 
     if (!uncompletedItems || !completedPaginatedItems) return <></>;
 
