@@ -5,7 +5,7 @@ const PlannerLogo = () => {
 
     const {theme} = useTheme();
 
-    const logo = theme === "light" ? "/plannertextblack.svg" : "/plannertextwhite.svg";
+    const logo = theme === "light" ? `/plannertextblack.svg` : "/plannertextwhite.svg";
 
     return (
         <Box>

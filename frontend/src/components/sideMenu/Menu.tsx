@@ -2,10 +2,10 @@ import SelectTabs from "@/components/base/SelectTabs.tsx";
 import {useNavigate, useRouter} from '@tanstack/react-router';
 import {Box, Center, Flex, Show} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
-import ActionButtonsMainPage from "@/components/actionButtons/ActionButtonsMainPage.tsx";
-import ActionButtonsWorklistPage from "@/components/actionButtons/ActionButtonsWorklistPage.tsx";
 import {getTabs, mapPathToName, type Tabs} from "@/types/Tabs.ts";
-import ActionButtonsInitiativesPage from "@/components/actionButtons/ActionButtonsInitiativesPage.tsx";
+import ActionButtonsInitiativesPage from "./actionButtons/ActionButtonsInitiativesPage";
+import ActionButtonsMainPage from "./actionButtons/ActionButtonsMainPage";
+import ActionButtonsWorklistPage from "./actionButtons/ActionButtonsWorklistPage";
 
 const Menu = ({isDesktop}: { isDesktop: boolean }) => {
 
