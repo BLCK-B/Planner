@@ -36,7 +36,7 @@ const TaskCreator = () => {
 
     const navigate = useNavigate();
 
-    const isDesktop = useBreakpointValue({base: false, sm: true, md: true}) as boolean;
+    const isDesktop = useBreakpointValue({base: false, sm: true, md: true}, {ssr: false}) as boolean;
 
     const queryClient = useQueryClient();
 

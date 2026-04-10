@@ -1,12 +1,11 @@
 import {
     Dialog,
     Portal,
-    Flex,
     Input,
     Show,
     Field,
     useBreakpointValue,
-    NumberInput, HStack, IconButton, Text,
+    NumberInput, HStack, IconButton, Text, Spacer,
 } from "@chakra-ui/react";
 import {showInitiativeCreator, existingInitiativeForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
@@ -19,10 +18,7 @@ import useDeleteInitiative from "@/queries/UseDeleteInitiative.tsx";
 import {LuMinus, LuPlus} from "react-icons/lu";
 
 const InitiativeCreator = () => {
-    const isDesktop = useBreakpointValue(
-        {base: false, md: true},
-        {ssr: false}
-    );
+    const isDesktop = useBreakpointValue({base: false, sm: true, md: true}, {ssr: false}) as boolean;
 
     const queryClient = useQueryClient();
 
@@ -69,18 +65,10 @@ const InitiativeCreator = () => {
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" textStyle="body">
-                        <Dialog.Header>
-                            <Flex justifyContent="space-between" w="100%">
-                                New initiative
-                                <Show when={!showDialog.isNew}>
-                                    <MyButton type="delete" onClick={deleteInitiative}/>
-                                </Show>
-                            </Flex>
-                        </Dialog.Header>
-                        <Dialog.Body>
+                        <Dialog.Body mt="1.2rem" p={isDesktop ? undefined : "0.3rem"}>
                             <Field.Root invalid={!newInitiative.data.name}>
                                 <Input p="2px" variant="subtle" value={newInitiative.data.name}
-                                       placeholder="Name"
+                                       placeholder="Initiative name"
                                        onChange={(e) => updateInitiative("name", e.target.value)}
                                        bg="primary.lighter"/>
                             </Field.Root>
@@ -92,7 +80,7 @@ const InitiativeCreator = () => {
                                               marginTop="1.2rem">
                                 <HStack gap="0">
                                     <Text marginRight="0.6rem">
-                                        Require input every
+                                        Remind every
                                     </Text>
                                     <NumberInput.DecrementTrigger asChild>
                                         <IconButton variant="outline" bg="primary.lighter" size="2xs">
@@ -112,6 +100,10 @@ const InitiativeCreator = () => {
                             </NumberInput.Root>
                         </Dialog.Body>
                         <Dialog.Footer>
+                            <Show when={!showDialog.isNew}>
+                                <MyButton type="delete" onClick={deleteInitiative}/>
+                                <Spacer/>
+                            </Show>
                             <MyButton type="confirm" onClick={saveInitiative} disabled={disableSaveRules()}/>
                             <MyButton type="cancel" onClick={() => setShowDialog({show: false, isNew: false})}/>
                         </Dialog.Footer>

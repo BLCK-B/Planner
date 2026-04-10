@@ -190,7 +190,7 @@ const InitiativesList = () => {
                                         .map((record, x) => (
                                             <Box key={x} color="primary.contrast" position="relative" mt='0.6rem'
                                                  borderRadius="md">
-                                                <Flex justifyContent="space-between" gap="0.6rem" marginRight="0.3rem">
+                                                <Flex justifyContent="space-between" marginRight="0.3rem">
                                                     <Text flex="5">{record.data.comment}</Text>
                                                     <MyButton type="delete"
                                                               onClick={() => deleteRecord(initiative, record)}

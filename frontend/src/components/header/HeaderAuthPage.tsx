@@ -5,4 +5,5 @@ const HeaderAuthPage = () => {
         <BaseHeader/>
     );
 };
+
 export default HeaderAuthPage;

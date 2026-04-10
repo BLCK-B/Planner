@@ -31,12 +31,8 @@ const InitiativesExplainer = () => {
                         <Dialog.Body p={isDesktop ? undefined : "0.6rem"}>
                             <Text>Initiatives help you try new ideas, with reminders and self-feedback.</Text>
                             <ModalImage src="/initiatives-explainer/initiatives.png"/>
-                            <Text>Write down what you want to try and set a reminder every few
-                                days. Each time, you can select a rating and leave a note about what can be done
-                                better.</Text>
-                            <br/>
-                            <Text>This page should help keep you motivated while forming habits and iterating on
-                                ideas.</Text>
+                            <Text>Write down what you want to try and set a regular reminder. This page should help with
+                                iterating on ideas and improving your habits.</Text>
                         </Dialog.Body>
                         <Dialog.Footer>
                             <MyButton type="cancel" onClick={() => setShowDialog('')}/>

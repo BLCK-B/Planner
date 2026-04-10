@@ -29,7 +29,7 @@ const TasksExplainer = () => {
                             <Text fontWeight="bold"> How to: Tasks</Text>
                         </Dialog.Header>
                         <Dialog.Body p={isDesktop ? undefined : "0.6rem"}>
-                            <Text>Tasks are your everyday to-do list ordered by date.</Text>
+                            <Text>Tasks is your everyday to-do list ordered by date.</Text>
                             <Text>You can assign tags, create repeating tasks and mark importance.</Text>
                             <ModalImage src="/tasks-explainer/tasks.png"/>
                             <Text>Tasks past their date are shown in red. Tasks without a date are labeled

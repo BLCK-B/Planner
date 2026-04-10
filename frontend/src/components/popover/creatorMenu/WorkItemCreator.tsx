@@ -1,11 +1,11 @@
 import {
     Dialog,
     Portal,
-    Flex,
     Input,
     Show,
     Field,
     useBreakpointValue,
+    Spacer
 } from "@chakra-ui/react";
 import {showWorkItemCreator, existingWorkItemForEdit} from "@/global/atoms.ts";
 import {useAtom} from "jotai";
@@ -17,10 +17,7 @@ import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 import DialogBackdrop from "@/components/base/DialogBackdrop.tsx";
 
 const WorkItemCreator = () => {
-    const isDesktop = useBreakpointValue(
-        {base: false, md: true},
-        {ssr: false}
-    );
+    const isDesktop = useBreakpointValue({base: false, sm: true, md: true}, {ssr: false}) as boolean;
 
     const queryClient = useQueryClient();
 
@@ -67,23 +64,19 @@ const WorkItemCreator = () => {
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     <Dialog.Content bg="primary" color="primary.contrast" textStyle="body">
-                        <Dialog.Header>
-                            <Flex justifyContent="space-between" w="100%">
-                                New worklist
-                                <Show when={!showDialog.isNew}>
-                                    <MyButton type="delete" onClick={deleteWorkItem}/>
-                                </Show>
-                            </Flex>
-                        </Dialog.Header>
-                        <Dialog.Body>
+                        <Dialog.Body mt="1.2rem" p={isDesktop ? undefined : "0.3rem"}>
                             <Field.Root invalid={!newWorkItem.data.name}>
                                 <Input p="2px" variant="subtle" value={newWorkItem.data.name}
-                                       placeholder="Name"
+                                       placeholder="Worklist name"
                                        onChange={(e) => updateWorkItem("name", e.target.value)}
                                        bg="primary.lighter"/>
                             </Field.Root>
                         </Dialog.Body>
                         <Dialog.Footer>
+                            <Show when={!showDialog.isNew}>
+                                <MyButton type="delete" onClick={deleteWorkItem}/>
+                                <Spacer/>
+                            </Show>
                             <MyButton type="confirm" onClick={saveWorkItem} disabled={disableSaveRules()}/>
                             <MyButton type="cancel" onClick={() => setShowDialog({show: false, isNew: false})}/>
                         </Dialog.Footer>
