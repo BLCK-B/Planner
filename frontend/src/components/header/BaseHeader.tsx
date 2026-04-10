@@ -40,16 +40,19 @@ const BaseHeader = ({leftSide = <></>, rightSide = <></>}: Props) => {
     return (
         <Flex p="2" align="center" h="2.5rem" position={isDesktop ? "absolute" : "relative"} right="0">
             <Show when={!isDesktop}>
-                <PlannerLogo/>
-                {leftSide}
+                <Flex gap="0.6rem" alignItems="center">
+                    <PlannerLogo/>
+                    {leftSide}
+                </Flex>
             </Show>
             <Spacer/>
-            <Flex gap="10px">
+            <Flex gap="0.6rem" alignItems="center">
                 {rightSide}
+                <IoMenu style={{width: "2rem", height: "2rem", color: "grey"}} cursor="pointer"
+                        onClick={isSettingsOpened() ? goFromSettingsPage : goToSettingsPage}/>
             </Flex>
-            <IoMenu style={{width: "2rem", height: "2rem", color: "grey"}} cursor="pointer"
-                    onClick={isSettingsOpened() ? goFromSettingsPage : goToSettingsPage}/>
         </Flex>
     );
 };
+
 export default BaseHeader;

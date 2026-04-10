@@ -22,6 +22,9 @@ export const filterContentAtom = atom<Filter>({
 // system
 export const errorModalContent = atom<string>('');
 
+type Explainer = '' | 'tasksExplainer' | 'worklistExplainer' | 'initiativesExplainer';
+export const explainerModal = atom<Explainer>('');
+
 
 export const showAddDialog = atom<showCreatorType>({show: false, isNew: false,});
 

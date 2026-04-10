@@ -188,27 +188,21 @@ const InitiativesList = () => {
                                         .slice()
                                         .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
                                         .map((record, x) => (
-                                            <Flex
-                                                key={x}
-                                                color="primary.contrast"
-                                                position="relative"
-                                                justifyContent="space-between"
-                                                mt='0.6rem'
-                                                gap="0.6rem"
-                                                borderRadius="md"
-                                            >
-                                                <Text>{dateToReadableDDMMYY(record.data.date)}</Text>
-                                                <Show when={record.data.rating !== 6}>
-                                                    <Text>{emojiMap[record.data.rating]}</Text>
-                                                </Show>
-                                                <Text flex="5">{record.data.comment}</Text>
-                                                <Spacer/>
-                                                <Box marginRight="0.3rem">
+                                            <Box key={x} color="primary.contrast" position="relative" mt='0.6rem'
+                                                 borderRadius="md">
+                                                <Flex justifyContent="space-between" marginRight="0.3rem">
+                                                    <Text flex="5">{record.data.comment}</Text>
                                                     <MyButton type="delete"
                                                               onClick={() => deleteRecord(initiative, record)}
                                                               extraSmall={true}/>
-                                                </Box>
-                                            </Flex>
+                                                </Flex>
+                                                <Flex gap="0.6rem">
+                                                    <Text w="5.5rem">{dateToReadableDDMMYY(record.data.date)}</Text>
+                                                    <Show when={record.data.rating !== 6}>
+                                                        <Text>{emojiMap[record.data.rating]}</Text>
+                                                    </Show>
+                                                </Flex>
+                                            </Box>
                                         ))}
                                 </Show>
                             </Flex>
