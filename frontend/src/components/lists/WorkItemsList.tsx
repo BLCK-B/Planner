@@ -1,4 +1,4 @@
-import {Box, Field, Flex, SimpleGrid, Text} from "@chakra-ui/react";
+import {Box, Flex, SimpleGrid, Text} from "@chakra-ui/react";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemsQuery from "@/queries/LoadWorkItemsQuery.tsx";
 import {useSetAtom} from "jotai";
@@ -54,7 +54,6 @@ const WorkItemsList = () => {
                                 </Flex>
                                 <Box w="100%" mx="auto" position="relative" p="0.6rem">
                                     {item.data.subtasks?.filter(s => !s.data.completed)
-                                        .slice(-5)
                                         .map((subtask, x) => (
                                             <Flex
                                                 key={x}
@@ -63,11 +62,9 @@ const WorkItemsList = () => {
                                                 justifyContent="space-between"
                                                 mb="0.6rem"
                                             >
-                                                <Field.Root ml="0.3rem">
-                                                    <Text lineClamp="1" fontSize="sm">
-                                                        {subtask.data.name}
-                                                    </Text>
-                                                </Field.Root>
+                                                <Text lineClamp="1" fontSize="sm" ml="0.3rem">
+                                                    {subtask.data.name}
+                                                </Text>
                                             </Flex>
                                         ))}
                                 </Box>

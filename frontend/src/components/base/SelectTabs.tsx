@@ -61,8 +61,8 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
                                       bg: "primary.lighter/65",
                                       color: "primary.contrast",
                                   }}
-                                  {...(tab === "Tasks" && isTasksPending() && styles.highlightRed)}
-                                  {...(tab === "Initiatives" && isInitiativesPending() && styles.highlightYellow)}
+                                  {...(tab === "Tasks" && isTasksPending() && styles.highlight)}
+                                  {...(tab === "Initiatives" && isInitiativesPending() && styles.highlight)}
                     >
                         {getIcon(tab)}
                         {tab}
@@ -76,14 +76,10 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
 export default SelectTabs;
 
 const styles = {
-    highlightYellow: {
-        borderWidth: "2px",
-        borderStyle: "solid",
-        borderColor: "theme.BrightYellow",
-    },
-    highlightRed: {
-        borderWidth: "2px",
-        borderStyle: "solid",
-        borderColor: "theme.Reddish",
+    highlight: {
+        textDecoration: "underline",
+        textDecorationColor: "primary.contrast",
+        textDecorationThickness: "2px",
+        textUnderlineOffset: "2px",
     },
 };
