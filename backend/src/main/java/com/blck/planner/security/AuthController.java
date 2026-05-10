@@ -35,4 +35,9 @@ public class AuthController {
     public void testSentry() throws Exception {
         throw new Exception("Sentry test.");
     }
+
+    @GetMapping("/encryptionPhrase")
+    public String getEncryptionPhrase(@AuthenticationPrincipal Jwt jwt) {
+        return accountService.getEncryptionPhrase(jwt.getClaim("sub"));
+    }
 }

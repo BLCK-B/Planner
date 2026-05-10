@@ -7,9 +7,17 @@ import HeaderAuthPage from "@/components/header/HeaderAuthPage.tsx";
 import {Alert} from "@chakra-ui/react"
 import type {Credentials} from "@/types/Credentials.ts";
 import {useState} from "react";
+import {useQuery} from "@tanstack/react-query";
+import {loadEncryptionPhraseQuery} from "../../queries/EncryptionQueries";
 
 const Postauth = () => {
     const navigate = useNavigate();
+
+    const {data: encryptionPhrase} = useQuery(loadEncryptionPhraseQuery());
+
+    const isEncryptionEnabled = () => {
+        return encryptionPhrase && encryptionPhrase !== 'spruiten';
+    };
 
     const [infoAlertMessage, setInfoAlertMessage] = useState<string>('');
 
@@ -99,10 +107,15 @@ const Postauth = () => {
                                    backdropFilter="blur(100px)" boxShadow="xs">
                             <Card.Header color="white">
                                 <Card.Title>
-                                    Log in
+
                                 </Card.Title>
                                 <Card.Description color="white">
-                                    Enter your encryption key.
+                                    <Show when={!isEncryptionEnabled()}>
+                                        Encryption not enabled. Enter your encryption key.
+                                    </Show>
+                                    <Show when={isEncryptionEnabled()}>
+                                        Encryption enabled.
+                                    </Show>
                                 </Card.Description>
                             </Card.Header>
                             <Card.Body gap="2" color="white">
