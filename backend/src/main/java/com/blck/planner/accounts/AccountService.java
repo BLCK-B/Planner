@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @Primary
 public class AccountService {
 
-	private final AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-	@Autowired
-	public AccountService(AccountRepository accountRepository) {
-		this.accountRepository = accountRepository;
-	}
+    @Autowired
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public UserAccount registerAccount(String userId) {
         UserAccount userAccount = new UserAccount(null, userId, null, true);
@@ -26,5 +26,10 @@ public class AccountService {
 
     public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         return (UserDetails) accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    public String getEncryptionPhrase(String username) {
+        var account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return account.getEncryptionPhrase();
     }
 }

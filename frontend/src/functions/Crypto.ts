@@ -3,8 +3,6 @@ import {TagEncryptSpec, type TagType} from "@/types/TagType.ts";
 import {WorkItemEncryptSpec, type WorkItemType} from "@/types/WorkItemType.ts";
 import type {Encryptable} from "@/functions/FetchRequest.tsx";
 import {SubtaskEncryptSpec, type SubtaskType} from "@/types/SubtaskType.ts";
-import {InitiativeEncryptSpec, type InitiativeType} from "@/types/InitiativeType.ts";
-import {InitiativeRecordEncryptSpec, type InitiativeRecordType} from "@/types/InitiativeRecordType.ts";
 
 // for converting between unicode text and UTF bytes
 const encoder = new TextEncoder();
@@ -196,21 +194,11 @@ const isSubTask = (item: Encryptable): item is SubtaskType => {
     return (item as SubtaskType).data.completed !== undefined;
 }
 
-const isInitiative = (item: Encryptable): item is InitiativeType => {
-    return (item as InitiativeType).data.records !== undefined;
-}
-
-const isInitiativeRecord = (item: Encryptable): item is InitiativeRecordType => {
-    return (item as InitiativeRecordType).data.rating !== undefined;
-}
-
 const getEncryptSpec = (item: Encryptable) => {
     if (isTask(item)) return TaskEncryptSpec;
     if (isTag(item)) return TagEncryptSpec;
     if (isWorkItem(item)) return WorkItemEncryptSpec;
     if (isSubTask(item)) return SubtaskEncryptSpec;
-    if (isInitiative(item)) return InitiativeEncryptSpec;
-    if (isInitiativeRecord(item)) return InitiativeRecordEncryptSpec;
 
     alert("Missing encryption spec.");
     throw new Error("Missing encryption spec.");

@@ -3,7 +3,6 @@ import {getNewTask, type TaskType} from "@/types/TaskType.ts";
 import {getNewTag, type TagType} from "@/types/TagType.ts";
 import {getNewWorkItem, type WorkItemType} from "@/types/WorkItemType.ts";
 import type {Filter} from "@/types/Filter.ts";
-import {getNewInitiative, type InitiativeType} from "@/types/InitiativeType.ts";
 import {atomWithStorage} from 'jotai/utils'
 
 export type showCreatorType = {
@@ -22,7 +21,7 @@ export const filterContentAtom = atom<Filter>({
 // system
 export const errorModalContent = atom<string>('');
 
-type Explainer = '' | 'tasksExplainer' | 'worklistExplainer' | 'initiativesExplainer';
+type Explainer = '' | 'tasksExplainer' | 'worklistExplainer';
 export const explainerModal = atom<Explainer>('');
 
 
@@ -39,8 +38,3 @@ export const existingTagForEdit = atom<TagType>(getNewTag());
 export const showWorkItemCreator = atom<showCreatorType>({show: false, isNew: false,});
 
 export const existingWorkItemForEdit = atom<WorkItemType>(getNewWorkItem());
-
-
-export const showInitiativeCreator = atom<showCreatorType>({show: false, isNew: false,});
-
-export const existingInitiativeForEdit = atom<InitiativeType>(getNewInitiative());

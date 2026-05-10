@@ -23,6 +23,9 @@ public class UserAccount {
     @Column(name = "enabled")
     private boolean enabled;
 
+    @Column(name = "encryption_phrase")
+    private String encryptionPhrase;
+
     public UserAccount() {}
 
     public UserAccount(UUID id, String username, String encryptionKeySalt, boolean enabled) {
@@ -62,5 +65,13 @@ public class UserAccount {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getEncryptionPhrase() {
+        return encryptionPhrase;
+    }
+
+    public void setEncryptionPhrase(String encryptionPhrase) {
+        this.encryptionPhrase = encryptionPhrase;
     }
 }

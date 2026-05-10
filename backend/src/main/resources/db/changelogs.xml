@@ -25,5 +25,7 @@
     <include file="/db/changelogs/2026-03-06-drop-columns.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2026-03-22-initiatives-init.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelogs/2026-03-28-rename-itemid-tags.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2026-04-14-encryption.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelogs/2026-05-10-drop-initiatives.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

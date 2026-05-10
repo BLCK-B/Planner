@@ -1,13 +1,10 @@
 import {Tabs} from "@chakra-ui/react";
 import {MdOutlineChecklist} from "react-icons/md";
 import {FaRegCheckCircle} from "react-icons/fa";
-import {MdRestartAlt} from "react-icons/md";
 import {useQuery} from "@tanstack/react-query";
-import loadInitiativesQuery from "@/queries/LoadloadInitiativesQuery.tsx";
 import type {TaskType} from "@/types/TaskType.ts";
 import {loadUncompletedItemsQuery} from "@/queries/LoadItemsQueries.tsx";
 import {isDatePast} from "@/functions/Dates.tsx";
-import {getPendingInitiatives} from "@/functions/Reusable.ts";
 
 type Props = {
     tabs: string[];
@@ -21,16 +18,12 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
 
     const {data: uncompletedTasks} = useQuery<TaskType[]>(loadUncompletedItemsQuery());
 
-    const {data: initiatives} = useQuery(loadInitiativesQuery());
-
     const getIcon = (tabName: string) => {
         switch (tabName) {
             case "Tasks":
                 return <FaRegCheckCircle/>;
             case "Worklist":
                 return <MdOutlineChecklist/>;
-            case "Initiatives":
-                return <MdRestartAlt/>;
             default:
                 return;
         }
@@ -42,10 +35,6 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
         return uncompletedTasks
             .filter((task) => !task.data.completed)
             .filter((task) => isDatePast(task.data.date)).length > 0;
-    };
-
-    const isInitiativesPending = (): boolean => {
-        return getPendingInitiatives(initiatives).length > 0
     };
 
     return (
@@ -62,7 +51,6 @@ const SelectTabs = ({tabs, selected, valueChanged, orientation = "horizontal", r
                                       color: "primary.contrast",
                                   }}
                                   {...(tab === "Tasks" && isTasksPending() && styles.highlight)}
-                                  {...(tab === "Initiatives" && isInitiativesPending() && styles.highlight)}
                     >
                         {getIcon(tab)}
                         {tab}

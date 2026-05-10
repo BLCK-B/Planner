@@ -3,7 +3,6 @@ import {useNavigate, useRouter} from '@tanstack/react-router';
 import {Box, Center, Flex, Show} from "@chakra-ui/react";
 import PlannerLogo from "@/components/base/PlannerLogo.tsx";
 import {getTabs, mapPathToName, type Tabs} from "@/types/Tabs.ts";
-import ActionButtonsInitiativesPage from "./actionButtons/ActionButtonsInitiativesPage";
 import ActionButtonsMainPage from "./actionButtons/ActionButtonsMainPage";
 import ActionButtonsWorklistPage from "./actionButtons/ActionButtonsWorklistPage";
 
@@ -21,9 +20,6 @@ const Menu = ({isDesktop}: { isDesktop: boolean }) => {
             case 'Worklist':
                 navigate({to: '/app/worklist'})
                 break;
-            case 'Initiatives':
-                navigate({to: '/app/initiatives'})
-                break;
         }
     };
 
@@ -32,8 +28,7 @@ const Menu = ({isDesktop}: { isDesktop: boolean }) => {
             {
                 router.state.location.pathname === '/app/tasks' ? <ActionButtonsMainPage isDesktop={isDesktop}/> :
                     router.state.location.pathname === '/app/worklist' ? <ActionButtonsWorklistPage/> :
-                        router.state.location.pathname === '/app/initiatives' ? <ActionButtonsInitiativesPage/> :
-                            null
+                        null
             }
         </Flex>
     );

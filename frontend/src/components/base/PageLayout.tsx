@@ -5,7 +5,6 @@ import TagCreator from "@/components/popover/creatorMenu/TagCreator.tsx";
 import ErrorModal from "@/components/popover/ErrorModal.tsx";
 import TasksExplainer from "../popover/infoModals/TasksExplainer";
 import WorklistExplainer from "../popover/infoModals/WorklistExplainer";
-import InitiativesExplainer from "../popover/infoModals/InitiativesExplainer";
 
 type Props = {
     header: React.ReactNode;
@@ -71,7 +70,6 @@ const PageLayout = ({header, content, popover}: Props) => {
                 <ErrorModal/>
                 <TasksExplainer/>
                 <WorklistExplainer/>
-                <InitiativesExplainer/>
             </Grid>
         </Box>
     );

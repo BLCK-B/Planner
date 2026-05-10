@@ -14,7 +14,6 @@ import { Route as AppTasksRouteImport } from './routes/app/tasks'
 import { Route as AppTagsEditRouteImport } from './routes/app/tagsEdit'
 import { Route as AppSettingsRouteImport } from './routes/app/settings'
 import { Route as AppPostauthRouteImport } from './routes/app/postauth'
-import { Route as AppInitiativesRouteImport } from './routes/app/initiatives'
 import { Route as AppWorklistIndexRouteImport } from './routes/app/worklist/index'
 import { Route as AppWorklistSubtasksWorkItemIdRouteImport } from './routes/app/worklist/subtasks/$workItemId'
 
@@ -43,11 +42,6 @@ const AppPostauthRoute = AppPostauthRouteImport.update({
   path: '/app/postauth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppInitiativesRoute = AppInitiativesRouteImport.update({
-  id: '/app/initiatives',
-  path: '/app/initiatives',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppWorklistIndexRoute = AppWorklistIndexRouteImport.update({
   id: '/app/worklist/',
   path: '/app/worklist/',
@@ -62,7 +56,6 @@ const AppWorklistSubtasksWorkItemIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app/initiatives': typeof AppInitiativesRoute
   '/app/postauth': typeof AppPostauthRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tagsEdit': typeof AppTagsEditRoute
@@ -72,7 +65,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app/initiatives': typeof AppInitiativesRoute
   '/app/postauth': typeof AppPostauthRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tagsEdit': typeof AppTagsEditRoute
@@ -83,7 +75,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app/initiatives': typeof AppInitiativesRoute
   '/app/postauth': typeof AppPostauthRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/tagsEdit': typeof AppTagsEditRoute
@@ -95,7 +86,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/app/initiatives'
     | '/app/postauth'
     | '/app/settings'
     | '/app/tagsEdit'
@@ -105,7 +95,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app/initiatives'
     | '/app/postauth'
     | '/app/settings'
     | '/app/tagsEdit'
@@ -115,7 +104,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/app/initiatives'
     | '/app/postauth'
     | '/app/settings'
     | '/app/tagsEdit'
@@ -126,7 +114,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppInitiativesRoute: typeof AppInitiativesRoute
   AppPostauthRoute: typeof AppPostauthRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppTagsEditRoute: typeof AppTagsEditRoute
@@ -172,13 +159,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPostauthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/initiatives': {
-      id: '/app/initiatives'
-      path: '/app/initiatives'
-      fullPath: '/app/initiatives'
-      preLoaderRoute: typeof AppInitiativesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/app/worklist/': {
       id: '/app/worklist/'
       path: '/app/worklist'
@@ -198,7 +178,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppInitiativesRoute: AppInitiativesRoute,
   AppPostauthRoute: AppPostauthRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppTagsEditRoute: AppTagsEditRoute,
