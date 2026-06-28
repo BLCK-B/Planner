@@ -9,14 +9,23 @@ import type {Credentials} from "@/types/Credentials.ts";
 import {useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {loadEncryptionPhraseQuery} from "../../queries/EncryptionQueries";
+import {
+    createEncryptionKey,
+    decodeFromBase64,
+    decryptString,
+    encodeToBase64, encryptString,
+    generateNewSalt
+} from "../../functions/Crypto";
 
 const Postauth = () => {
     const navigate = useNavigate();
 
     const {data: encryptionPhrase} = useQuery(loadEncryptionPhraseQuery());
 
+    const EXPECTED_PHRASE = 'spruiten' as const;
+
     const isEncryptionEnabled = () => {
-        return encryptionPhrase && encryptionPhrase !== 'spruiten';
+        return encryptionPhrase && encryptionPhrase !== EXPECTED_PHRASE;
     };
 
     const [infoAlertMessage, setInfoAlertMessage] = useState<string>('');
@@ -27,58 +36,69 @@ const Postauth = () => {
         formState: {errors},
     } = useForm<Credentials>();
 
-    // not ready for protocol migrations
-    const reencryptAllData = async () => {
+    const encryptAllData = async (encryptedPhrase: string) => {
+        if (isEncryptionEnabled()) {
+            setInfoAlertMessage("Encryption is already enabled.");
+            return;
+        }
+
         const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
-        const allPlansReencrypted = await FetchRequest("GET", "/users/userTags");
+        const allTagsReencrypted = await FetchRequest("GET", "/users/userTags");
         const allWorkItemsReencrypted = await FetchRequest("GET", "/users/userWorkItems");
 
+        // todo: network is not reliable
+        // todo: saves {"encryptedPhrase":"+P/...
+        await FetchRequest("PUT", "/auth/encryptionPhrase", {encryptedPhrase});
         if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
-        if (allPlansReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allPlansReencrypted);
+        if (allTagsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allTagsReencrypted);
         if (allWorkItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserWorkItems", allWorkItemsReencrypted);
     };
 
-    // const registerNewAccount = async (credentials: Credentials) => {
-    //     try {
-    //         const newAuthSalt = generateNewSalt();
-    //         const newEncryptionKeySalt = generateNewSalt();
-    //
-    //         const newFrontendAuthHash = await deriveAuthHash(newAuthSalt, credentials.encryptionKey);
-    //
-    //         const backendCredentials = {
-    //             frontendPasswordHash: newFrontendAuthHash,
-    //             passwordAuthSalt: encodeToBase64(newAuthSalt),
-    //             encryptionKeySalt: encodeToBase64(newEncryptionKeySalt),
-    //         };
-    //         await sendAuthRequest("/auth/register", backendCredentials);
-    //
-    //         await router.navigate({
-    //             to: postAuthRoute.fullPath,
-    //             params: {authType: 'log-in'},
-    //         });
-    //     } catch (error: any) {
-    //         if (error?.status === 409) {
-    //             setInfoAlertMessage("This account already exists.");
-    //         } else if (error?.status) {
-    //             setInfoAlertMessage("Invalid credentials.");
-    //         } else {
-    //             alert("Login failed: " + (error?.error || "Unknown error"));
-    //         }
-    //     }
-    // };
-
-    const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
-        if (credentials.encryptionKey === "testsentry") {
-            await FetchRequest("GET", "/auth/test-sentry");
+    const decryptAllData = async () => {
+        if (!isEncryptionEnabled()) {
+            setInfoAlertMessage("Encryption is already disabled.");
             return;
         }
+
+        const allItemsReencrypted = await FetchRequest("GET", "/users/allUserTasks");
+        const allTagsReencrypted = await FetchRequest("GET", "/users/userTags");
+        const allWorkItemsReencrypted = await FetchRequest("GET", "/users/userWorkItems");
+
+        // todo crypto.clearKey();
+        // todo: network is not reliable
+        // todo: saves {"encryptedPhrase":"+P/...
+        // await FetchRequest("PUT", "/auth/encryptionPhrase", {EXPECTED_PHRASE});
+        // if (allItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTasks", allItemsReencrypted);
+        // if (allTagsReencrypted) await FetchRequest("PUT", "/users/updateAllUserTags", allTagsReencrypted);
+        // if (allWorkItemsReencrypted) await FetchRequest("PUT", "/users/updateAllUserWorkItems", allWorkItemsReencrypted);
+    };
+
+    const onSubmit: SubmitHandler<Credentials> = async (credentials: Credentials) => {
         try {
             setInfoAlertMessage("");
-            // const encryptionKeySalt = await FetchRequest("GET", `/auth/encryptionKeySalt`);
 
-            // await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.encryptionKey);
+            let encryptionKeySalt = await FetchRequest("GET", `/auth/encryptionKeySalt`);
+            if (!encryptionKeySalt) {
+                const newEncryptionKeySalt = encodeToBase64(generateNewSalt());
+                encryptionKeySalt = await FetchRequest("POST", `/auth/registerUserSalt`, {newEncryptionKeySalt});
+            }
 
-            await reencryptAllData();
+            await createEncryptionKey(decodeFromBase64(encryptionKeySalt), credentials.encryptionPassword);
+
+            if (isEncryptionEnabled()) {
+                if (!encryptionPhrase) {
+                    setInfoAlertMessage("Missing encryption phrase.");
+                    return;
+                }
+                if (await decryptString(encryptionPhrase) !== EXPECTED_PHRASE) {
+                    setInfoAlertMessage("Invalid credentials.");
+                    return;
+                }
+                await decryptAllData();
+            } else {
+                const encryptedPhrase = await encryptString(EXPECTED_PHRASE);
+                await encryptAllData(encryptedPhrase);
+            }
 
             await navigate({to: '/app/tasks'});
             // eslint-disable-next-line
@@ -86,7 +106,7 @@ const Postauth = () => {
             if (error?.status) {
                 setInfoAlertMessage("Invalid credentials.");
             } else {
-                alert("Login failed: " + (error?.error || "Unknown error"));
+                alert("Operation failed: " + (error?.error || "Unknown error"));
             }
         }
     };
@@ -111,7 +131,7 @@ const Postauth = () => {
                                 </Card.Title>
                                 <Card.Description color="white">
                                     <Show when={!isEncryptionEnabled()}>
-                                        Encryption not enabled. Enter your encryption key.
+                                        Encryption not enabled. Enter a new encryption password.
                                     </Show>
                                     <Show when={isEncryptionEnabled()}>
                                         Encryption enabled.
@@ -121,9 +141,9 @@ const Postauth = () => {
                             <Card.Body gap="2" color="white">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <Stack gap="4" align="flex-start" maxW="sm">
-                                        <Field.Root invalid={!!errors.encryptionKey}>
-                                            <PasswordInput {...register("encryptionKey", {required: "Encryption key is required"})} />
-                                            <Field.ErrorText>{String(errors.encryptionKey?.message)}</Field.ErrorText>
+                                        <Field.Root invalid={!!errors.encryptionPassword}>
+                                            <PasswordInput {...register("encryptionPassword", {required: "Encryption password is required"})} />
+                                            <Field.ErrorText>{String(errors.encryptionPassword?.message)}</Field.ErrorText>
                                         </Field.Root>
                                         <Button type="submit" alignSelf="center" variant="subtle">Submit</Button>
                                     </Stack>

@@ -1,5 +1,5 @@
 export type Credentials = {
-    encryptionKey: string;
+    encryptionPassword: string;
 };
 
 export type BackendCredentials = {
