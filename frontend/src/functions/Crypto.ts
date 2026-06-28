@@ -126,6 +126,34 @@ const generateIV = (): Uint8Array => {
     return crypto.getRandomValues(new Uint8Array(AES_NONCE_LENGTH));
 };
 
+export const encryptString = async (
+    value: string
+): Promise<string> => {
+    const cryptoKey = await getCryptoKey();
+    const result = await encryptFields(
+        {v: value},
+        {v: true},
+        cryptoKey
+    );
+    return result.v;
+};
+
+export const decryptString = async (
+    value: string,
+): Promise<string> => {
+    try {
+        const cryptoKey = await getCryptoKey();
+        const result = await decryptFields(
+            {v: value},
+            {v: true},
+            cryptoKey
+        );
+        return result.v;
+    } catch {
+        return value;
+    }
+};
+
 export const encryptFields = async (
     value: any,
     spec: { [key: string]: boolean },
@@ -134,19 +162,19 @@ export const encryptFields = async (
     const result: any = {...value};
 
     for (const key in spec) {
-        if (spec[key]) {
-            const iv = generateIV(); // initialisation vector
-            const encoded = encoder.encode(JSON.stringify(value[key])); // -> string -> UTF-8 bytes
-            const ciphertext = await crypto.subtle.encrypt({name: ENCRYPTION_ALGORITHM, iv}, cryptoKey, encoded);
-
-            const combined = new Uint8Array(iv.byteLength + ciphertext.byteLength);
-            combined.set(iv, 0); // vector first
-            combined.set(new Uint8Array(ciphertext), iv.byteLength); // ciphertext bytes second
-
-            result[key] = encodeToBase64(combined);
-        } else {
+        if (!spec[key]) {
             result[key] = value[key];
+            continue;
         }
+        const iv = generateIV(); // initialisation vector
+        const encoded = encoder.encode(JSON.stringify(value[key])); // -> string -> UTF-8 bytes
+        const ciphertext = await crypto.subtle.encrypt({name: ENCRYPTION_ALGORITHM, iv}, cryptoKey, encoded);
+
+        const combined = new Uint8Array(iv.byteLength + ciphertext.byteLength);
+        combined.set(iv, 0); // vector first
+        combined.set(new Uint8Array(ciphertext), iv.byteLength); // ciphertext bytes second
+
+        result[key] = encodeToBase64(combined);
     }
     return result;
 };
@@ -159,19 +187,19 @@ export const decryptFields = async (
     const result: any = {...value};
 
     for (const key in spec) {
-        if (spec[key]) {
-            try {
-                const combined = decodeFromBase64(value[key]);
-                const iv = combined.slice(0, AES_NONCE_LENGTH);
-                const ciphertext = combined.slice(AES_NONCE_LENGTH);
-                const decryptedBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv}, cryptoKey, ciphertext);
-                result[key] = JSON.parse(decoder.decode(decryptedBuffer));
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (error) {
-                // unencrypted data passes unchanged
-                result[key] = value[key];
-            }
-        } else {
+        if (!spec[key]) {
+            result[key] = value[key];
+            continue;
+        }
+        try {
+            const combined = decodeFromBase64(value[key]);
+            const iv = combined.slice(0, AES_NONCE_LENGTH);
+            const ciphertext = combined.slice(AES_NONCE_LENGTH);
+            const decryptedBuffer = await crypto.subtle.decrypt({name: "AES-GCM", iv}, cryptoKey, ciphertext);
+            result[key] = JSON.parse(decoder.decode(decryptedBuffer));
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            // unencrypted data passes unchanged
             result[key] = value[key];
         }
     }
