@@ -1,9 +1,8 @@
 import {Box, Flex, Show, Spacer, Text} from "@chakra-ui/react";
 import MyButton from "@/components/base/MyButton.tsx";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {getNewSubtask, type SubtaskType} from "@/types/SubtaskType.ts";
 import useSaveWorkItem from "@/queries/UseSaveWorkItem.tsx";
-import {useThrottledCallback} from "@tanstack/react-pacer";
 import type {WorkItemType} from "@/types/WorkItemType.ts";
 import {useQuery} from "@tanstack/react-query";
 import loadWorkItemQuery from "@/queries/LoadWorkItemQuery.tsx";
@@ -27,33 +26,29 @@ const SubtasksList = () => {
 
     const [newSubtasks, setNewSubtasks] = useState<SubtaskType[]>([]);
 
-    useEffect(() => {
-        if (workItem?.data.subtasks) {
-            setNewSubtasks(workItem.data.subtasks);
-        }
-    }, [workItem]);
+    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const throttledSave = useThrottledCallback(
-        (subtasks: SubtaskType[]) => {
-            if (!workItem) return;
-            const updatedWorkItem: WorkItemType = {
-                itemID: workItem.itemID,
-                data: {
-                    name: workItem.data.name,
-                    subtasks: subtasks,
-                },
-            };
-            saveWorkItemMutation.mutate(updatedWorkItem);
-        },
-        {
-            wait: 1500,
-            leading: true,
-            trailing: true,
-        }
-    );
+    const prevSubtasksRef = useRef<SubtaskType[] | undefined>(undefined);
+    const subtasks = workItem?.data.subtasks;
+    if (prevSubtasksRef.current !== subtasks) {
+        prevSubtasksRef.current = subtasks;
+        setNewSubtasks(subtasks ?? []);
+    }
+
+    useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, []);
 
     const immediateSave = (subtasks: SubtaskType[]) => {
         if (!workItem) return;
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+            debounceTimerRef.current = null;
+        }
         const updatedWorkItem: WorkItemType = {
             itemID: workItem.itemID,
             data: {
@@ -63,6 +58,25 @@ const SubtasksList = () => {
         };
         saveWorkItemMutation.mutate(updatedWorkItem);
     };
+
+    const debouncedSave = useCallback((subtasks: SubtaskType[]) => {
+        if (!workItem) return;
+
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+
+        debounceTimerRef.current = setTimeout(() => {
+            const updatedWorkItem: WorkItemType = {
+                itemID: workItem.itemID,
+                data: {
+                    name: workItem.data.name,
+                    subtasks: subtasks,
+                },
+            };
+            saveWorkItemMutation.mutate(updatedWorkItem);
+        }, 500);
+    }, [workItem, saveWorkItemMutation]);
 
     const toggleSubtaskCompleted = (index: number) => {
         const updated = (() => {
@@ -116,9 +130,9 @@ const SubtasksList = () => {
                     : subtask
             );
             setNewSubtasks(updated);
-            throttledSave(updated);
+            debouncedSave(updated);
         },
-        [newSubtasks, throttledSave]
+        [newSubtasks, debouncedSave]
     );
 
     const addSubTask = () => {
@@ -133,8 +147,8 @@ const SubtasksList = () => {
         next.splice(to, 0, item);
 
         setNewSubtasks(next);
-        throttledSave(next);
-    }, [newSubtasks, throttledSave]);
+        debouncedSave(next);
+    }, [newSubtasks, debouncedSave]);
 
     const returnToWorkItems = () => {
         immediateSave(newSubtasks);

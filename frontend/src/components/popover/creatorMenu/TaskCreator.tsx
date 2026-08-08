@@ -148,7 +148,7 @@ const TaskCreator = () => {
                 <DialogBackdrop/>
                 <Dialog.Positioner style={isDesktop ? styles.dialogDesktop : styles.dialogMobile}>
                     {/* related tasks */}
-                    <Show when={tasksNearDate.length}>
+                    <Show when={newItem.data.date && tasksNearDate.length}>
                         <Card.Root textStyle="body" position="fixed" w={isDesktop ? "25%" : "100%"} top="0.6rem"
                                    right={isDesktop ? "0.6rem" : undefined} bg="primary" pb="0.3rem"
                                    boxShadow="xs">
@@ -249,6 +249,7 @@ export default TaskCreator;
 const styles = {
     dialogMobile: {
         alignItems: "end",
+        height: "100dvh",
         padding: "0"
     },
     dialogDesktop: {
