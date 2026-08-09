@@ -248,9 +248,9 @@ export default TaskCreator;
 
 const styles = {
     dialogMobile: {
-        alignItems: "end",
+        alignItems: "flex-end",
+        padding: "0",
         height: "100dvh",
-        padding: "0"
     },
     dialogDesktop: {
         alignItems: "center",
