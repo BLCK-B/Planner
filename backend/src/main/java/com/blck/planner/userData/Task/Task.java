@@ -3,7 +3,6 @@ package com.blck.planner.userData.Task;
 import com.blck.planner.userData.Tag.Tag;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import org.hibernate.annotations.BatchSize;
 
 import java.util.Set;
 import java.util.UUID;

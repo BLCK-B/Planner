@@ -11,4 +11,6 @@ public interface UserTagRepository extends JpaRepository<Tag, UUID> {
     Tag findByUserIDAndItemID(String userId, UUID itemID);
 
     void deleteByUserIDAndItemID(String userId, UUID itemID);
+
+    void deleteByUserID(String userId);
 }

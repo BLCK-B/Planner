@@ -29,7 +29,6 @@ public class AccountService {
         return accountRepository.save(user).getEncryptionKeySalt();
     }
 
-
     public UserAccount loadUserByUsername(@NonNull String username) {
         return accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }

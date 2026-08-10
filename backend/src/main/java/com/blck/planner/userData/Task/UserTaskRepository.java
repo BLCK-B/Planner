@@ -1,7 +1,10 @@
 package com.blck.planner.userData.Task;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +16,8 @@ public interface UserTaskRepository extends JpaRepository<Task, UUID> {
     Optional<Task> findByUserIDAndItemID(String userId, UUID itemId);
 
     void deleteByUserIDAndItemID(String userId, UUID itemId);
+
+    void deleteByUserID(String userId);
 
     /** Returns all tasks without <code>completed</code>. This includes <code>someday</code>. */
     @Query("""

@@ -11,4 +11,6 @@ public interface UserWorkItemRepository extends JpaRepository<WorkItem, UUID> {
     WorkItem findByUserIDAndItemID(String userId, UUID itemId);
 
     void deleteByUserIDAndItemID(String userId, UUID itemId);
+
+    void deleteByUserID(String userId);
 }

@@ -1,5 +1,6 @@
 import {Box, Button, Card, Flex, Text} from "@chakra-ui/react";
 import ErrorModal from "@/components/popover/ErrorModal.tsx";
+import DeleteAllDataDialog from "@/components/popover/DeleteAllDataDialog.tsx";
 import HeaderSettingsPage from "@/components/header/HeaderSettingsPage.tsx";
 import {ColorModeButton} from "@/components/ui/color-mode.tsx";
 import FetchRequest from "@/functions/FetchRequest.tsx";
@@ -33,6 +34,7 @@ const Settings = () => {
                                     settings</Button>
                                 <Button bg="primary" color="primary.contrast" onClick={logout}>Log out</Button>
                             </Flex>
+                            <DeleteAllDataDialog/>
                         </Flex>
                     </Card.Body>
                 </Card.Root>
